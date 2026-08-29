@@ -103,8 +103,15 @@ $psql = "C:\Program Files\PostgreSQL\18\bin\psql.exe"
 & $psql -U postgres -h localhost -d vectra_cure  -f database\03_verificar_postgresql.sql
 ```
 
-**Opción B — pgAdmin 4:** sigue el instructivo de
-[`database/README.md`](database/README.md).
+**Opción B — pgAdmin 4** (viene incluido con la instalación de PostgreSQL 18):
+sigue el instructivo de [`database/README.md`](database/README.md). Abre una
+*Query Tool* cuya conexión indique `vectra_cure/postgres@PostgreSQL 18` y
+ejecuta los archivos en orden.
+
+> ⚠️ El script `01_schema_postgresql.sql` se ejecuta **una sola vez**. Si ya
+> cargaste el esquema y lo vuelves a correr, falla porque las tablas ya existen.
+> Los que sí puedes repetir son `02_seed_demo` (está escrito para reejecutarse)
+> y `03_verificar`.
 
 El script `03_verificar` debe listar **4 tablas** sin lanzar excepciones:
 
