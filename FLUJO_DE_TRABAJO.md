@@ -263,9 +263,86 @@ git commit
 
 ---
 
-## 5. Reglas de convivencia del código
+## 5. Ver el trabajo del otro en vivo (Live Share)
 
-### 5.1 Cambios en el modelo de datos
+Git **no muestra los cambios en vivo**: es un sistema de *tirar*, no de
+*empujar*. Nada llega solo a la máquina del otro, siempre alguien tiene que
+hacer `git pull`. Para ver lo que el otro está haciendo **en el momento** se usa
+**Live Share**.
+
+Las dos herramientas resuelven cosas distintas y se usan juntas:
+
+| Situación | Herramienta |
+| :--- | :--- |
+| Estamos los dos a la vez y quiero ver lo que el otro escribe **ahora** | **Live Share** |
+| Terminamos algo y debe quedar en el historial del proyecto | **git push** → Pull Request |
+| El otro trabaja por su lado y quiero saber si subió algo | **autofetch** avisa; luego se hace `pull` |
+
+Live Share es **efímero**: al cerrar la sesión no queda nada guardado. Git es el
+registro permanente. Se necesitan los dos.
+
+### 5.1 Iniciar una sesión
+
+**Quien comparte (anfitrión):**
+
+1. `Ctrl+Shift+P` → **Live Share: Start Collaboration Session**
+2. La primera vez pide iniciar sesión con GitHub o Microsoft
+3. Se copia un enlace al portapapeles → envíaselo al otro
+
+**Quien se conecta (invitado):**
+
+1. Abre el enlace, o `Ctrl+Shift+P` → **Live Share: Join Collaboration Session**
+2. Ve la carpeta completa del anfitrión **sin descargar nada**
+
+### 5.2 Qué se sincroniza
+
+Live Share comparte **los archivos en disco del anfitrión**, no solo lo que se
+teclea en el editor. Esto significa que **cualquier cambio se propaga**, venga
+del editor, de la terminal o de un script.
+
+| Función | Cómo se activa | Para qué sirve |
+| :--- | :--- | :--- |
+| Edición compartida | Automática al iniciar la sesión | Ambos editan los mismos archivos y se ven los cursores |
+| **Shared Server** | `Ctrl+Shift+P` → *Live Share: Share Server* → puerto `5000` | El invitado abre `localhost:5000` **en su navegador** y ve la aplicación corriendo, aunque no tenga PostgreSQL instalado |
+| **Shared Terminal** | `Ctrl+Shift+P` → *Live Share: Share Terminal* | El invitado ve la salida de los comandos: pruebas, errores, logs de Flask |
+| Seguir al otro | Clic en el avatar del participante | La pantalla sigue automáticamente el cursor del otro |
+
+### 5.3 Reglas para que no falle
+
+- **Guarda siempre antes** (`Ctrl+S`). Si un archivo tiene cambios sin guardar
+  y llega una modificación externa, VS Code avisa de un conflicto.
+- **El invitado no tiene los archivos.** Está viendo la carpeta del anfitrión de
+  forma remota. Si necesita el código en su máquina, hay que usar Git.
+- **Compartir terminal da control real** sobre la máquina del anfitrión. Se
+  comparte solo con quien corresponde.
+- Al terminar: `Ctrl+Shift+P` → **Live Share: End Collaboration Session**.
+  Lo que se haya hecho hay que guardarlo con `git commit` como siempre.
+
+### 5.4 El aviso de cambios en GitHub
+
+En `.vscode/settings.json` está activado `git.autofetch` cada 120 segundos.
+Cuando el otro sube algo a su rama:
+
+```
+El otro hace push
+      ↓  (máximo 2 minutos)
+En la barra inferior de VS Code aparece:   ↓1  main*
+      ↓  (hay que hacer clic)
+Se descargan los cambios
+```
+
+VS Code **avisa** de forma automática, pero **no aplica** nada solo — y así debe
+ser: si Git aplicara cambios mientras alguien está editando, sobrescribiría
+trabajo o dejaría conflictos a medio escribir.
+
+> Existen extensiones que hacen `pull` automático. **No conviene usarlas** con
+> dos personas trabajando a la vez: es la forma más rápida de perder trabajo.
+
+---
+
+## 6. Reglas de convivencia del código
+
+### 6.1 Cambios en el modelo de datos
 
 Si se agrega o cambia una columna, hay que actualizar **todo esto junto**, en un
 mismo Pull Request:
@@ -279,7 +356,7 @@ mismo Pull Request:
 Si solo se cambia uno, la app y la base quedan desalineadas y el otro se
 encuentra con errores raros.
 
-### 5.2 Qué no se sube nunca
+### 6.2 Qué no se sube nunca
 
 Ya está cubierto por `.gitignore`, pero para tenerlo claro:
 
@@ -289,7 +366,7 @@ Ya está cubierto por `.gitignore`, pero para tenerlo claro:
 - `__pycache__/`, `*.pyc`
 - `vectra_cure/static/uploads/*` → imágenes que suban los usuarios
 
-### 5.3 Dónde va cada cosa
+### 6.3 Dónde va cada cosa
 
 | Si vas a… | Toca este archivo |
 | :--- | :--- |
@@ -298,7 +375,7 @@ Ya está cubierto por `.gitignore`, pero para tenerlo claro:
 | Cambiar un valor fijo (especialidades, horarios, estados, motivos) | `vectra_cure/constantes.py` |
 | Cambiar colores, tipografía o espaciados | `vectra_cure/static/css/vectra.css` |
 | Cambiar permisos por rol | `vectra_cure/auth.py` |
-| Cambiar el esquema | `database/` (ver 5.1) |
+| Cambiar el esquema | `database/` (ver 6.1) |
 
 **La lógica de negocio no va en `models.py`.** Los modelos son solo estructura
 (columnas y relaciones); el comportamiento vive en `logica.py`. Eso permite que
@@ -306,7 +383,7 @@ las dos capas evolucionen sin estorbarse.
 
 ---
 
-## 6. Antes de abrir un Pull Request
+## 7. Antes de abrir un Pull Request
 
 Corre las pruebas. Son 13 y usan SQLite en memoria, así que **no tocan tu
 PostgreSQL**:
@@ -327,7 +404,7 @@ agendar → pagar → descargar ticket → consultar cita → cancelar.
 
 ---
 
-## 7. Estado actual del proyecto
+## 8. Estado actual del proyecto
 
 Lo que ya está funcionando y verificado contra PostgreSQL 18:
 
@@ -351,7 +428,7 @@ Lo que ya está funcionando y verificado contra PostgreSQL 18:
 
 ---
 
-## 8. Resumen para el día a día
+## 9. Resumen para el día a día
 
 ```bash
 # Empezar
