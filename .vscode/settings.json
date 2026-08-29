@@ -1,0 +1,42 @@
+{
+  // Intérprete del entorno virtual del proyecto (ruta relativa: sirve en
+  // cualquier máquina del equipo que haya creado su venv en vectra_cure/venv).
+  "python.defaultInterpreterPath": "${workspaceFolder}/vectra_cure/venv/Scripts/python.exe",
+  "python.terminal.activateEnvironment": true,
+
+  // Pruebas: unittest, descubiertas en vectra_cure/tests
+  "python.testing.unittestEnabled": true,
+  "python.testing.pytestEnabled": false,
+  "python.testing.cwd": "${workspaceFolder}/vectra_cure",
+  "python.testing.unittestArgs": ["-v", "-s", "tests", "-p", "test_*.py"],
+
+  // Jinja: que VS Code entienda las plantillas de Flask
+  "files.associations": {
+    "**/templates/**/*.html": "jinja-html"
+  },
+  "emmet.includeLanguages": {
+    "jinja-html": "html"
+  },
+
+  // Higiene de archivos: evita diffs ruidosos entre los dos desarrolladores
+  "files.eol": "\n",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  // No indexar el entorno virtual ni los archivos generados
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true
+  },
+  "search.exclude": {
+    "**/venv": true,
+    "**/__pycache__": true,
+    "**/static/uploads": true
+  },
+
+  // Git: ver los cambios del compañero sin tener que refrescar a mano
+  "git.autofetch": true,
+  "git.autofetchPeriod": 120,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": false
+}
