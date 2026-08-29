@@ -1,0 +1,188 @@
+/* ============================================================
+   Vectra Cure — Design System  (02_DESIGN_SYSTEM.md)
+   Estética Apple Desktop: sobrio, nítido, sereno, alta confianza.
+   Se carga DESPUÉS de Bootstrap 5 para sobre-escribir.
+   ============================================================ */
+
+:root {
+  /* Marca */
+  --vc-primary: #0284C7;
+  --vc-primary-dark: #0369A1;
+  --vc-mint: #10B981;
+  --vc-mint-light: #D1FAE5;
+
+  /* Tema claro (Clean Light) */
+  --vc-bg: #F8FAFC;
+  --vc-surface: #FFFFFF;
+  --vc-text: #0F172A;
+  --vc-text-muted: #64748B;
+  --vc-border: #E2E8F0;
+
+  --vc-radius: 1rem;
+  --vc-radius-lg: 1.5rem;
+  --vc-shadow: 0 10px 30px -12px rgba(15, 23, 42, .18);
+
+  --vc-font-display: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --vc-font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --vc-bg: #090D16;
+    --vc-surface: #131B2E;
+    --vc-text: #F8FAFC;
+    --vc-text-muted: #94A3B8;
+    --vc-border: #1E293B;
+    --vc-shadow: 0 12px 34px -14px rgba(0, 0, 0, .6);
+  }
+}
+:root[data-theme="dark"] {
+  --vc-bg: #090D16;
+  --vc-surface: #131B2E;
+  --vc-text: #F8FAFC;
+  --vc-text-muted: #94A3B8;
+  --vc-border: #1E293B;
+  --vc-shadow: 0 12px 34px -14px rgba(0, 0, 0, .6);
+}
+
+body {
+  background-color: var(--vc-bg);
+  color: var(--vc-text);
+  font-family: var(--vc-font-body);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, .navbar-brand, .btn {
+  font-family: var(--vc-font-display);
+  letter-spacing: -0.01em;
+}
+h1 { font-weight: 700; }
+h2, h3 { font-weight: 600; }
+
+.text-muted, .vc-data { color: var(--vc-text-muted) !important; }
+.vc-data { font-size: 13px; }
+
+a { color: var(--vc-primary); text-decoration: none; }
+a:hover { color: var(--vc-primary-dark); }
+
+/* Navbar */
+.navbar.vc-nav {
+  background-color: var(--vc-surface);
+  border-bottom: 1px solid var(--vc-border);
+  backdrop-filter: saturate(180%) blur(8px);
+}
+.navbar.vc-nav .nav-link { color: var(--vc-text); }
+.navbar.vc-nav .nav-link:hover { color: var(--vc-primary); }
+.navbar-brand .vc-logo { color: var(--vc-primary); font-weight: 700; }
+
+/* Superficies */
+.vc-card {
+  background-color: var(--vc-surface);
+  border: 1px solid var(--vc-border);
+  border-radius: var(--vc-radius);
+  box-shadow: var(--vc-shadow);
+}
+.vc-card-lg { border-radius: var(--vc-radius-lg); }
+
+/* Botones */
+.btn-vc {
+  background-color: var(--vc-primary);
+  border-color: var(--vc-primary);
+  color: #fff;
+}
+.btn-vc:hover { background-color: var(--vc-primary-dark); border-color: var(--vc-primary-dark); color: #fff; }
+.btn-vc-outline {
+  border: 1px solid var(--vc-primary);
+  color: var(--vc-primary);
+  background: transparent;
+}
+.btn-vc-outline:hover { background-color: var(--vc-primary); color: #fff; }
+
+/* Insignias */
+.vc-badge-verificado {
+  background-color: var(--vc-mint-light);
+  color: #065F46;
+  border-radius: 999px;
+  padding: .15rem .6rem;
+  font-size: 12px;
+  font-weight: 600;
+}
+.vc-chip {
+  border: 1px solid var(--vc-border);
+  background: var(--vc-surface);
+  color: var(--vc-text);
+  border-radius: 999px;
+  padding: .35rem .9rem;
+  font-size: 13px;
+  display: inline-flex;
+  gap: .35rem;
+  align-items: center;
+}
+.vc-chip.activo { background-color: var(--vc-primary); color: #fff; border-color: var(--vc-primary); }
+
+/* Hero */
+.vc-hero {
+  background: linear-gradient(180deg, var(--vc-mint-light) 0%, var(--vc-bg) 60%);
+  border-radius: var(--vc-radius-lg);
+  padding: 3.5rem 2rem;
+}
+:root[data-theme="dark"] .vc-hero,
+:root:not([data-theme="light"]) .vc-hero {
+  background: linear-gradient(180deg, rgba(16,185,129,.12) 0%, var(--vc-bg) 60%);
+}
+
+/* Tarjeta de especialista (02 §4.1) */
+.vc-doctor-photo {
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  width: 100%;
+  border-radius: var(--vc-radius) var(--vc-radius) 0 0;
+  background: var(--vc-mint-light);
+}
+.vc-stars { color: #F59E0B; letter-spacing: 1px; }
+
+/* Mapa estático (placeholder del Split View) */
+.vc-map {
+  background:
+    repeating-linear-gradient(0deg, var(--vc-border) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(90deg, var(--vc-border) 0 1px, transparent 1px 40px),
+    var(--vc-surface);
+  border: 1px solid var(--vc-border);
+  border-radius: var(--vc-radius);
+  min-height: 320px;
+  display: grid;
+  place-items: center;
+  color: var(--vc-text-muted);
+}
+
+/* Ticket */
+.vc-ticket {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  white-space: pre;
+  background: var(--vc-surface);
+  border: 1px dashed var(--vc-border);
+  border-radius: var(--vc-radius);
+  padding: 1.25rem;
+  font-size: 12.5px;
+  overflow-x: auto;
+}
+
+/* Visto verde gigante (03 §3.2) */
+.vc-check {
+  width: 96px; height: 96px;
+  border-radius: 999px;
+  background: var(--vc-mint);
+  color: #fff;
+  display: grid; place-items: center;
+  font-size: 48px;
+  margin: 0 auto 1rem;
+  animation: vc-pop .4s ease-out;
+}
+@keyframes vc-pop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+footer.vc-footer {
+  background: var(--vc-surface);
+  border-top: 1px solid var(--vc-border);
+  color: var(--vc-text-muted);
+}

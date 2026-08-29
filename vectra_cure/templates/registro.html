@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block titulo %}Crear cuenta — Vectra Cure{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="vc-card p-4">
+      <h1 class="h4 mb-3">Crear cuenta</h1>
+
+      <div class="btn-group w-100 mb-4" role="group">
+        <a href="{{ url_for('registro', tipo='paciente') }}"
+           class="btn {{ 'btn-vc' if tipo != 'medico' else 'btn-vc-outline' }}">👤 Soy paciente</a>
+        <a href="{{ url_for('registro', tipo='medico') }}"
+           class="btn {{ 'btn-vc' if tipo == 'medico' else 'btn-vc-outline' }}">🩺 Soy especialista</a>
+      </div>
+
+      <form method="post" enctype="multipart/form-data">
+        <input type="hidden" name="tipo" value="{{ tipo }}">
+
+        <h2 class="h6">Datos personales</h2>
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label">Nombre completo</label>
+            <input name="nombre" class="form-control" value="{{ datos.get('nombre','') }}" required></div>
+          <div class="col-md-6"><label class="form-label">Teléfono / WhatsApp</label>
+            <input name="telefono" class="form-control" value="{{ datos.get('telefono','') }}" required></div>
+          <div class="col-md-6"><label class="form-label">Correo electrónico</label>
+            <input type="email" name="email" class="form-control" value="{{ datos.get('email','') }}" required></div>
+          <div class="col-md-6"><label class="form-label">Contraseña (mín. 6)</label>
+            <input type="password" name="password" class="form-control" minlength="6" required></div>
+        </div>
+
+        {% if tipo == 'medico' %}
+          <h2 class="h6 mt-4">Verificación de títulos y consultorio</h2>
+          <div class="row g-3">
+            <div class="col-md-6"><label class="form-label">Especialidad</label>
+              <select name="especialidad" class="form-select" required>
+                {% for e in ESPECIALIDADES %}<option value="{{ e }}">{{ e }}</option>{% endfor %}
+              </select></div>
+            <div class="col-md-6"><label class="form-label">N° de colegiatura</label>
+              <input name="num_colegiatura" class="form-control" value="{{ datos.get('num_colegiatura','') }}" required></div>
+            <div class="col-md-6"><label class="form-label">Nombre del consultorio</label>
+              <input name="nombre_clinica" class="form-control" value="{{ datos.get('nombre_clinica','') }}" required></div>
+            <div class="col-md-6"><label class="form-label">Precio aprox. de consulta (USD)</label>
+              <input type="number" step="0.01" name="precio_aprox" class="form-control" value="{{ datos.get('precio_aprox','') }}" required></div>
+            <div class="col-12"><label class="form-label">Dirección</label>
+              <input name="direccion" class="form-control" value="{{ datos.get('direccion','') }}" required></div>
+            <div class="col-md-4"><label class="form-label">Latitud</label>
+              <input name="latitud" class="form-control" placeholder="-0.180653"></div>
+            <div class="col-md-4"><label class="form-label">Longitud</label>
+              <input name="longitud" class="form-control" placeholder="-78.467834"></div>
+            <div class="col-md-4"><label class="form-label">Horario de atención</label>
+              <input name="horario_atencion" class="form-control" placeholder="09:00 - 18:30"></div>
+            <div class="col-12"><label class="form-label">Foto del consultorio (opcional)</label>
+              <input type="file" name="foto" class="form-control" accept="image/*"></div>
+          </div>
+          <p class="vc-data mt-2">Tras enviar verás: <em>"En revisión de credenciales (2-3 min)"</em> →
+            insignia 🛡️ Verificado activada automáticamente (flujo simulado).</p>
+        {% endif %}
+
+        <button class="btn btn-vc btn-lg w-100 mt-4">
+          {{ 'Completar registro de especialista' if tipo == 'medico' else 'Registrarme' }}
+        </button>
+      </form>
+      <p class="text-center vc-data mt-3">¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

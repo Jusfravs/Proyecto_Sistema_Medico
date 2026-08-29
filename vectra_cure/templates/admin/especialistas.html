@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block titulo %}Especialistas — Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Especialistas</h1>
+  <a href="{{ url_for('admin_especialista_nuevo') }}" class="btn btn-vc">+ Nuevo especialista</a>
+</div>
+
+<div class="vc-card p-0 table-responsive">
+  <table class="table align-middle mb-0">
+    <thead><tr>
+      <th>#</th><th>Nombre</th><th>Especialidad</th><th>Consultorio</th>
+      <th>Precio</th><th>Rating</th><th>Estado</th><th></th>
+    </tr></thead>
+    <tbody>
+      {% for p in perfiles %}
+      <tr class="{{ '' if p.activo else 'opacity-50' }}">
+        <td>{{ p.id }}</td>
+        <td>{{ p.usuario.nombre }}
+          {% if p.verificado %}<span class="vc-badge-verificado">🛡️</span>{% endif %}</td>
+        <td>{{ p.especialidad }}</td>
+        <td class="vc-data">{{ p.nombre_clinica }}</td>
+        <td>${{ '%.2f'|format(p.precio_aprox|float) }}</td>
+        <td>{{ '%.1f'|format(p.rating_promedio|float) }} ({{ p.num_resenas }})</td>
+        <td>{{ 'Activo' if p.activo else 'Inactivo' }}</td>
+        <td class="text-nowrap">
+          <a href="{{ url_for('admin_especialista_editar', medico_id=p.id) }}" class="btn btn-sm btn-vc-outline">Editar</a>
+          <form class="d-inline" method="post" action="{{ url_for('admin_especialista_verificar', medico_id=p.id) }}">
+            <button class="btn btn-sm btn-outline-secondary">{{ 'Quitar 🛡️' if p.verificado else 'Verificar' }}</button>
+          </form>
+          <form class="d-inline" method="post" action="{{ url_for('admin_especialista_desactivar', medico_id=p.id) }}"
+                onsubmit="return confirm('¿Cambiar estado de este especialista?')">
+            <button class="btn btn-sm btn-outline-danger">{{ 'Reactivar' if not p.activo else 'Desactivar' }}</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="8" class="text-center vc-data py-3">Sin especialistas todavía.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

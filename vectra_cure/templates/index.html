@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui with context %}
+{% block titulo %}Vectra Cure — Encuentra especialistas médicos verificados{% endblock %}
+
+{% block content %}
+<section class="vc-hero text-center mb-5">
+  <h1 class="display-6 mb-3">Encuentra especialistas médicos verificados<br>cerca de ti en segundos</h1>
+  <p class="lead vc-data mb-4">Estrellas ⭐ primero, distancia 📍, horarios y precios visibles. Agendamiento 100% autónomo, sin llamadas.</p>
+  <a href="{{ url_for('directorio') }}" class="btn btn-vc btn-lg">⚡ Probar plataforma / Explorar mapa</a>
+</section>
+
+<section class="mb-5">
+  <h2 class="h4 mb-3">Catálogo de especialidades</h2>
+  <div class="row row-cols-2 row-cols-md-5 g-3">
+    {% for e in ESPECIALIDADES %}
+      <div class="col">
+        <a href="{{ url_for('directorio', especialidad=e) }}" class="vc-card d-block text-center p-3 h-100 text-decoration-none">
+          <div style="font-size:2rem">{{ ICONO_ESPECIALIDAD[e] }}</div>
+          <div class="fw-semibold mt-1" style="color:var(--vc-text)">{{ e }}</div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% if destacados %}
+<section class="mb-5">
+  <h2 class="h4 mb-3">Mejor calificados</h2>
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for p in destacados %}<div class="col">{{ ui.tarjeta_especialista(p) }}</div>{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section id="como-funciona" class="mb-5">
+  <h2 class="h4 mb-3">¿Cómo funciona?</h2>
+  <div class="row row-cols-1 row-cols-md-4 g-3">
+    {% for paso in [
+      ('1', 'Explora el mapa', 'Filtra por especialidad, calificación, cercanía o precio.'),
+      ('2', 'Revisa el perfil', 'Fotos del consultorio, tarifas y reseñas de otros pacientes.'),
+      ('3', 'Agenda tu cita', 'Ficha rápida en 2 pasos y elige método de pago.'),
+      ('4', 'Recibe tu ticket', 'Descarga el recibo .md y la confirmación por WhatsApp y correo.'),
+    ] %}
+      <div class="col"><div class="vc-card p-3 h-100">
+        <div class="vc-badge-verificado mb-2">Paso {{ paso[0] }}</div>
+        <h6>{{ paso[1] }}</h6><p class="vc-data mb-0">{{ paso[2] }}</p>
+      </div></div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="mb-4">
+  <div class="row text-center g-3">
+    {% for dato in [('92%', 'valida el mapa interactivo'), ('80%', 'prefiere agendar 100% online'),
+                    ('44%', 'elige por reseñas y estrellas'), ('$0.00', 'de comisión al paciente')] %}
+      <div class="col-6 col-md-3"><div class="vc-card p-3 h-100">
+        <div class="h3 mb-0" style="color:var(--vc-primary)">{{ dato[0] }}</div>
+        <div class="vc-data">{{ dato[1] }}</div>
+      </div></div>
+    {% endfor %}
+  </div>
+  <p class="vc-data text-center mt-2">Basado en la encuesta de mercado (N = 25) — ver documentación del proyecto.</p>
+</section>
+{% endblock %}

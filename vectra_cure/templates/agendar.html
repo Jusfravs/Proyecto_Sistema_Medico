@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block titulo %}Agendar cita — {{ perfil.usuario.nombre }}{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('especialista', medico_id=perfil.id) }}" class="btn btn-vc-outline btn-sm mb-3">← Volver al perfil</a>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="vc-card p-4">
+      <h1 class="h4 mb-1">Agendar cita rápida</h1>
+      <p class="vc-data">{{ ICONO_ESPECIALIDAD.get(perfil.especialidad,'🩺') }} {{ perfil.usuario.nombre }} ·
+        {{ perfil.especialidad }} · {{ perfil.nombre_clinica }} · aprox. ${{ '%.2f'|format(perfil.precio_aprox|float) }} USD</p>
+
+      <form method="post">
+        <h2 class="h6 mt-3">Paso 1 · Datos de contacto y turno</h2>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Nombre y apellido</label>
+            <input name="paciente_nombre" class="form-control" value="{{ datos.get('paciente_nombre','') }}" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Teléfono / WhatsApp</label>
+            <input name="paciente_telefono" class="form-control" value="{{ datos.get('paciente_telefono','') }}" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Correo electrónico</label>
+            <input type="email" name="paciente_email" class="form-control" value="{{ datos.get('paciente_email','') }}" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Fecha</label>
+            <input type="date" name="fecha" class="form-control" value="{{ datos.get('fecha','') }}" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Hora (bloques de 2 h)</label>
+            <select name="hora" class="form-select" required>
+              {% for h in bloques %}<option value="{{ h }}" {{ 'selected' if datos.get('hora')==h }}>{{ h }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Motivo breve de consulta</label>
+            <input name="motivo" class="form-control" placeholder="Ej. Dolor de muela desde anoche"
+                   value="{{ datos.get('motivo','') }}">
+          </div>
+        </div>
+
+        <h2 class="h6 mt-4">Paso 2 · Método de pago</h2>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="vc-card p-3 d-block h-100" style="cursor:pointer">
+              <input class="form-check-input me-2" type="radio" name="metodo_pago" value="PAYPAL_MOCK" checked>
+              <strong>Pago digital</strong> — PayPal Mock (simulado)
+              <div class="vc-data mt-1">Abre una ventana simulada de <em>Vectra Cure Pay</em>. Estado: PAGADO · SIMULADO.</div>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label class="vc-card p-3 d-block h-100" style="cursor:pointer">
+              <input class="form-check-input me-2" type="radio" name="metodo_pago" value="EFECTIVO_VENTANILLA">
+              <strong>Pago en efectivo</strong> — ventanilla del consultorio
+              <div class="vc-data mt-1">No requiere tarjeta. Estado: PENDIENTE EN VENTANILLA.</div>
+            </label>
+          </div>
+        </div>
+
+        <button class="btn btn-vc btn-lg mt-4 w-100">Continuar</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

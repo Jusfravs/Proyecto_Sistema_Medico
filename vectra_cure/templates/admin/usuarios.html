@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block titulo %}Usuarios — Admin{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-3">Usuarios</h1>
+
+<div class="vc-card p-0 table-responsive">
+  <table class="table align-middle mb-0">
+    <thead><tr><th>#</th><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Rol</th><th>Alta</th><th>Estado</th><th></th></tr></thead>
+    <tbody>
+      {% for u in usuarios %}
+      <tr class="{{ '' if u.activo else 'opacity-50' }}">
+        <td>{{ u.id }}</td>
+        <td>{{ u.nombre }}</td>
+        <td class="vc-data">{{ u.email }}</td>
+        <td class="vc-data">{{ u.telefono }}</td>
+        <td><span class="vc-badge-verificado">{{ u.rol }}</span></td>
+        <td class="vc-data">{{ u.fecha_registro.strftime('%Y-%m-%d') }}</td>
+        <td>{{ 'Activo' if u.activo else 'Inactivo' }}</td>
+        <td>
+          <form method="post" action="{{ url_for('admin_usuario_activar', usuario_id=u.id) }}">
+            <button class="btn btn-sm btn-outline-danger">{{ 'Reactivar' if not u.activo else 'Desactivar' }}</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

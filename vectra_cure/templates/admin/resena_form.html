@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block titulo %}Editar reseña #{{ resena.id }} — Admin{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('admin_resenas') }}" class="btn btn-vc-outline btn-sm mb-3">← Volver</a>
+
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="vc-card p-4">
+      <h1 class="h5 mb-1">Editar reseña #{{ resena.id }}</h1>
+      <p class="vc-data">Especialista: {{ resena.medico.usuario.nombre }}</p>
+      <form method="post">
+        <div class="mb-2"><label class="form-label">Nombre del paciente</label>
+          <input name="paciente_nombre" class="form-control" value="{{ resena.paciente_nombre }}" required></div>
+        <div class="mb-2"><label class="form-label">Calificación</label>
+          <select name="calificacion" class="form-select" required>
+            {% for n in [5,4,3,2,1] %}<option value="{{ n }}" {{ 'selected' if resena.calificacion == n }}>{{ '★' * n }} ({{ n }})</option>{% endfor %}
+          </select></div>
+        <div class="mb-3"><label class="form-label">Comentario</label>
+          <textarea name="comentario" class="form-control" rows="3">{{ resena.comentario or '' }}</textarea></div>
+        <button class="btn btn-vc">Guardar</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

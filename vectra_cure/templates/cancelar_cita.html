@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block titulo %}Cancelar cita {{ cita.codigo_ticket }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7">
+    <div class="vc-card p-4">
+      <h1 class="h4">Cancelar cita #{{ cita.codigo_ticket }}</h1>
+      <p class="vc-data">Cuéntanos el motivo. Si tu pago fue digital, se emitirá un
+        <strong>reverso / reembolso simulado</strong> y el turno quedará disponible para otros pacientes.</p>
+
+      <form method="post" id="form-cancelar">
+        {% for m in motivos %}
+          <div class="form-check my-2">
+            <input class="form-check-input" type="radio" name="motivo" id="m{{ loop.index }}" value="{{ m }}" required
+                   onchange="document.getElementById('otros-box').style.display = this.value === 'Otros' ? 'block' : 'none'">
+            <label class="form-check-label" for="m{{ loop.index }}">{{ loop.index }}. {{ m }}</label>
+          </div>
+        {% endfor %}
+        <div id="otros-box" style="display:none" class="mb-3">
+          <input name="detalle" class="form-control" placeholder="Cuéntanos brevemente (opcional)">
+        </div>
+        <button class="btn btn-outline-danger" id="btn-cancelar">Confirmar cancelación</button>
+        <a href="{{ url_for('mi_cita', codigo=cita.codigo_ticket) }}" class="btn btn-link">Volver</a>
+      </form>
+
+      <div id="procesando" class="text-center py-4" style="display:none">
+        <div class="spinner-border text-success" role="status"></div>
+        <p class="vc-data mt-2">Procesando reverso y liberando cupo médico…</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.getElementById('form-cancelar').addEventListener('submit', function () {
+    document.getElementById('btn-cancelar').disabled = true;
+    document.getElementById('procesando').style.display = 'block';
+  });
+</script>
+{% endblock %}

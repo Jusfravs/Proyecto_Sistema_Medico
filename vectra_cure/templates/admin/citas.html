@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block titulo %}Citas — Admin{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-3">Citas</h1>
+
+<div class="mb-3 d-flex flex-wrap gap-2">
+  <a href="{{ url_for('admin_citas') }}" class="vc-chip {{ 'activo' if not estado }}">Todas</a>
+  {% for e in constantes.ESTADOS_CITA %}
+    <a href="{{ url_for('admin_citas', estado=e) }}" class="vc-chip {{ 'activo' if estado == e }}">{{ constantes.ESTADO_CITA_ETIQUETA[e] }}</a>
+  {% endfor %}
+</div>
+
+<div class="vc-card p-0 table-responsive">
+  <table class="table align-middle mb-0">
+    <thead><tr>
+      <th>Ticket</th><th>Paciente</th><th>Especialista</th><th>Fecha/Hora</th>
+      <th>Pago</th><th>Estado</th><th></th>
+    </tr></thead>
+    <tbody>
+      {% for c in citas %}
+      <tr>
+        <td class="text-nowrap"><a href="{{ url_for('mi_cita', codigo=c.codigo_ticket) }}">{{ c.codigo_ticket }}</a></td>
+        <td>{{ c.paciente_nombre }}<br><span class="vc-data">{{ c.paciente_telefono }}</span></td>
+        <td class="vc-data">{{ c.medico.usuario.nombre }}<br>{{ c.medico.especialidad }}</td>
+        <td class="vc-data">{{ c.fecha.strftime('%Y-%m-%d') }}<br>{{ c.hora }}</td>
+        <td class="vc-data">{{ constantes.ESTADO_PAGO_ETIQUETA[c.estado_pago] }}</td>
+        <td><span class="vc-badge-verificado">{{ constantes.ESTADO_CITA_ETIQUETA[c.estado] }}</span></td>
+        <td class="text-nowrap">
+          <form class="d-inline" method="post" action="{{ url_for('admin_cita_estado', cita_id=c.id) }}">
+            <select name="estado" class="form-select form-select-sm d-inline w-auto">
+              {% for e in constantes.ESTADOS_CITA %}
+                <option value="{{ e }}" {{ 'selected' if c.estado == e }}>{{ constantes.ESTADO_CITA_ETIQUETA[e] }}</option>
+              {% endfor %}
+            </select>
+            <button class="btn btn-sm btn-vc-outline">Aplicar</button>
+          </form>
+          <form class="d-inline" method="post" action="{{ url_for('admin_cita_eliminar', cita_id=c.id) }}"
+                onsubmit="return confirm('¿Eliminar esta cita definitivamente?')">
+            <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="text-center vc-data py-3">Sin citas.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,7 @@
+.env
+venv/
+__pycache__/
+*.py[cod]
+vectra_cure_demo.db
+static/uploads/*
+!static/uploads/.gitkeep

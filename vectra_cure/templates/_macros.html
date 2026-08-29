@@ -1,0 +1,29 @@
+{# Componentes reutilizables #}
+
+{% macro estrellas(valor) -%}
+  <span class="vc-stars">{% for _ in range(valor|round(0,'floor')|int) %}★{% endfor %}{% for _ in range(5 - (valor|round(0,'floor')|int)) %}☆{% endfor %}</span>
+{%- endmacro %}
+
+{% macro tarjeta_especialista(p, distancia=None) -%}
+<div class="vc-card h-100 overflow-hidden d-flex flex-column">
+  {% if p.foto %}
+    <img class="vc-doctor-photo" src="{{ url_for('static', filename='uploads/' ~ p.foto) }}" alt="{{ p.nombre_clinica }}">
+  {% else %}
+    <img class="vc-doctor-photo" src="{{ url_for('static', filename='img/consultorio-default.svg') }}" alt="Consultorio">
+  {% endif %}
+  <div class="p-3 d-flex flex-column flex-grow-1">
+    {% if p.verificado %}<span class="vc-badge-verificado mb-2 align-self-start">🛡️ Especialista Verificado #{{ p.num_colegiatura }}</span>{% endif %}
+    <h5 class="mb-1">{{ p.usuario.nombre }}</h5>
+    <div class="vc-data mb-2">{{ ICONO_ESPECIALIDAD.get(p.especialidad, '🩺') }} {{ p.especialidad }}</div>
+    <div class="mb-1">{{ estrellas(p.rating_promedio|float) }}
+      <span class="vc-data">{{ '%.1f'|format(p.rating_promedio|float) }} ({{ p.num_resenas }} reseñas)</span></div>
+    <div class="vc-data">📍 {% if distancia is not none %}A {{ distancia }} km de tu ubicación{% else %}{{ p.nombre_clinica }}{% endif %}</div>
+    <div class="vc-data">🕒 {{ p.horario_atencion }}</div>
+    <div class="fw-semibold mt-1">💵 Consulta desde aprox. ${{ '%.2f'|format(p.precio_aprox|float) }} USD</div>
+    <div class="mt-3 d-flex gap-2">
+      <a href="{{ url_for('especialista', medico_id=p.id) }}" class="btn btn-vc-outline btn-sm flex-fill">Ver perfil</a>
+      <a href="{{ url_for('agendar', medico_id=p.id) }}" class="btn btn-vc btn-sm flex-fill">⚡ Agendar</a>
+    </div>
+  </div>
+</div>
+{%- endmacro %}

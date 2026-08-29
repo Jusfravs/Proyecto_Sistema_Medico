@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block titulo %}Mi perfil — Vectra Cure{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="vc-card p-4">
+      <h1 class="h4 mb-1">Mi perfil</h1>
+      <p class="vc-data">{{ usuario.email }} · <span class="vc-badge-verificado">{{ usuario.rol }}</span>
+        · desde {{ usuario.fecha_registro.strftime('%Y-%m-%d') }}</p>
+
+      <form method="post" action="{{ url_for('editar_perfil') }}">
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label">Nombre</label>
+            <input name="nombre" class="form-control" value="{{ usuario.nombre }}" required></div>
+          <div class="col-md-6"><label class="form-label">Teléfono</label>
+            <input name="telefono" class="form-control" value="{{ usuario.telefono }}" required></div>
+          <div class="col-md-6"><label class="form-label">Nueva contraseña (opcional)</label>
+            <input type="password" name="password" class="form-control" minlength="6"></div>
+        </div>
+        <button class="btn btn-vc mt-3">Guardar cambios</button>
+      </form>
+
+      {% if usuario.perfil_medico %}
+        <hr>
+        <h2 class="h6">Mi consultorio</h2>
+        <p class="vc-data mb-1">{{ usuario.perfil_medico.especialidad }} ·
+          {{ usuario.perfil_medico.nombre_clinica }}</p>
+        <a href="{{ url_for('especialista', medico_id=usuario.perfil_medico.id) }}" class="btn btn-vc-outline btn-sm">Ver mi ficha pública</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

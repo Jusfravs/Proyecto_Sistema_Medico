@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui with context %}
+{% block titulo %}{{ perfil.usuario.nombre }} — Vectra Cure{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('directorio') }}" class="btn btn-vc-outline btn-sm mb-3">← Volver al directorio</a>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="vc-card p-4">
+      {% if perfil.verificado %}<span class="vc-badge-verificado mb-2 d-inline-block">🛡️ Especialista Verificado #{{ perfil.num_colegiatura }}</span>{% endif %}
+      <h1 class="h3 mb-1">{{ perfil.usuario.nombre }}</h1>
+      <div class="vc-data mb-2">{{ ICONO_ESPECIALIDAD.get(perfil.especialidad,'🩺') }} {{ perfil.especialidad }}</div>
+      <p class="mb-1">{{ ui.estrellas(perfil.rating_promedio|float) }}
+        <span class="vc-data">{{ '%.1f'|format(perfil.rating_promedio|float) }} ({{ perfil.num_resenas }} reseñas verificadas)</span></p>
+      <p class="vc-data mb-1">📍 A {{ distancia }} km · {{ perfil.direccion }}</p>
+      <p class="vc-data mb-1">🕒 {{ perfil.horario_atencion }}</p>
+      <p class="fw-semibold">💵 Consulta desde aprox. ${{ '%.2f'|format(perfil.precio_aprox|float) }} USD · Tasa de plataforma $0.00</p>
+
+      {% set fotos = perfil.galeria or [] %}
+      {% if fotos %}
+        <div class="d-flex gap-2 overflow-auto py-2">
+          {% for f in fotos %}<img src="{{ f }}" class="rounded" style="height:120px" alt="Consultorio">{% endfor %}
+        </div>
+      {% endif %}
+
+      <a href="{{ url_for('agendar', medico_id=perfil.id) }}" class="btn btn-vc btn-lg mt-2">⚡ Agendar cita rápida</a>
+    </div>
+
+    <div class="vc-card p-4 mt-4">
+      <h2 class="h5 mb-3">Reseñas de pacientes</h2>
+      {% for r in perfil.resenas %}
+        <div class="border-bottom py-2" style="border-color:var(--vc-border)!important">
+          <div>{{ ui.estrellas(r.calificacion) }} <strong>{{ r.paciente_nombre }}</strong>
+            <span class="vc-data">· {{ r.fecha_creacion.strftime('%Y-%m-%d') }}</span></div>
+          {% if r.comentario %}<div class="vc-data">{{ r.comentario }}</div>{% endif %}
+        </div>
+      {% else %}
+        <p class="vc-data">Aún no hay reseñas. ¡Sé el primero!</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="vc-card p-4">
+      <h2 class="h5 mb-3">Deja tu reseña</h2>
+      <form method="post" action="{{ url_for('crear_resena', medico_id=perfil.id) }}">
+        <div class="mb-2">
+          <label class="form-label">Tu nombre</label>
+          <input name="paciente_nombre" class="form-control" required>
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Calificación</label>
+          <select name="calificacion" class="form-select" required>
+            {% for n in [5,4,3,2,1] %}<option value="{{ n }}">{{ '★' * n }} ({{ n }})</option>{% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Comentario (opcional)</label>
+          <textarea name="comentario" class="form-control" rows="3"></textarea>
+        </div>
+        <button class="btn btn-vc w-100">Publicar reseña</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
