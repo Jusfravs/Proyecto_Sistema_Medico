@@ -63,7 +63,6 @@ con `Ctrl+Shift+X` y busca cada una:
 | Better Jinja | `samuelcolvin.jinjahtml` | Resaltado de las plantillas de `templates/` |
 | Ruff | `charliermarsh.ruff` | Linter de Python |
 | GitLens | `eamodio.gitlens` | Ver quién cambió cada línea |
-| Live Share | `ms-vsliveshare.vsliveshare` | Editar el mismo archivo los dos a la vez |
 
 La configuración compartida ya está en el repositorio y se aplica sola:
 
@@ -263,80 +262,96 @@ git commit
 
 ---
 
-## 5. Ver el trabajo del otro en vivo (Live Share)
+## 5. Ver el trabajo del otro
 
-Git **no muestra los cambios en vivo**: es un sistema de *tirar*, no de
-*empujar*. Nada llega solo a la máquina del otro, siempre alguien tiene que
-hacer `git pull`. Para ver lo que el otro está haciendo **en el momento** se usa
-**Live Share**.
+**Nos sincronizamos solo con Git, subiendo seguido.** No usamos edición en
+tiempo real: cada quien trabaja en su rama y sube avances pequeños y frecuentes
+para que el otro los tenga disponibles pronto.
 
-Las dos herramientas resuelven cosas distintas y se usan juntas:
+Git es un sistema de *tirar*, no de *empujar*: nada llega solo a la máquina del
+otro. Siempre hay que traerlo con `fetch` o `pull`. Eso es una ventaja, no una
+limitación — nadie te sobrescribe el archivo que estás editando.
 
-| Situación | Herramienta |
-| :--- | :--- |
-| Estamos los dos a la vez y quiero ver lo que el otro escribe **ahora** | **Live Share** |
-| Terminamos algo y debe quedar en el historial del proyecto | **git push** → Pull Request |
-| El otro trabaja por su lado y quiero saber si subió algo | **autofetch** avisa; luego se hace `pull` |
+### 5.1 La costumbre: subir seguido
 
-Live Share es **efímero**: al cerrar la sesión no queda nada guardado. Git es el
-registro permanente. Se necesitan los dos.
+En lugar de guardar todo el trabajo de un día en un solo commit gigante:
 
-### 5.1 Iniciar una sesión
+```bash
+# cada vez que terminas algo que funciona (aunque sea pequeño)
+git add -A
+git commit -m "feat: descripción corta"
+git push
+```
 
-**Quien comparte (anfitrión):**
+Mientras más seguido subas, menos conflictos hay y más rápido ve el otro tu
+avance. Un commit por cada cosa que funcione es mejor que uno por día.
 
-1. `Ctrl+Shift+P` → **Live Share: Start Collaboration Session**
-2. La primera vez pide iniciar sesión con GitHub o Microsoft
-3. Se copia un enlace al portapapeles → envíaselo al otro
+### 5.2 Cómo te avisa VS Code
 
-**Quien se conecta (invitado):**
-
-1. Abre el enlace, o `Ctrl+Shift+P` → **Live Share: Join Collaboration Session**
-2. Ve la carpeta completa del anfitrión **sin descargar nada**
-
-### 5.2 Qué se sincroniza
-
-Live Share comparte **los archivos en disco del anfitrión**, no solo lo que se
-teclea en el editor. Esto significa que **cualquier cambio se propaga**, venga
-del editor, de la terminal o de un script.
-
-| Función | Cómo se activa | Para qué sirve |
-| :--- | :--- | :--- |
-| Edición compartida | Automática al iniciar la sesión | Ambos editan los mismos archivos y se ven los cursores |
-| **Shared Server** | `Ctrl+Shift+P` → *Live Share: Share Server* → puerto `5000` | El invitado abre `localhost:5000` **en su navegador** y ve la aplicación corriendo, aunque no tenga PostgreSQL instalado |
-| **Shared Terminal** | `Ctrl+Shift+P` → *Live Share: Share Terminal* | El invitado ve la salida de los comandos: pruebas, errores, logs de Flask |
-| Seguir al otro | Clic en el avatar del participante | La pantalla sigue automáticamente el cursor del otro |
-
-### 5.3 Reglas para que no falle
-
-- **Guarda siempre antes** (`Ctrl+S`). Si un archivo tiene cambios sin guardar
-  y llega una modificación externa, VS Code avisa de un conflicto.
-- **El invitado no tiene los archivos.** Está viendo la carpeta del anfitrión de
-  forma remota. Si necesita el código en su máquina, hay que usar Git.
-- **Compartir terminal da control real** sobre la máquina del anfitrión. Se
-  comparte solo con quien corresponde.
-- Al terminar: `Ctrl+Shift+P` → **Live Share: End Collaboration Session**.
-  Lo que se haya hecho hay que guardarlo con `git commit` como siempre.
-
-### 5.4 El aviso de cambios en GitHub
-
-En `.vscode/settings.json` está activado `git.autofetch` cada 120 segundos.
-Cuando el otro sube algo a su rama:
+En `.vscode/settings.json` está activado `git.autofetch` cada 120 segundos:
 
 ```
 El otro hace push
-      ↓  (máximo 2 minutos)
-En la barra inferior de VS Code aparece:   ↓1  main*
-      ↓  (hay que hacer clic)
-Se descargan los cambios
+      ↓  (máximo 2 minutos después)
+En la barra inferior de VS Code aparece:   ↓1  isaac*
+      ↓  (haces clic en esa flecha)
+Se descargan sus cambios
 ```
 
-VS Code **avisa** de forma automática, pero **no aplica** nada solo — y así debe
-ser: si Git aplicara cambios mientras alguien está editando, sobrescribiría
-trabajo o dejaría conflictos a medio escribir.
+VS Code **avisa** solo, pero **no aplica** nada automáticamente — y así debe
+ser: si Git trajera cambios mientras estás escribiendo, sobrescribiría trabajo o
+te dejaría conflictos a medio archivo.
 
 > Existen extensiones que hacen `pull` automático. **No conviene usarlas** con
 > dos personas trabajando a la vez: es la forma más rápida de perder trabajo.
+
+### 5.3 Ver qué hizo el otro sin mezclarlo aún
+
+A veces solo quieres **mirar** su avance antes de traerlo a tu rama:
+
+```bash
+git fetch origin                          # baja la información, no cambia tus archivos
+
+git log origin/justin --oneline -10       # sus últimos commits
+git diff main..origin/justin --stat       # qué archivos tocó y cuánto
+git diff main..origin/justin              # el detalle línea por línea
+```
+
+Ninguno de esos comandos modifica lo que tienes abierto.
+
+**Desde VS Code**, sin escribir comandos: abre el panel de Control de código
+fuente (`Ctrl+Shift+G`) → sección **Branches / Remotes** → despliega la rama del
+otro y revisa sus commits. Con **GitLens** instalado también puedes abrir un
+archivo y ver, línea por línea, quién la escribió y cuándo.
+
+### 5.4 Traer su trabajo a tu rama
+
+Cuando ya quieres incorporar lo suyo:
+
+```bash
+git checkout isaac                # tu rama
+git fetch origin
+git merge origin/main             # si su trabajo ya se aprobó en main
+# o bien, para probar directamente su rama:
+git merge origin/justin
+```
+
+Si aparece un conflicto, resuélvelo como se explica en la sección 4.5.
+
+### 5.5 Ver la aplicación corriendo
+
+Cada quien la corre en su propia máquina:
+
+```powershell
+cd vectra_cure
+venv\Scripts\activate
+python app.py          # http://127.0.0.1:5000
+```
+
+Cada uno tiene su propia base PostgreSQL local con los mismos datos
+demostrativos, así que ven lo mismo aunque las bases sean independientes. Si uno
+cambia el esquema, el otro debe volver a cargar los scripts de `database/`
+(sección 6.1).
 
 ---
 
