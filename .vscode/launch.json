@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Vectra Cure — Flask (app.py)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/vectra_cure/app.py",
+      "cwd": "${workspaceFolder}/vectra_cure",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": {
+        "APP_DEBUG": "true"
+      }
+    },
+    {
+      "name": "Vectra Cure — Pruebas (unittest)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "unittest",
+      "args": ["discover", "-s", "tests", "-v"],
+      "cwd": "${workspaceFolder}/vectra_cure",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    }
+  ]
+}
