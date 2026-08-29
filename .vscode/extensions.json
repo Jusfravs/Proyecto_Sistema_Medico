@@ -12,8 +12,7 @@
     "charliermarsh.ruff",         // Linter de Python (configurado en vectra_cure/ruff.toml)
 
     // ── Trabajo en equipo ────────────────────────────────────────────
-    "eamodio.gitlens",            // Autoría línea por línea e historial
-    "ms-vsliveshare.vsliveshare"  // Edición colaborativa en tiempo real
+    "eamodio.gitlens"             // Autoría línea por línea e historial de cambios
   ],
 
   "unwantedRecommendations": []
