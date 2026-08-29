@@ -1,0 +1,20 @@
+{
+  // Al abrir este proyecto, VS Code ofrece instalar estas extensiones.
+  // También se pueden instalar a mano desde la pestaña de Extensiones (Ctrl+Shift+X).
+  "recommendations": [
+    // ── Imprescindibles ──────────────────────────────────────────────
+    "ms-python.python",           // Lenguaje Python, selección de intérprete, pruebas
+    "ms-python.vscode-pylance",   // Autocompletado y análisis de tipos
+    "ms-python.debugpy",          // Depurador (lo usa launch.json)
+    "samuelcolvin.jinjahtml",     // Resaltado de las plantillas Jinja de templates/
+
+    // ── Calidad de código ────────────────────────────────────────────
+    "charliermarsh.ruff",         // Linter de Python (configurado en vectra_cure/ruff.toml)
+
+    // ── Trabajo en equipo ────────────────────────────────────────────
+    "eamodio.gitlens",            // Autoría línea por línea e historial
+    "ms-vsliveshare.vsliveshare"  // Edición colaborativa en tiempo real
+  ],
+
+  "unwantedRecommendations": []
+}

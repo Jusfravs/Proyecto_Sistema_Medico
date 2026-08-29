@@ -1,0 +1,31 @@
+# Configuración de Ruff (linter de Python que usa la extensión de VS Code).
+#
+# Criterio: marcar errores REALES (variables no definidas, imports sin usar,
+# código inalcanzable) y no imponer estilo. Así el linter avisa de problemas
+# sin llenar el editor de subrayados ni provocar reformateos masivos que
+# generen conflictos entre los dos desarrolladores.
+
+line-length = 100
+target-version = "py313"
+
+exclude = ["venv", ".venv", "__pycache__"]
+
+[lint]
+# E = errores de pycodestyle · F = pyflakes (lo importante) · W = advertencias
+select = ["E", "F", "W"]
+
+ignore = [
+    # Líneas largas: el proyecto las usa a propósito en el renderizado del
+    # ticket y en los separadores de sección. No es un error.
+    "E501",
+]
+
+[lint.per-file-ignores]
+# Las pruebas definen DATABASE_URL antes de importar app.py: ese orden es
+# obligatorio (Flask-SQLAlchemy crea el motor durante db.init_app), así que
+# los imports no pueden ir todos arriba.
+"tests/*" = ["E402"]
+
+[format]
+quote-style = "double"
+indent-style = "space"

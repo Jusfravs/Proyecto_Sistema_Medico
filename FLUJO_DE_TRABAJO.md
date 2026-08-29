@@ -48,6 +48,40 @@ Todo el proyecto es **Python**. No hay Java, Node ni frontend con framework.
 
 ## 3. Puesta en marcha (una sola vez por máquina)
 
+### 3.0 VS Code — extensiones del proyecto
+
+Trabajamos **todo dentro de VS Code**. Al abrir la carpeta del proyecto, VS Code
+detecta el archivo `.vscode/extensions.json` y ofrece instalar las extensiones
+del equipo con un solo clic (*"Install All"*). Si no aparece el aviso, ábrelas
+con `Ctrl+Shift+X` y busca cada una:
+
+| Extensión | ID | Para qué |
+| :--- | :--- | :--- |
+| Python | `ms-python.python` | Intérprete, ejecución y panel de pruebas |
+| Pylance | `ms-python.vscode-pylance` | Autocompletado y análisis de tipos |
+| Python Debugger | `ms-python.debugpy` | Depuración con F5 (lo usa `launch.json`) |
+| Better Jinja | `samuelcolvin.jinjahtml` | Resaltado de las plantillas de `templates/` |
+| Ruff | `charliermarsh.ruff` | Linter de Python |
+| GitLens | `eamodio.gitlens` | Ver quién cambió cada línea |
+| Live Share | `ms-vsliveshare.vsliveshare` | Editar el mismo archivo los dos a la vez |
+
+La configuración compartida ya está en el repositorio y se aplica sola:
+
+| Archivo | Qué define |
+| :--- | :--- |
+| `.vscode/settings.json` | Intérprete del venv, descubrimiento de pruebas, resaltado Jinja, autofetch de Git |
+| `.vscode/launch.json` | Perfiles de F5: *"Flask (app.py)"* y *"Pruebas (unittest)"* |
+| `.vscode/extensions.json` | Las extensiones de la tabla de arriba |
+| `vectra_cure/ruff.toml` | Reglas del linter |
+
+> **El formateo automático al guardar está desactivado a propósito.** Si se
+> activa, reformatea archivos completos y genera conflictos enormes cuando los
+> dos trabajamos sobre lo mismo.
+
+**Seleccionar el intérprete** (solo si VS Code no lo toma solo): `Ctrl+Shift+P`
+→ *Python: Select Interpreter* → elige el que dice
+`.\vectra_cure\venv\Scripts\python.exe`.
+
 ### 3.1 Clonar y crear el entorno
 
 ```powershell

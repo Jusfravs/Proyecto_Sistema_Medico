@@ -18,6 +18,12 @@
     "jinja-html": "html"
   },
 
+  // Linter Ruff (su configuración vive en vectra_cure/ruff.toml)
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": false
+  },
+
   // Higiene de archivos: evita diffs ruidosos entre los dos desarrolladores
   "files.eol": "\n",
   "files.trimTrailingWhitespace": true,

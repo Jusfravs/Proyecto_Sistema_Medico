@@ -32,6 +32,12 @@ cuando algo falla**. Para el reparto de tareas y el flujo de Git, revisa
 | Python | 3.13 | `python --version` |
 | PostgreSQL | 18 | Servicio `postgresql-x64-18` en ejecución |
 | pgAdmin 4 | 9.x | Viene incluido con PostgreSQL 18 |
+| Visual Studio Code | 1.13x | `code --version` |
+
+**Extensiones de VS Code:** al abrir la carpeta del proyecto, VS Code ofrece
+instalar las del equipo automáticamente (*"Install All"*). Si no aparece el
+aviso, revisa la tabla de extensiones en
+[`FLUJO_DE_TRABAJO.md` §3.0](FLUJO_DE_TRABAJO.md#30-vs-code--extensiones-del-proyecto).
 
 **Verificar que PostgreSQL esté corriendo** (PowerShell):
 
