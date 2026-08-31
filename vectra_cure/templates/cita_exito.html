@@ -2,38 +2,39 @@
 {% block titulo %}Cita confirmada — {{ cita.codigo_ticket }}{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-lg-8 text-center">
-    <div class="vc-check">✓</div>
-    <h1 class="h3">¡Cita confirmada!</h1>
-    <p class="vc-data">Ticket <strong>#{{ cita.codigo_ticket }}</strong> · Notificación enviada a
-      {{ cita.paciente_telefono }} y {{ cita.paciente_email }}.</p>
+<section class="vc-profile"><div class="vc-shell"><div class="vc-narrow-wide">
+  <div class="vc-success-mark">✓</div>
+  <p class="vc-eyebrow">Reserva completada</p>
+  <h1>¡Cita confirmada!</h1>
+  <p class="vc-data">Ticket <strong>#{{ cita.codigo_ticket }}</strong> · Notificación enviada a
+    {{ cita.paciente_telefono }} y {{ cita.paciente_email }}.</p>
 
-    <div class="vc-card p-4 my-4 text-start">
-      <div class="row">
-        <div class="col-md-6">
-          <h6>Especialista</h6>
-          <p class="vc-data mb-0">{{ cita.medico.usuario.nombre }}<br>
-            {{ cita.medico.especialidad }} · {{ cita.medico.nombre_clinica }}<br>
-            {{ cita.medico.direccion }}</p>
-        </div>
-        <div class="col-md-6">
-          <h6>Detalle</h6>
-          <p class="vc-data mb-0">
-            {{ cita.fecha.strftime('%Y-%m-%d') }} · {{ cita.hora }} (tolerancia {{ constantes.TOLERANCIA_MINUTOS }} min)<br>
-            Motivo: {{ cita.motivo or '—' }}<br>
-            Total aprox.: ${{ '%.2f'|format(cita.precio_aprox|float) }} USD<br>
-            Pago: {{ constantes.ESTADO_PAGO_ETIQUETA[cita.estado_pago] }}
-          </p>
-        </div>
+  <article class="vc-card">
+    <div class="vc-form-grid">
+      <div>
+        <h4>Especialista</h4>
+        <p class="vc-data">{{ cita.medico.usuario.nombre }}<br>
+          {{ cita.medico.especialidad }} · {{ cita.medico.nombre_clinica }}<br>
+          {{ cita.medico.direccion }}</p>
       </div>
-      {% if cita.estado_pago == constantes.ESTADO_PAGO_PENDIENTE %}
-        <div class="alert alert-warning mt-3 mb-0">⚠️ {{ constantes.LEYENDA_SALDO_PENDIENTE }}</div>
-      {% endif %}
+      <div>
+        <h4>Detalle</h4>
+        <p class="vc-data">
+          {{ cita.fecha.strftime('%Y-%m-%d') }} · {{ cita.hora }} (tolerancia {{ constantes.TOLERANCIA_MINUTOS }} min)<br>
+          Motivo: {{ cita.motivo or '—' }}<br>
+          Total aprox.: ${{ '%.2f'|format(cita.precio_aprox|float) }} USD<br>
+          Pago: {{ constantes.ESTADO_PAGO_ETIQUETA[cita.estado_pago] }}
+        </p>
+      </div>
     </div>
+    {% if cita.estado_pago == constantes.ESTADO_PAGO_PENDIENTE %}
+      <div class="vc-alert vc-alert-danger">⚠️ {{ constantes.LEYENDA_SALDO_PENDIENTE }}</div>
+    {% endif %}
+  </article>
 
-    <a href="{{ url_for('descargar_ticket', codigo=cita.codigo_ticket) }}" class="btn btn-vc btn-lg">⬇️ Descargar ticket de cita (.md)</a>
-    <a href="{{ url_for('mi_cita', codigo=cita.codigo_ticket) }}" class="btn btn-vc-outline btn-lg">Ver / gestionar mi cita</a>
+  <div class="vc-row-actions">
+    <a class="vc-button" href="{{ url_for('descargar_ticket', codigo=cita.codigo_ticket) }}">⬇️ Descargar ticket de cita (.md)</a>
+    <a class="vc-button vc-button-outline" href="{{ url_for('mi_cita', codigo=cita.codigo_ticket) }}">Ver / gestionar mi cita</a>
   </div>
-</div>
+</div></div></section>
 {% endblock %}

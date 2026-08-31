@@ -2,31 +2,28 @@
 {% block titulo %}Pasarela de pago simulada — Vectra Cure{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-6">
-    <div class="vc-card vc-card-lg p-4 text-center">
-      <div class="vc-badge-verificado d-inline-block mb-3">🔒 Entorno simulado · no se transfiere dinero real</div>
-      <h1 class="h4">Vectra Cure Pay</h1>
-      <p class="vc-data">Estás a punto de aprobar el pago simulado de tu consulta con
-        <strong>{{ perfil.usuario.nombre }}</strong>.</p>
+<section class="vc-profile"><div class="vc-shell"><div class="vc-narrow-tight">
+  <article class="vc-card vc-card-lg">
+    <span class="vc-tag vc-tag-warn">🔒 Entorno simulado · no se transfiere dinero real</span>
+    <h1>Vectra Cure Pay</h1>
+    <p class="vc-data">Estás a punto de aprobar el pago simulado de tu consulta con
+      <strong>{{ perfil.usuario.nombre }}</strong>.</p>
 
-      <div class="vc-card p-3 my-3 text-start">
-        <div class="d-flex justify-content-between"><span class="vc-data">Consulta {{ perfil.especialidad }}</span>
-          <span>${{ '%.2f'|format(perfil.precio_aprox|float) }} USD</span></div>
-        <div class="d-flex justify-content-between"><span class="vc-data">Tasa de plataforma</span><span>$0.00 USD</span></div>
-        <hr>
-        <div class="d-flex justify-content-between fw-semibold"><span>Total</span>
-          <span>${{ '%.2f'|format(perfil.precio_aprox|float) }} USD</span></div>
-      </div>
+    <hr class="vc-divider">
+    <div class="vc-money-row"><span class="vc-data">Consulta {{ perfil.especialidad }}</span>
+      <span>${{ '%.2f'|format(perfil.precio_aprox|float) }} USD</span></div>
+    <div class="vc-money-row"><span class="vc-data">Tasa de plataforma</span><span>$0.00 USD</span></div>
+    <hr class="vc-divider">
+    <div class="vc-money-row is-total"><span>Total</span>
+      <span>${{ '%.2f'|format(perfil.precio_aprox|float) }} USD</span></div>
 
-      <form method="post" action="{{ url_for('aprobar_pago') }}">
-        {% for campo in ['medico_id','paciente_nombre','paciente_email','paciente_telefono','fecha','hora','motivo'] %}
-          <input type="hidden" name="{{ campo }}" value="{{ datos[campo] }}">
-        {% endfor %}
-        <button class="btn btn-vc btn-lg w-100">✅ Aprobar pago simulado</button>
-      </form>
-      <a href="{{ url_for('agendar', medico_id=perfil.id) }}" class="btn btn-link mt-2">Cancelar y volver</a>
-    </div>
-  </div>
-</div>
+    <form class="vc-form" method="post" action="{{ url_for('aprobar_pago') }}">
+      {% for campo in ['medico_id','paciente_nombre','paciente_email','paciente_telefono','fecha','hora','motivo'] %}
+        <input type="hidden" name="{{ campo }}" value="{{ datos[campo] }}">
+      {% endfor %}
+      <button class="vc-button vc-button-block">✅ Aprobar pago simulado</button>
+    </form>
+    <p class="vc-data"><a href="{{ url_for('agendar', medico_id=perfil.id) }}">Cancelar y volver</a></p>
+  </article>
+</div></div></section>
 {% endblock %}

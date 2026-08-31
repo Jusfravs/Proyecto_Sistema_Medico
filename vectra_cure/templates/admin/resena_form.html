@@ -2,25 +2,24 @@
 {% block titulo %}Editar reseña #{{ resena.id }} — Admin{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('admin_resenas') }}" class="btn btn-vc-outline btn-sm mb-3">← Volver</a>
+<section class="vc-profile"><div class="vc-shell"><div class="vc-narrow">
+  <a class="vc-back-link" href="{{ url_for('admin_resenas') }}">← Volver</a>
 
-<div class="row justify-content-center">
-  <div class="col-md-6">
-    <div class="vc-card p-4">
-      <h1 class="h5 mb-1">Editar reseña #{{ resena.id }}</h1>
-      <p class="vc-data">Especialista: {{ resena.medico.usuario.nombre }}</p>
-      <form method="post">
-        <div class="mb-2"><label class="form-label">Nombre del paciente</label>
-          <input name="paciente_nombre" class="form-control" value="{{ resena.paciente_nombre }}" required></div>
-        <div class="mb-2"><label class="form-label">Calificación</label>
-          <select name="calificacion" class="form-select" required>
-            {% for n in [5,4,3,2,1] %}<option value="{{ n }}" {{ 'selected' if resena.calificacion == n }}>{{ '★' * n }} ({{ n }})</option>{% endfor %}
-          </select></div>
-        <div class="mb-3"><label class="form-label">Comentario</label>
-          <textarea name="comentario" class="form-control" rows="3">{{ resena.comentario or '' }}</textarea></div>
-        <button class="btn btn-vc">Guardar</button>
-      </form>
-    </div>
-  </div>
-</div>
+  <article class="vc-card">
+    <p class="vc-eyebrow">Administración</p>
+    <h1>Editar reseña #{{ resena.id }}</h1>
+    <p class="vc-data">Especialista: {{ resena.medico.usuario.nombre }}</p>
+    <form class="vc-form" method="post">
+      <label>Nombre del paciente
+        <input name="paciente_nombre" value="{{ resena.paciente_nombre }}" required></label>
+      <label>Calificación
+        <select name="calificacion" required>
+          {% for n in [5,4,3,2,1] %}<option value="{{ n }}" {{ 'selected' if resena.calificacion == n }}>{{ '★' * n }} ({{ n }})</option>{% endfor %}
+        </select></label>
+      <label>Comentario
+        <textarea name="comentario" rows="3">{{ resena.comentario or '' }}</textarea></label>
+      <button class="vc-button">Guardar</button>
+    </form>
+  </article>
+</div></div></section>
 {% endblock %}
