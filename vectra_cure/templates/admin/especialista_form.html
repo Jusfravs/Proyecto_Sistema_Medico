@@ -3,60 +3,63 @@
 {% block titulo %}{{ 'Editar' if edicion else 'Nuevo' }} especialista — Admin{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('admin_especialistas') }}" class="btn btn-vc-outline btn-sm mb-3">← Volver</a>
+<section class="vc-profile"><div class="vc-shell"><div class="vc-narrow-wide">
+  <a class="vc-back-link" href="{{ url_for('admin_especialistas') }}">← Volver</a>
 
-<div class="vc-card p-4">
-  <h1 class="h4 mb-3">{{ 'Editar especialista' if edicion else 'Nuevo especialista' }}</h1>
-  <form method="post" enctype="multipart/form-data">
-    {% if not edicion %}
-      <h2 class="h6">Cuenta de usuario</h2>
-      <div class="row g-3 mb-3">
-        <div class="col-md-6"><label class="form-label">Nombre completo</label>
-          <input name="nombre" class="form-control" value="{{ datos.get('nombre','') }}" required></div>
-        <div class="col-md-6"><label class="form-label">Correo</label>
-          <input type="email" name="email" class="form-control" value="{{ datos.get('email','') }}" required></div>
-        <div class="col-md-6"><label class="form-label">Teléfono</label>
-          <input name="telefono" class="form-control" value="{{ datos.get('telefono','') }}" required></div>
-        <div class="col-md-6"><label class="form-label">Contraseña inicial</label>
-          <input name="password" class="form-control" placeholder="medico123"></div>
-      </div>
-    {% endif %}
+  <article class="vc-card">
+    <p class="vc-eyebrow">Administración</p>
+    <h1>{{ 'Editar especialista' if edicion else 'Nuevo especialista' }}</h1>
 
-    <h2 class="h6">Perfil profesional</h2>
-    {% set p = perfil %}
-    <div class="row g-3">
-      <div class="col-md-6"><label class="form-label">Especialidad</label>
-        <select name="especialidad" class="form-select" required>
-          {% for e in ESPECIALIDADES %}
-            <option value="{{ e }}" {{ 'selected' if p and p.especialidad == e }}>{{ e }}</option>
-          {% endfor %}
-        </select></div>
-      <div class="col-md-6"><label class="form-label">N° de colegiatura</label>
-        <input name="num_colegiatura" class="form-control" value="{{ p.num_colegiatura if p else datos.get('num_colegiatura','') }}" required></div>
-      <div class="col-md-6"><label class="form-label">Nombre del consultorio</label>
-        <input name="nombre_clinica" class="form-control" value="{{ p.nombre_clinica if p else datos.get('nombre_clinica','') }}" required></div>
-      <div class="col-md-6"><label class="form-label">Precio aprox. (USD)</label>
-        <input type="number" step="0.01" name="precio_aprox" class="form-control" value="{{ p.precio_aprox if p else datos.get('precio_aprox','') }}" required></div>
-      <div class="col-12"><label class="form-label">Dirección</label>
-        <input name="direccion" class="form-control" value="{{ p.direccion if p else datos.get('direccion','') }}" required></div>
-      <div class="col-md-4"><label class="form-label">Latitud</label>
-        <input name="latitud" class="form-control" value="{{ p.latitud if p else '' }}" placeholder="-0.180653"></div>
-      <div class="col-md-4"><label class="form-label">Longitud</label>
-        <input name="longitud" class="form-control" value="{{ p.longitud if p else '' }}" placeholder="-78.467834"></div>
-      <div class="col-md-4"><label class="form-label">Horario de atención</label>
-        <input name="horario_atencion" class="form-control" value="{{ p.horario_atencion if p else '' }}" placeholder="09:00 - 18:30"></div>
-      <div class="col-md-8"><label class="form-label">Foto del consultorio</label>
-        <input type="file" name="foto" class="form-control" accept="image/*"></div>
-      <div class="col-md-4 d-flex align-items-end">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" name="verificado" id="verif"
-                 {{ 'checked' if (p and p.verificado) or (not p) }}>
-          <label class="form-check-label" for="verif">🛡️ Verificado</label>
+    <form class="vc-form" method="post" enctype="multipart/form-data">
+      {% if not edicion %}
+        <h2 class="vc-fieldset-title">Cuenta de usuario</h2>
+        <div class="vc-form-grid">
+          <label>Nombre completo
+            <input name="nombre" value="{{ datos.get('nombre','') }}" required></label>
+          <label>Correo
+            <input type="email" name="email" value="{{ datos.get('email','') }}" required></label>
+          <label>Teléfono
+            <input name="telefono" value="{{ datos.get('telefono','') }}" required></label>
+          <label>Contraseña inicial
+            <input name="password" placeholder="medico123"></label>
         </div>
-      </div>
-    </div>
+      {% endif %}
 
-    <button class="btn btn-vc btn-lg mt-4">{{ 'Guardar cambios' if edicion else 'Crear especialista' }}</button>
-  </form>
-</div>
+      <h2 class="vc-fieldset-title">Perfil profesional</h2>
+      {% set p = perfil %}
+      <div class="vc-form-grid">
+        <label>Especialidad
+          <select name="especialidad" required>
+            {% for e in ESPECIALIDADES %}
+              <option value="{{ e }}" {{ 'selected' if p and p.especialidad == e }}>{{ e }}</option>
+            {% endfor %}
+          </select></label>
+        <label>N° de colegiatura
+          <input name="num_colegiatura" value="{{ p.num_colegiatura if p else datos.get('num_colegiatura','') }}" required></label>
+        <label>Nombre del consultorio
+          <input name="nombre_clinica" value="{{ p.nombre_clinica if p else datos.get('nombre_clinica','') }}" required></label>
+        <label>Precio aprox. (USD)
+          <input type="number" step="0.01" name="precio_aprox" value="{{ p.precio_aprox if p else datos.get('precio_aprox','') }}" required></label>
+        <label class="vc-col-full">Dirección
+          <input name="direccion" value="{{ p.direccion if p else datos.get('direccion','') }}" required></label>
+      </div>
+      <div class="vc-form-grid vc-form-grid-3">
+        <label>Latitud
+          <input name="latitud" value="{{ p.latitud if p else '' }}" placeholder="-0.180653"></label>
+        <label>Longitud
+          <input name="longitud" value="{{ p.longitud if p else '' }}" placeholder="-78.467834"></label>
+        <label>Horario de atención
+          <input name="horario_atencion" value="{{ p.horario_atencion if p else '' }}" placeholder="09:00 - 18:30"></label>
+      </div>
+      <label>Foto del consultorio
+        <input type="file" name="foto" accept="image/*"></label>
+      <div class="vc-form-check">
+        <input type="checkbox" name="verificado" id="verif" {{ 'checked' if (p and p.verificado) or (not p) }}>
+        <label for="verif">🛡️ Verificado</label>
+      </div>
+
+      <button class="vc-button vc-button-block">{{ 'Guardar cambios' if edicion else 'Crear especialista' }}</button>
+    </form>
+  </article>
+</div></div></section>
 {% endblock %}
