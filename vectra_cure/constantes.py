@@ -118,5 +118,18 @@ ORDENES = (ORDEN_RATING, ORDEN_DISTANCIA, ORDEN_PRECIO)
 TASA_PLATAFORMA = 0.00  # $0.00 al paciente (05, Pregunta 10)
 HORARIO_ATENCION_DEFECTO = "09:00 - 18:30"
 
+# ── Zonas de referencia (Quito y valle) para cambiar el centro sin GPS ──
+# (clave, etiqueta, latitud, longitud)
+ZONAS_REFERENCIA = (
+    ("centro_norte", "Centro-norte de Quito", -0.180653, -78.467834),
+    ("norte", "Norte de Quito", -0.106500, -78.482000),
+    ("centro", "Centro histórico", -0.220100, -78.512300),
+    ("sur", "Sur de Quito", -0.292000, -78.548000),
+    ("valle", "Cumbayá y valle", -0.205000, -78.427000),
+)
+ZONA_POR_DEFECTO = "centro_norte"
+COORDENADAS_ZONA = {clave: (lat, lng) for clave, _, lat, lng in ZONAS_REFERENCIA}
+ETIQUETA_ZONA = {clave: etiqueta for clave, etiqueta, _, _ in ZONAS_REFERENCIA}
+
 # ── Ubicación de referencia (Quito) para el cálculo de distancia ──
-UBICACION_REFERENCIA = (-0.180653, -78.467834)  # Centro-norte de Quito
+UBICACION_REFERENCIA = COORDENADAS_ZONA[ZONA_POR_DEFECTO]  # Centro-norte de Quito

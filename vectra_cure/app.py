@@ -152,12 +152,23 @@ def directorio():
     especialidad = request.args.get("especialidad") or None
     orden = request.args.get("orden", C.ORDEN_RATING)
     q = (request.args.get("q") or "").strip().lower()
+
+    zona = request.args.get("zona")
+    if zona not in C.COORDENADAS_ZONA:
+        zona = C.ZONA_POR_DEFECTO
+    zona_lat, zona_lng = C.COORDENADAS_ZONA[zona]
+
+    usa_ubicacion = False
+    lat_arg, lng_arg = request.args.get("lat"), request.args.get("lng")
     try:
-        lat = float(request.args.get("lat", C.UBICACION_REFERENCIA[0]))
-        lng = float(request.args.get("lng", C.UBICACION_REFERENCIA[1]))
+        if lat_arg and lng_arg:
+            lat, lng = float(lat_arg), float(lng_arg)
+            usa_ubicacion = True
+        else:
+            lat, lng = zona_lat, zona_lng
         radio = float(request.args.get("radio", C.RADIO_INICIAL_KM))
     except ValueError:
-        lat, lng, radio = (*C.UBICACION_REFERENCIA, C.RADIO_INICIAL_KM)
+        lat, lng, radio, usa_ubicacion = zona_lat, zona_lng, C.RADIO_INICIAL_KM, False
     radio = radio if radio in (C.RADIO_INICIAL_KM, *C.RADIOS_AMPLIACION_KM) else C.RADIO_INICIAL_KM
     if orden not in C.ORDENES:
         orden = C.ORDEN_RATING
@@ -177,6 +188,7 @@ def directorio():
         "directorio.html",
         perfiles=perfiles, distancias=distancias,
         especialidad=especialidad, orden=orden, q=q, lat=lat, lng=lng, radio=radio,
+        zona=zona, zona_actual=C.ETIQUETA_ZONA[zona], usa_ubicacion=usa_ubicacion,
         map_tile_url=app.config["MAP_TILE_URL"], map_attribution=app.config["MAP_ATTRIBUTION"],
         route_service_url=app.config["ROUTE_SERVICE_URL"],
     )
@@ -189,8 +201,6 @@ def especialista(medico_id):
         "especialista.html",
         perfil=perfil,
         distancia=L.distancia_a_referencia(perfil),
-        bloques=C.BLOQUES_HORARIOS,
-        motivos_cancelacion=C.MOTIVOS_CANCELACION,
     )
 
 
@@ -368,6 +378,22 @@ def agendar(medico_id):
     )
 
 
+@app.route("/agendar/<int:medico_id>/horas")
+@rol_requerido(C.ROL_PACIENTE)
+def horas_disponibles(medico_id):
+    """Horas libres del especialista para una fecha (consumido por agendar.html)."""
+    perfil = db.get_or_404(PerfilMedico, medico_id)
+    try:
+        fecha = L.fecha_no_pasada(request.args.get("fecha", ""))
+    except ValueError as err:
+        return {"horas": [], "error": str(err)}
+    horas = [
+        h for h in L.bloques_disponibles(perfil, fecha)
+        if not _turno_ocupado(perfil.id, fecha, h)
+    ]
+    return {"horas": horas, "sin_disponibilidad": not horas}
+
+
 @app.route("/pago/aprobar", methods=["POST"])
 @rol_requerido(C.ROL_PACIENTE)
 def aprobar_pago():
@@ -502,21 +528,25 @@ def cancelar_cita(codigo):
 
 
 # ══════════════════════════════════════════════════════════════════
-# RESEÑAS  (CRUD Resena: create público)
+# RESEÑAS  (CRUD Resena: create solo para pacientes autenticados)
 # ══════════════════════════════════════════════════════════════════
 
 @app.route("/especialista/<int:medico_id>/resena", methods=["POST"])
+@rol_requerido(C.ROL_PACIENTE)
 def crear_resena(medico_id):
     perfil = db.get_or_404(PerfilMedico, medico_id)
+    usuario = _usuario_actual()
     try:
+        calificacion = int(
+            L.numero_no_negativo(request.form.get("calificacion"), "calificación", int))
+        if not 1 <= calificacion <= 5:
+            raise ValueError("La calificación debe estar entre 1 y 5 estrellas.")
         resena = Resena(
             medico_id=perfil.id,
-            paciente_nombre=L.texto_requerido(request.form.get("paciente_nombre"), "nombre"),
-            calificacion=int(L.numero_no_negativo(request.form.get("calificacion"), "calificación", int)),
+            paciente_nombre=usuario.nombre,
+            calificacion=calificacion,
             comentario=(request.form.get("comentario") or "").strip() or None,
         )
-        if not 1 <= resena.calificacion <= 5:
-            raise ValueError("La calificación debe estar entre 1 y 5 estrellas.")
         db.session.add(resena)
         db.session.flush()
         L.recalcular_rating(perfil)
