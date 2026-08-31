@@ -10,7 +10,7 @@ BEGIN
 
   SELECT string_agg(nombre, ', ')
   INTO faltantes
-  FROM unnest(ARRAY['usuarios', 'perfiles_medicos', 'citas', 'resenas']) AS nombre
+  FROM unnest(ARRAY['usuarios', 'perfiles_medicos', 'disponibilidades_medicas', 'citas', 'resenas']) AS nombre
   WHERE to_regclass('public.' || nombre) IS NULL;
 
   IF faltantes IS NOT NULL THEN
@@ -25,12 +25,14 @@ SELECT current_database() AS base_actual,
 SELECT table_name
 FROM information_schema.tables
 WHERE table_schema = 'public'
-  AND table_name IN ('usuarios', 'perfiles_medicos', 'citas', 'resenas')
+  AND table_name IN ('usuarios', 'perfiles_medicos', 'disponibilidades_medicas', 'citas', 'resenas')
 ORDER BY table_name;
 
 SELECT 'usuarios' AS entidad, COUNT(*) AS registros FROM usuarios
 UNION ALL
 SELECT 'perfiles_medicos', COUNT(*) FROM perfiles_medicos
+UNION ALL
+SELECT 'disponibilidades_medicas', COUNT(*) FROM disponibilidades_medicas
 UNION ALL
 SELECT 'citas', COUNT(*) FROM citas
 UNION ALL
@@ -41,7 +43,8 @@ SELECT conname AS restriccion, contype AS tipo
 FROM pg_constraint
 WHERE conname IN (
   'uq_citas_turno_activo', 'ck_usuarios_rol', 'ck_citas_metodo_pago',
-  'ck_citas_estado_pago', 'ck_citas_estado', 'ck_resenas_calificacion'
+  'ck_citas_estado_pago', 'ck_citas_estado', 'ck_resenas_calificacion',
+  'ck_disponibilidad_dia', 'ck_disponibilidad_rango', 'uq_disponibilidad_bloque'
 )
 ORDER BY conname;
 
@@ -52,6 +55,8 @@ WHERE schemaname = 'public'
     'ix_perfiles_especialidad_activo',
     'ix_citas_telefono_fecha',
     'ix_citas_estado_fecha',
+    'ix_citas_paciente_fecha',
+    'ix_disponibilidad_perfil_dia_activo',
     'ix_resenas_medico_fecha'
   )
 ORDER BY indexname;

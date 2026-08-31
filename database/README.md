@@ -15,7 +15,7 @@ la documentación de la base PostgreSQL usada por la aplicación Flask.
 | Orden | Archivo | Conexión requerida | Acción |
 | --- | --- | --- | --- |
 | 0 | `00_create_database_postgresql.sql` | Base de mantenimiento `postgres` | Crea la base `vectra_cure`. Se omite si ya existe. |
-| 1 | `01_schema_postgresql.sql` | Base `vectra_cure` | Crea las cuatro tablas, claves, restricciones e índices. Se ejecuta una sola vez. |
+| 1 | `01_schema_postgresql.sql` | Base `vectra_cure` | Crea las cinco tablas, claves, restricciones e índices. Se ejecuta una sola vez. |
 | 2 | `02_seed_demo_postgresql.sql` | Base `vectra_cure` | Inserta o actualiza los datos demostrativos. Puede repetirse. |
 | 3 | `03_verificar_postgresql.sql` | Base `vectra_cure` | Comprueba la base activa, las tablas, restricciones, índices y conteos. |
 
@@ -27,7 +27,7 @@ la documentación de la base PostgreSQL usada por la aplicación Flask.
    `vectra_cure/postgres@PostgreSQL 18`.
 3. Ejecuta una sola vez `01_schema_postgresql.sql`.
 4. Ejecuta `02_seed_demo_postgresql.sql` para cargar los datos demostrativos.
-5. Ejecuta `03_verificar_postgresql.sql`. Debe listar cuatro tablas y no debe
+5. Ejecuta `03_verificar_postgresql.sql`. Debe listar cinco tablas y no debe
    generar excepciones.
 6. Copia `vectra_cure/.env.example` como `vectra_cure/.env`, configura las
    credenciales de PostgreSQL e inicia Flask.
@@ -59,3 +59,13 @@ Estas cuentas solo pertenecen a la semilla local.
 | Administrador | `admin@vectra.demo` | `admin123` |
 | Especialista | `medico0@vectra.demo` a `medico5@vectra.demo` | `medico123` |
 | Paciente | `paciente0@vectra.demo` a `paciente4@vectra.demo` | `paciente123` |
+# Nota de instalación V2
+
+Una instalación nueva ejecuta `01_schema_postgresql.sql`, `02_seed_demo_postgresql.sql`
+y `03_verificar_postgresql.sql`. Ahora son cinco tablas: se añade
+`disponibilidades_medicas` y cada cita pertenece a un paciente autenticado.
+
+Para una base creada antes de V2 no se repite `01`: ejecutar una sola vez
+`04_migracion_v2_postgresql.sql`, repetir la semilla y terminar con la
+verificación. La migración se detiene sin modificar la restricción final si una
+cita no puede asociarse mediante su correo a una cuenta paciente.

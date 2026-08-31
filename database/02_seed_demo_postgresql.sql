@@ -71,12 +71,25 @@ ON CONFLICT (usuario_id) DO UPDATE SET
   activo = TRUE,
   fecha_actualizacion = CURRENT_TIMESTAMP;
 
+INSERT INTO disponibilidades_medicas (perfil_medico_id, dia_semana, hora_inicio, hora_fin, activo)
+SELECT pm.id, d.dia_semana, d.hora_inicio, d.hora_fin, TRUE
+FROM perfiles_medicos pm
+CROSS JOIN (VALUES
+  (0, '08:00', '18:00'), (1, '08:00', '18:00'), (2, '08:00', '18:00'),
+  (3, '08:00', '18:00'), (4, '08:00', '18:00'), (5, '09:00', '13:00')
+) AS d(dia_semana, hora_inicio, hora_fin)
+WHERE NOT EXISTS (
+  SELECT 1 FROM disponibilidades_medicas dm
+  WHERE dm.perfil_medico_id = pm.id AND dm.dia_semana = d.dia_semana
+    AND dm.hora_inicio = d.hora_inicio AND dm.hora_fin = d.hora_fin
+);
+
 INSERT INTO citas (
-  medico_id, paciente_nombre, paciente_email, paciente_telefono, fecha, hora,
+  medico_id, paciente_usuario_id, paciente_nombre, paciente_email, paciente_telefono, fecha, hora,
   motivo, precio_aprox, metodo_pago, estado_pago, estado, codigo_ticket
 )
 SELECT
-  pm.id, v.paciente, v.paciente_email, v.telefono,
+  pm.id, pu.id, v.paciente, v.paciente_email, v.telefono,
   CURRENT_DATE + v.dias, v.hora, 'Consulta de control', pm.precio_aprox,
   v.metodo, v.estado_pago, 'CONFIRMADA', v.ticket
 FROM (VALUES
@@ -91,6 +104,7 @@ FROM (VALUES
 ) AS v(medico_email, paciente, paciente_email, telefono, dias, hora, metodo, estado_pago, ticket)
 JOIN usuarios mu ON mu.email = v.medico_email
 JOIN perfiles_medicos pm ON pm.usuario_id = mu.id
+JOIN usuarios pu ON pu.email = v.paciente_email AND pu.rol = 'paciente'
 ON CONFLICT (codigo_ticket) DO NOTHING;
 
 INSERT INTO resenas (medico_id, paciente_nombre, calificacion, comentario)

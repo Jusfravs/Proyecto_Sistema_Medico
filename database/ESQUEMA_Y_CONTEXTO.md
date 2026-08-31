@@ -6,10 +6,11 @@ Vectra Cure usa una base relacional para administrar cuentas, perfiles de
 especialistas, citas y reseñas. PostgreSQL 18 es el motor de ejecución. Flask
 accede a las tablas mediante Flask-SQLAlchemy y el controlador `psycopg`.
 
-El esquema instalado se llama `public` y contiene cuatro tablas:
+El esquema instalado se llama `public` y contiene cinco tablas:
 
 - `usuarios`: identidad, autenticación y rol;
 - `perfiles_medicos`: información profesional y ubicación del especialista;
+- `disponibilidades_medicas`: intervalos estructurados de atención por especialista;
 - `citas`: reserva, pago simulado, estado y ticket;
 - `resenas`: calificación y comentario asociado a un especialista.
 
@@ -227,15 +228,14 @@ La aplicación usa baja suave para usuarios y perfiles (`activo = FALSE`). Esto
 evita el conflicto entre el `CASCADE` de usuario a perfil y el `RESTRICT` de
 perfil a citas.
 
-Las citas y reseñas no tienen una FK hacia una cuenta de paciente. El diseño
-permite reservas y reseñas sin iniciar sesión y guarda los datos introducidos
-como una instantánea. La consecuencia es que la base no puede probar que esos
-datos pertenecen a un registro de `usuarios`.
+Las reseñas conservan autor como texto demostrativo. Las citas sí tienen una FK
+obligatoria hacia una cuenta paciente y conservan los datos de contacto como
+instantánea histórica; la base puede así autorizar la gestión de la reserva.
 
 ## 6. Índices y patrones de consulta
 
 PostgreSQL crea índices para las claves primarias y restricciones únicas. El
-esquema añade cuatro índices explícitos:
+esquema añade índices explícitos para el directorio, disponibilidad y citas:
 
 | Índice | Columnas | Consulta que favorece |
 | --- | --- | --- |
@@ -295,8 +295,22 @@ Para un cambio futuro:
 Después de instalar o migrar:
 
 1. ejecuta `03_verificar_postgresql.sql` en una conexión nueva a `vectra_cure`;
-2. confirma cuatro tablas, las restricciones esperadas y los cuatro índices;
+2. confirma cinco tablas, las restricciones esperadas y los índices V2;
 3. inicia Flask con una conexión nueva para validar las credenciales reales;
 4. ejecuta `python -m unittest discover -s tests -v` desde `vectra_cure`;
 5. prueba crear y cancelar una cita en el mismo turno para confirmar que la
    cancelación libera el cupo.
+## Addendum V2 — disponibilidad y propiedad de las citas
+
+Desde la V2 el esquema contiene cinco tablas. `disponibilidades_medicas` es la
+fuente de verdad para los intervalos de atención de cada especialista: un día
+de semana de `0` (lunes) a `6` (domingo), hora de inicio, hora de fin y estado
+activo. `perfiles_medicos.horario_atencion` se conserva como texto heredado
+para compatibilidad visual, pero no autoriza por sí solo una reserva.
+
+`citas.paciente_usuario_id` es obligatorio y referencia `usuarios.id` con
+`ON DELETE RESTRICT`. Los tres campos de paciente siguen siendo una instantánea
+histórica; la FK permite que “Mis citas”, el ticket y la cancelación solo sean
+accesibles por la cuenta que hizo la reserva. La migración no destructiva para
+bases existentes está en `04_migracion_v2_postgresql.sql`; una instalación
+nueva usa directamente `01_schema_postgresql.sql` seguido de la semilla.

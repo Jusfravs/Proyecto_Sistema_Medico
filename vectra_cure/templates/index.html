@@ -1,64 +1,9 @@
 {% extends "base.html" %}
-{% import "_macros.html" as ui with context %}
-{% block titulo %}Vectra Cure — Encuentra especialistas médicos verificados{% endblock %}
-
 {% block content %}
-<section class="vc-hero text-center mb-5">
-  <h1 class="display-6 mb-3">Encuentra especialistas médicos verificados<br>cerca de ti en segundos</h1>
-  <p class="lead vc-data mb-4">Estrellas ⭐ primero, distancia 📍, horarios y precios visibles. Agendamiento 100% autónomo, sin llamadas.</p>
-  <a href="{{ url_for('directorio') }}" class="btn btn-vc btn-lg">⚡ Probar plataforma / Explorar mapa</a>
-</section>
-
-<section class="mb-5">
-  <h2 class="h4 mb-3">Catálogo de especialidades</h2>
-  <div class="row row-cols-2 row-cols-md-5 g-3">
-    {% for e in ESPECIALIDADES %}
-      <div class="col">
-        <a href="{{ url_for('directorio', especialidad=e) }}" class="vc-card d-block text-center p-3 h-100 text-decoration-none">
-          <div style="font-size:2rem">{{ ICONO_ESPECIALIDAD[e] }}</div>
-          <div class="fw-semibold mt-1" style="color:var(--vc-text)">{{ e }}</div>
-        </a>
-      </div>
-    {% endfor %}
-  </div>
-</section>
-
-{% if destacados %}
-<section class="mb-5">
-  <h2 class="h4 mb-3">Mejor calificados</h2>
-  <div class="row row-cols-1 row-cols-md-3 g-4">
-    {% for p in destacados %}<div class="col">{{ ui.tarjeta_especialista(p) }}</div>{% endfor %}
-  </div>
-</section>
-{% endif %}
-
-<section id="como-funciona" class="mb-5">
-  <h2 class="h4 mb-3">¿Cómo funciona?</h2>
-  <div class="row row-cols-1 row-cols-md-4 g-3">
-    {% for paso in [
-      ('1', 'Explora el mapa', 'Filtra por especialidad, calificación, cercanía o precio.'),
-      ('2', 'Revisa el perfil', 'Fotos del consultorio, tarifas y reseñas de otros pacientes.'),
-      ('3', 'Agenda tu cita', 'Ficha rápida en 2 pasos y elige método de pago.'),
-      ('4', 'Recibe tu ticket', 'Descarga el recibo .md y la confirmación por WhatsApp y correo.'),
-    ] %}
-      <div class="col"><div class="vc-card p-3 h-100">
-        <div class="vc-badge-verificado mb-2">Paso {{ paso[0] }}</div>
-        <h6>{{ paso[1] }}</h6><p class="vc-data mb-0">{{ paso[2] }}</p>
-      </div></div>
-    {% endfor %}
-  </div>
-</section>
-
-<section class="mb-4">
-  <div class="row text-center g-3">
-    {% for dato in [('92%', 'valida el mapa interactivo'), ('80%', 'prefiere agendar 100% online'),
-                    ('44%', 'elige por reseñas y estrellas'), ('$0.00', 'de comisión al paciente')] %}
-      <div class="col-6 col-md-3"><div class="vc-card p-3 h-100">
-        <div class="h3 mb-0" style="color:var(--vc-primary)">{{ dato[0] }}</div>
-        <div class="vc-data">{{ dato[1] }}</div>
-      </div></div>
-    {% endfor %}
-  </div>
-  <p class="vc-data text-center mt-2">Basado en la encuesta de mercado (N = 25) — ver documentación del proyecto.</p>
-</section>
+<section class="vc-hero"><div class="vc-shell vc-hero-grid"><div data-reveal><p class="vc-eyebrow">Atención que se siente cercana</p><h1>Encuentra el cuidado que necesitas, <em>cerca de ti.</em></h1><p class="vc-hero-copy">Explora especialistas verificados, compara información clara y reserva en un recorrido tranquilo, sin llamadas ni incertidumbre.</p><div class="vc-hero-actions"><a class="vc-button" href="{{ url_for('directorio') }}">Explorar especialistas <span>→</span></a><a class="vc-button vc-button-outline" href="{{ url_for('registro', tipo='medico') }}">Soy especialista</a></div></div><div class="vc-hero-visual" aria-label="Mapa abstracto de una red de atención" data-reveal><div class="vc-orbit"></div><div class="vc-orbit"></div><div class="vc-map-shape"></div><span class="vc-pin one"></span><span class="vc-pin two"></span><div class="vc-float-card one"><strong>✓ Verificado</strong><br>Tu información, visible</div><div class="vc-float-card two">★ 4.9 <span class="vc-data">opiniones reales</span></div></div></div></section>
+<section class="vc-section"><div class="vc-shell"><p class="vc-eyebrow" data-reveal>Encuentra tu camino</p><h2 class="vc-section-title" data-reveal>La atención empieza con una decisión informada.</h2><p class="vc-section-intro" data-reveal>El directorio es el lugar para buscar. Aquí te mostramos solo una mirada amable a las especialidades que puedes encontrar.</p><div class="vc-specialty-grid">{% for e in ESPECIALIDADES %}<a data-reveal class="vc-specialty" href="{{ url_for('directorio', especialidad=e) }}"><span class="vc-specialty-icon">{{ ICONO_ESPECIALIDAD[e] }}</span><strong>{{ e }}</strong><span class="vc-data">Explorar →</span></a>{% endfor %}</div></div></section>
+<section class="vc-section vc-section-mist"><div class="vc-shell"><p class="vc-eyebrow" data-reveal>Recomendados para ti</p><h2 class="vc-section-title" data-reveal>Perfiles claros. Decisiones más tranquilas.</h2><div class="vc-stack">{% for p in destacados %}<article class="vc-doctor-card" data-reveal><div class="vc-doctor-cover"></div><div class="vc-doctor-card-body"><span class="vc-chip">✓ Perfil verificado</span><h3>{{ p.usuario.nombre }}</h3><p class="vc-data">{{ p.especialidad }} · {{ p.nombre_clinica }}</p><strong>★ {{ '%.1f'|format(p.rating_promedio|float) }}</strong><span class="vc-data"> · {{ p.num_resenas }} reseñas</span></div></article>{% endfor %}</div></div></section>
+<section class="vc-section" id="como-funciona"><div class="vc-shell"><p class="vc-eyebrow" data-reveal>Cómo funciona</p><h2 class="vc-section-title" data-reveal>Un recorrido simple, de principio a fin.</h2><div class="vc-steps"><article class="vc-step" data-reveal><span class="vc-step-num">01 / EXPLORA</span><h3>Ubica lo que necesitas</h3><p class="vc-data">Filtra por especialidad, cercanía, calificación o precio desde el mapa.</p></article><article class="vc-step" data-reveal><span class="vc-step-num">02 / COMPARA</span><h3>Conoce antes de reservar</h3><p class="vc-data">Revisa horarios, ubicación, precio aproximado y la información del perfil.</p></article><article class="vc-step" data-reveal><span class="vc-step-num">03 / RESERVA</span><h3>Agenda con claridad</h3><p class="vc-data">Elige un día disponible, confirma tu cita y consérvala en un solo lugar.</p></article></div></div></section>
+<section class="vc-section vc-section-mist"><div class="vc-shell"><p class="vc-eyebrow" data-reveal>Confianza en cada detalle</p><div class="vc-trust"><article data-reveal><h3>Perfiles verificados</h3><p class="vc-data">Cada especialista de la demostración aparece con credenciales visibles.</p></article><article data-reveal><h3>Precios orientativos</h3><p class="vc-data">Compara el valor aproximado antes de iniciar la reserva.</p></article><article data-reveal><h3>Ubicación y disponibilidad</h3><p class="vc-data">Encuentra rutas y horarios estructurados, no promesas vagas.</p></article></div></div></section>
+<section class="vc-final"><div class="vc-shell" data-reveal><p class="vc-eyebrow">También para profesionales</p><h2>Tu consulta merece ser fácil de encontrar.</h2><p>Publica tu consultorio, muestra tu disponibilidad y conecta con pacientes que ya están buscando tu especialidad.</p><a class="vc-button" href="{{ url_for('registro', tipo='medico') }}">Publicar mi consultorio</a></div></section>
 {% endblock %}

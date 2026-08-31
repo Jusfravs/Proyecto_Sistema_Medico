@@ -93,6 +93,15 @@ BLOQUES_HORARIOS = (
     "08:00", "10:00", "12:00", "14:00", "16:00", "18:00",
 )
 
+DIAS_SEMANA = (
+    (0, "Lunes"), (1, "Martes"), (2, "Miércoles"), (3, "Jueves"),
+    (4, "Viernes"), (5, "Sábado"), (6, "Domingo"),
+)
+NOMBRE_DIA_SEMANA = dict(DIAS_SEMANA)
+DISPONIBILIDAD_DEMO = ((0, "08:00", "18:00"), (1, "08:00", "18:00"),
+                       (2, "08:00", "18:00"), (3, "08:00", "18:00"),
+                       (4, "08:00", "18:00"), (5, "09:00", "13:00"))
+
 TOLERANCIA_MINUTOS = 15  # protocolo hospitalario de inasistencia (03 §3.3)
 
 # ── Búsqueda geográfica (06 §2.6) ─────────────────────────────────

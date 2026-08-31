@@ -10,7 +10,7 @@ Roles: 'paciente' | 'medico' | 'admin'  (ver constantes.ROLES)
 
 from functools import wraps
 
-from flask import flash, redirect, session, url_for
+from flask import flash, redirect, request, session, url_for
 
 
 def login_requerido(vista):
@@ -20,7 +20,7 @@ def login_requerido(vista):
     def envoltura(*args, **kwargs):
         if "usuario_id" not in session:
             flash("Debes iniciar sesión para acceder a esa página.", "danger")
-            return redirect(url_for("login"))
+            return redirect(url_for("login", next=request.full_path.rstrip("?")))
         return vista(*args, **kwargs)
 
     return envoltura
@@ -40,7 +40,7 @@ def rol_requerido(*roles):
         def envoltura(*args, **kwargs):
             if "usuario_id" not in session:
                 flash("Debes iniciar sesión para acceder a esa página.", "danger")
-                return redirect(url_for("login"))
+                return redirect(url_for("login", next=request.full_path.rstrip("?")))
             if session.get("usuario_rol") not in roles:
                 flash("No tienes permisos para acceder a esa página.", "danger")
                 return redirect(url_for("inicio"))
