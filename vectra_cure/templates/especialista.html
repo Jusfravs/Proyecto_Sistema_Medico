@@ -14,7 +14,7 @@
     <p>{{ ui.estrellas(perfil.rating_promedio|float) }}
       <span class="vc-data">{{ '%.1f'|format(perfil.rating_promedio|float) }} ({{ perfil.num_resenas }} reseñas verificadas)</span></p>
     <p class="vc-data">📍 A {{ distancia }} km · {{ perfil.direccion }}</p>
-    <p class="vc-data">🕒 {{ perfil.horario_atencion }}</p>
+    <p class="vc-data">🕒 {{ L.resumen_disponibilidad(perfil) }}</p>
     <p><strong>💵 Consulta desde aprox. ${{ '%.2f'|format(perfil.precio_aprox|float) }} USD</strong>
       <span class="vc-data">· Tasa de plataforma $0.00</span></p>
 
@@ -45,17 +45,25 @@
 
   <article class="vc-card">
     <h2>Deja tu reseña</h2>
-    <form class="vc-form" method="post" action="{{ url_for('crear_resena', medico_id=perfil.id) }}">
-      <label>Tu nombre
-        <input name="paciente_nombre" required></label>
-      <label>Calificación
-        <select name="calificacion" required>
-          {% for n in [5,4,3,2,1] %}<option value="{{ n }}">{{ '★' * n }} ({{ n }})</option>{% endfor %}
-        </select></label>
-      <label>Comentario (opcional)
-        <textarea name="comentario" rows="3"></textarea></label>
-      <button class="vc-button vc-button-block">Publicar reseña</button>
-    </form>
+    {% if usuario_actual and usuario_actual.rol == constantes.ROL_PACIENTE %}
+      <form class="vc-form" method="post" action="{{ url_for('crear_resena', medico_id=perfil.id) }}">
+        <p class="vc-data">Publicas como <strong>{{ usuario_actual.nombre }}</strong>.</p>
+        <label>Calificación
+          <select name="calificacion" required>
+            {% for n in [5,4,3,2,1] %}<option value="{{ n }}">{{ '★' * n }} ({{ n }})</option>{% endfor %}
+          </select></label>
+        <label>Comentario (opcional)
+          <textarea name="comentario" rows="3"></textarea></label>
+        <button class="vc-button vc-button-block">Publicar reseña</button>
+      </form>
+    {% elif usuario_actual %}
+      <p class="vc-data">Solo las cuentas de paciente pueden dejar reseñas.</p>
+    {% else %}
+      <p class="vc-data">Inicia sesión como paciente para dejar una reseña.</p>
+      <div class="vc-row-actions">
+        <button class="vc-button" type="button" data-modal-open="login-modal">Iniciar sesión</button>
+      </div>
+    {% endif %}
   </article>
 </div></div></section>
 {% endblock %}

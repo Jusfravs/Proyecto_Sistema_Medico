@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 
 from app import app  # noqa: E402
-from models import Cita, DisponibilidadMedica, PerfilMedico, Usuario, db  # noqa: E402
+from models import Cita, DisponibilidadMedica, PerfilMedico, Resena, Usuario, db  # noqa: E402
 import logica as L  # noqa: E402
 
 
@@ -122,6 +122,20 @@ class TestAgendamiento(BaseTest):
         r = self._agendar()
         self.assertIn("ya está reservado", r.get_data(as_text=True))
 
+    def test_horas_disponibles_excluye_turnos_tomados(self):
+        self._login_paciente()
+        antes = self.c.get(f"/agendar/{self.perfil_id}/horas?fecha=2026-09-20").get_json()
+        self.assertIn("10:00", antes["horas"])
+        self._agendar(hora="10:00")
+        despues = self.c.get(f"/agendar/{self.perfil_id}/horas?fecha=2026-09-20").get_json()
+        self.assertNotIn("10:00", despues["horas"])
+
+    def test_horas_disponibles_rechaza_fecha_pasada(self):
+        self._login_paciente()
+        data = self.c.get(f"/agendar/{self.perfil_id}/horas?fecha=2020-01-01").get_json()
+        self.assertEqual(data["horas"], [])
+        self.assertIn("pasó", data["error"])
+
     def test_ticket_markdown(self):
         self._agendar()
         cod = db.session.query(Cita).first().codigo_ticket
@@ -162,16 +176,28 @@ class TestAgendamiento(BaseTest):
 
 class TestResenasYRBAC(BaseTest):
     def test_resena_recalcula_rating(self):
+        self._login_paciente()
         for n in (5, 4, 3):
-            self.c.post(f"/especialista/{self.perfil_id}/resena",
-                        data={"paciente_nombre": "Q", "calificacion": n})
+            self.c.post(f"/especialista/{self.perfil_id}/resena", data={"calificacion": n})
         db.session.refresh(self.perfil)
         self.assertEqual(self.perfil.num_resenas, 3)
         self.assertEqual(float(self.perfil.rating_promedio), 4.0)
 
+    def test_resena_usa_el_nombre_del_paciente_autenticado(self):
+        self._login_paciente()
+        self.c.post(f"/especialista/{self.perfil_id}/resena", data={"calificacion": 5})
+        self.assertEqual(db.session.query(Resena).first().paciente_nombre, "Ana")
+
+    def test_resena_requiere_sesion_de_paciente(self):
+        r = self.c.post(f"/especialista/{self.perfil_id}/resena", data={"calificacion": 5})
+        self.assertEqual(r.status_code, 302)
+        self.assertIn("/login", r.headers["Location"])
+        self.assertEqual(db.session.query(Resena).count(), 0)
+
     def test_resena_fuera_de_rango(self):
+        self._login_paciente()
         r = self.c.post(f"/especialista/{self.perfil_id}/resena",
-                        data={"paciente_nombre": "Q", "calificacion": "9"}, follow_redirects=True)
+                        data={"calificacion": "9"}, follow_redirects=True)
         self.assertIn("entre 1 y 5", r.get_data(as_text=True))
 
     def test_admin_requiere_sesion(self):

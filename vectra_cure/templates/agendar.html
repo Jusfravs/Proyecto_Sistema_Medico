@@ -1,3 +1,36 @@
 {% extends "base.html" %}
 {% block titulo %}Reservar atención — Vectra Cure{% endblock %}
-{% block content %}<section class="vc-profile"><div class="vc-shell"><a class="vc-text-link" href="{{ url_for('especialista', medico_id=perfil.id) }}">← Volver al perfil</a><form method="post" class="vc-booking"><p class="vc-eyebrow">Reserva segura</p><h1>Agenda con {{ perfil.usuario.nombre }}</h1><p class="vc-data">{{ perfil.especialidad }} · {{ perfil.nombre_clinica }} · Consulta aproximada ${{ '%.2f'|format(perfil.precio_aprox|float) }}</p><div class="vc-booking-grid"><label>Fecha<input type="date" name="fecha" min="{{ hoy }}" value="{{ datos.get('fecha','') }}" required></label><label>Hora<select name="hora" required>{% for h in bloques %}<option value="{{ h }}" {{ 'selected' if datos.get('hora') == h }}>{{ h }}</option>{% endfor %}</select></label></div><p class="vc-data">Los horarios se confirman con la disponibilidad estructurada del especialista al continuar.</p><label>Motivo breve de consulta<input name="motivo" value="{{ datos.get('motivo','') }}" placeholder="Ej. Consulta de control"></label><fieldset><legend class="vc-data">Método de pago</legend><label><input type="radio" name="metodo_pago" value="PAYPAL_MOCK" checked> Pago digital simulado</label><label><input type="radio" name="metodo_pago" value="EFECTIVO_VENTANILLA"> Pago en ventanilla</label></fieldset><p class="vc-data">Reservas a nombre de {{ usuario.nombre }} ({{ usuario.email }}).</p><button class="vc-button vc-button-block">Continuar con mi reserva</button></form></div></section>{% endblock %}
+{% block content %}
+<section class="vc-profile"><div class="vc-shell">
+  <a class="vc-text-link" href="{{ url_for('especialista', medico_id=perfil.id) }}">← Volver al perfil</a>
+  <form method="post" class="vc-booking" id="vc-agendar"
+        data-horas-url="{{ url_for('horas_disponibles', medico_id=perfil.id) }}">
+    <p class="vc-eyebrow">Reserva segura</p>
+    <h1>Agenda con {{ perfil.usuario.nombre }}</h1>
+    <p class="vc-data">{{ perfil.especialidad }} · {{ perfil.nombre_clinica }} ·
+      Consulta aproximada ${{ '%.2f'|format(perfil.precio_aprox|float) }}</p>
+    <div class="vc-booking-grid">
+      <label>Fecha
+        <input type="date" name="fecha" id="vc-fecha" min="{{ hoy }}"
+               value="{{ datos.get('fecha','') }}" required></label>
+      <label>Hora
+        <select name="hora" id="vc-hora" required>
+          {% for h in bloques %}<option value="{{ h }}" {{ 'selected' if datos.get('hora') == h }}>{{ h }}</option>{% endfor %}
+        </select></label>
+    </div>
+    <p class="vc-data" id="vc-hora-nota">Elige una fecha para ver las horas libres de este especialista.</p>
+    <label>Motivo breve de consulta
+      <input name="motivo" value="{{ datos.get('motivo','') }}" placeholder="Ej. Consulta de control"></label>
+    <fieldset>
+      <legend class="vc-data">Método de pago</legend>
+      <label><input type="radio" name="metodo_pago" value="PAYPAL_MOCK" checked> Pago digital simulado</label>
+      <label><input type="radio" name="metodo_pago" value="EFECTIVO_VENTANILLA"> Pago en ventanilla</label>
+    </fieldset>
+    <p class="vc-data">Reservas a nombre de {{ usuario.nombre }} ({{ usuario.email }}).</p>
+    <button class="vc-button vc-button-block" id="vc-agendar-enviar">Continuar con mi reserva</button>
+  </form>
+</div></section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/agendar.js') }}"></script>
+{% endblock %}
