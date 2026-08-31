@@ -26,7 +26,10 @@
     {% endif %}
 
     <div class="vc-row-actions">
-      <a class="vc-button" href="{{ url_for('agendar', medico_id=perfil.id) }}">⚡ Agendar cita rápida</a>
+      <a class="vc-button" href="{{ url_for('agendar', medico_id=perfil.id) }}"
+         data-agendar-id="{{ perfil.id }}" data-agendar-nombre="{{ perfil.usuario.nombre }}"
+         data-agendar-especialidad="{{ perfil.especialidad }}"
+         data-agendar-precio="{{ '%.2f'|format(perfil.precio_aprox|float) }}">⚡ Agendar cita rápida</a>
     </div>
   </article>
 
