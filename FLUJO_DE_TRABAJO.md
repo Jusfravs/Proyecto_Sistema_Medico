@@ -146,7 +146,7 @@ ejecuta los archivos en orden.
 > Los que sí puedes repetir son `02_seed_demo` (está escrito para reejecutarse)
 > y `03_verificar`.
 
-El script `03_verificar` debe listar **4 tablas** sin lanzar excepciones:
+El script `03_verificar` debe listar **5 tablas** sin lanzar excepciones:
 
 ```
  entidad          | registros
@@ -462,3 +462,11 @@ git push -u origin justin
 Si algo no arranca, revisa en este orden: ¿está activo el `venv`? ¿existe
 `.env` con la contraseña? ¿está corriendo el servicio de PostgreSQL? ¿corriste
 los scripts de `database/`?
+# Actualización V2 (agosto de 2026)
+
+El flujo actual incorpora `disponibilidades_medicas` y
+`citas.paciente_usuario_id`. Para una base ya existente se ejecuta
+`database/04_migracion_v2_postgresql.sql` antes de volver a sembrar y verificar;
+para una base nueva, `01_schema_postgresql.sql` ya contiene las cinco tablas.
+Después de este cambio, ticket, detalle, cancelación y “Mis citas” se autorizan
+por la cuenta paciente propietaria. Las pruebas automatizadas son 15.

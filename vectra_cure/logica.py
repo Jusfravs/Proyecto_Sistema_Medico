@@ -80,6 +80,39 @@ def parse_fecha(valor: str | None) -> date:
         raise ValueError("La fecha de la cita no es válida (formato AAAA-MM-DD).")
 
 
+def fecha_no_pasada(valor: str | date) -> date:
+    """Acepta solo hoy o una fecha futura, también cuando llega desde un POST."""
+    fecha = parse_fecha(valor) if isinstance(valor, str) else valor
+    if fecha < date.today():
+        raise ValueError("No puedes agendar una cita en una fecha que ya pasó.")
+    return fecha
+
+
+def bloques_disponibles(perfil, fecha: date) -> tuple[str, ...]:
+    """Devuelve bloques de la matriz que caben en la disponibilidad del día."""
+    dia = fecha.weekday()
+    rangos = [d for d in perfil.disponibilidades if d.activo and d.dia_semana == dia]
+    if not rangos:
+        return ()
+    return tuple(
+        hora for hora in C.BLOQUES_HORARIOS
+        if any(d.hora_inicio <= hora < d.hora_fin for d in rangos)
+    )
+
+
+def resumen_disponibilidad(perfil) -> str:
+    """Texto breve para cards; no sustituye el dato estructurado."""
+    activos = [d for d in perfil.disponibilidades if d.activo]
+    if not activos:
+        return perfil.horario_atencion
+    dias = sorted({d.dia_semana for d in activos})
+    inicio = min(d.hora_inicio for d in activos)
+    fin = max(d.hora_fin for d in activos)
+    etiquetas = [C.NOMBRE_DIA_SEMANA[d] for d in dias]
+    dias_texto = f"{etiquetas[0]}–{etiquetas[-1]}" if len(etiquetas) > 1 else etiquetas[0]
+    return f"{dias_texto}, {inicio}–{fin}"
+
+
 # ══════════════════════════════════════════════════════════════════
 # PAGO SIMULADO  (03 §2)
 # ══════════════════════════════════════════════════════════════════

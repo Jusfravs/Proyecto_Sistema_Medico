@@ -106,3 +106,12 @@ Debe existir al menos **un usuario con rol `'admin'`** para entrar al panel.
 
 El esquema, la semilla demostrativa y la verificación se ejecutan manualmente
 desde pgAdmin 4 siguiendo `database/README.md`.
+# Addendum V2
+
+`app.py` también importa `DisponibilidadMedica`. La clase mapea
+`disponibilidades_medicas` con `perfil_medico_id`, `dia_semana` (0 a 6),
+`hora_inicio`, `hora_fin` y `activo`; `PerfilMedico.disponibilidades` es una
+colección ordenada por día y hora. `Cita.paciente_usuario_id` es obligatorio y
+su relación `Cita.paciente` apunta a `Usuario`; el inverso es
+`Usuario.citas_paciente`. La app conserva la instantánea de contacto de la cita
+para el historial, pero la autorización de lectura/cancelación usa esa FK.

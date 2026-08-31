@@ -55,6 +55,11 @@ class Config:
     ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
     MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5 MB
 
+    # Servicios abiertos: no se usa una llave de Google Maps ni scraping.
+    MAP_TILE_URL = os.getenv("MAP_TILE_URL", "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png")
+    MAP_ATTRIBUTION = os.getenv("MAP_ATTRIBUTION", "&copy; OpenStreetMap contributors")
+    ROUTE_SERVICE_URL = os.getenv("ROUTE_SERVICE_URL", "https://router.project-osrm.org/route/v1/driving")
+
 
 class TestConfig(Config):
     TESTING = True

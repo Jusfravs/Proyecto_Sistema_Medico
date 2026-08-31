@@ -7,6 +7,8 @@ médico respaldada por PostgreSQL.
 
 from pathlib import Path
 from uuid import uuid4
+from datetime import date
+from urllib.parse import urlparse
 
 from flask import (
     Flask, abort, flash, redirect, render_template, request, Response, session, url_for,
@@ -19,7 +21,7 @@ import logica as L
 from auth import login_requerido, rol_requerido
 from config import Config
 
-from models import db, Cita, PerfilMedico, Resena, Usuario
+from models import db, Cita, DisponibilidadMedica, PerfilMedico, Resena, Usuario
 
 
 app = Flask(__name__)
@@ -48,6 +50,34 @@ def _usuario_actual():
     return db.session.get(Usuario, uid) if uid else None
 
 
+def _iniciar_sesion(usuario):
+    session["usuario_id"] = usuario.id
+    session["usuario_nombre"] = usuario.nombre
+    session["usuario_rol"] = usuario.rol
+
+
+def _destino_usuario(usuario):
+    if usuario.rol == C.ROL_ADMIN:
+        return url_for("panel_admin")
+    return url_for("directorio")
+
+
+def _url_interna(destino):
+    """Evita redirecciones hacia dominios externos a partir de `next`."""
+    if not destino:
+        return None
+    parsed = urlparse(destino)
+    return destino if not parsed.netloc and destino.startswith("/") else None
+
+
+def _cita_del_paciente(codigo):
+    cita = _cita_por_codigo(codigo)
+    usuario = _usuario_actual()
+    if not usuario or cita.paciente_usuario_id != usuario.id:
+        abort(403)
+    return cita
+
+
 @app.context_processor
 def _inyectar_globales():
     return {
@@ -55,6 +85,8 @@ def _inyectar_globales():
         "ESPECIALIDADES": C.ESPECIALIDADES,
         "ICONO_ESPECIALIDAD": C.ICONO_ESPECIALIDAD,
         "constantes": C,
+        "L": L,
+        "hoy": date.today().isoformat(),
     }
 
 
@@ -119,6 +151,14 @@ def inicio():
 def directorio():
     especialidad = request.args.get("especialidad") or None
     orden = request.args.get("orden", C.ORDEN_RATING)
+    q = (request.args.get("q") or "").strip().lower()
+    try:
+        lat = float(request.args.get("lat", C.UBICACION_REFERENCIA[0]))
+        lng = float(request.args.get("lng", C.UBICACION_REFERENCIA[1]))
+        radio = float(request.args.get("radio", C.RADIO_INICIAL_KM))
+    except ValueError:
+        lat, lng, radio = (*C.UBICACION_REFERENCIA, C.RADIO_INICIAL_KM)
+    radio = radio if radio in (C.RADIO_INICIAL_KM, *C.RADIOS_AMPLIACION_KM) else C.RADIO_INICIAL_KM
     if orden not in C.ORDENES:
         orden = C.ORDEN_RATING
 
@@ -126,13 +166,19 @@ def directorio():
     if especialidad in C.ESPECIALIDADES:
         consulta = consulta.filter_by(especialidad=especialidad)
 
-    perfiles = L.ordenar_directorio(consulta.all(), orden)
-    distancias = {p.id: L.distancia_a_referencia(p) for p in perfiles}
+    perfiles = consulta.all()
+    if q:
+        perfiles = [p for p in perfiles if q in p.usuario.nombre.lower() or q in p.nombre_clinica.lower()]
+    distancias = {p.id: L.distancia_a_referencia(p, lat, lng) for p in perfiles}
+    perfiles = [p for p in perfiles if distancias[p.id] <= radio]
+    perfiles = L.ordenar_directorio(perfiles, orden, lat, lng)
 
     return render_template(
         "directorio.html",
         perfiles=perfiles, distancias=distancias,
-        especialidad=especialidad, orden=orden,
+        especialidad=especialidad, orden=orden, q=q, lat=lat, lng=lng, radio=radio,
+        map_tile_url=app.config["MAP_TILE_URL"], map_attribution=app.config["MAP_ATTRIBUTION"],
+        route_service_url=app.config["ROUTE_SERVICE_URL"],
     )
 
 
@@ -193,6 +239,12 @@ def registro():
                     verificado=True,  # simulado: "en revisión 2-3 min" -> verificado
                 )
                 db.session.add(perfil)
+                db.session.flush()
+                for dia, inicio, fin in C.DISPONIBILIDAD_DEMO:
+                    db.session.add(DisponibilidadMedica(
+                        perfil_medico_id=perfil.id, dia_semana=dia,
+                        hora_inicio=inicio, hora_fin=fin,
+                    ))
 
             db.session.commit()
         except ValueError as err:
@@ -204,12 +256,12 @@ def registro():
             flash("Ya existe una cuenta con ese correo.", "danger")
             return render_template("registro.html", datos=request.form, tipo=tipo)
 
+        _iniciar_sesion(usuario)
         if tipo == "medico":
-            flash("¡Registro exitoso! Credenciales en revisión (2-3 min)… "
-                  "Insignia 🛡️ Verificado activada. Ya puedes iniciar sesión.", "success")
+            flash("Tu perfil profesional quedó verificado y visible en el mapa.", "success")
         else:
-            flash("Cuenta creada correctamente. Ya puedes iniciar sesión.", "success")
-        return redirect(url_for("login"))
+            flash("Cuenta creada. Ya puedes explorar y reservar tu atención.", "success")
+        return redirect(url_for("directorio", destacado=perfil.id) if tipo == "medico" else url_for("directorio"))
 
     return render_template("registro.html", datos={}, tipo=request.args.get("tipo", "paciente"))
 
@@ -222,16 +274,13 @@ def login():
         usuario = db.session.query(Usuario).filter_by(email=email).first()
 
         if usuario and usuario.activo and L.verificar_password(usuario.password_hash, password):
-            session["usuario_id"] = usuario.id
-            session["usuario_nombre"] = usuario.nombre
-            session["usuario_rol"] = usuario.rol
+            _iniciar_sesion(usuario)
             flash(f"¡Bienvenido, {usuario.nombre}!", "success")
-            destino = url_for("panel_admin") if usuario.rol == C.ROL_ADMIN else url_for("inicio")
-            return redirect(destino)
+            return redirect(_url_interna(request.form.get("next")) or _destino_usuario(usuario))
 
         flash("Correo o contraseña incorrectos.", "danger")
 
-    return render_template("login.html")
+    return render_template("login.html", next_url=_url_interna(request.args.get("next")))
 
 
 @app.route("/logout")
@@ -277,30 +326,35 @@ def editar_perfil():
 # ══════════════════════════════════════════════════════════════════
 
 @app.route("/agendar/<int:medico_id>", methods=["GET", "POST"])
+@rol_requerido(C.ROL_PACIENTE)
 def agendar(medico_id):
     perfil = db.get_or_404(PerfilMedico, medico_id)
+    usuario = _usuario_actual()
 
     if request.method == "POST":
         try:
             datos = {
                 "medico_id": perfil.id,
-                "paciente_nombre": L.texto_requerido(request.form.get("paciente_nombre"), "nombre"),
-                "paciente_email": L.email_valido(request.form.get("paciente_email")),
-                "paciente_telefono": L.texto_requerido(request.form.get("paciente_telefono"), "teléfono"),
+                "paciente_usuario_id": usuario.id,
+                "paciente_nombre": usuario.nombre,
+                "paciente_email": usuario.email,
+                "paciente_telefono": usuario.telefono,
                 "fecha": request.form.get("fecha", ""),
                 "hora": L.opcion_valida(request.form.get("hora"), C.BLOQUES_HORARIOS, "hora"),
                 "motivo": (request.form.get("motivo") or "").strip(),
                 "metodo_pago": L.opcion_valida(
                     request.form.get("metodo_pago"), C.METODOS_PAGO, "método de pago"),
             }
-            fecha = L.parse_fecha(datos["fecha"])
+            fecha = L.fecha_no_pasada(datos["fecha"])
+            datos["hora"] = L.opcion_valida(
+                datos["hora"], L.bloques_disponibles(perfil, fecha), "hora")
             if _turno_ocupado(perfil.id, fecha, datos["hora"]):
                 raise ValueError("Ese turno ya está reservado. Elige otro horario.")
         except ValueError as err:
             flash(str(err), "danger")
             return render_template(
                 "agendar.html", perfil=perfil, bloques=C.BLOQUES_HORARIOS,
-                datos=request.form,
+                datos=request.form, usuario=usuario,
             )
 
         if datos["metodo_pago"] == C.PAGO_PAYPAL_MOCK:
@@ -310,17 +364,20 @@ def agendar(medico_id):
         return _crear_cita(datos)
 
     return render_template(
-        "agendar.html", perfil=perfil, bloques=C.BLOQUES_HORARIOS, datos={},
+        "agendar.html", perfil=perfil, bloques=C.BLOQUES_HORARIOS, datos={}, usuario=usuario,
     )
 
 
 @app.route("/pago/aprobar", methods=["POST"])
+@rol_requerido(C.ROL_PACIENTE)
 def aprobar_pago():
+    usuario = _usuario_actual()
     datos = {
         "medico_id": int(request.form["medico_id"]),
-        "paciente_nombre": request.form["paciente_nombre"],
-        "paciente_email": request.form["paciente_email"],
-        "paciente_telefono": request.form["paciente_telefono"],
+        "paciente_usuario_id": usuario.id,
+        "paciente_nombre": usuario.nombre,
+        "paciente_email": usuario.email,
+        "paciente_telefono": usuario.telefono,
         "fecha": request.form["fecha"],
         "hora": request.form["hora"],
         "motivo": request.form.get("motivo", ""),
@@ -331,7 +388,12 @@ def aprobar_pago():
 
 def _crear_cita(datos):
     perfil = db.get_or_404(PerfilMedico, datos["medico_id"])
-    fecha = L.parse_fecha(datos["fecha"])
+    try:
+        fecha = L.fecha_no_pasada(datos["fecha"])
+        hora = L.opcion_valida(datos["hora"], L.bloques_disponibles(perfil, fecha), "hora")
+    except ValueError as err:
+        flash(str(err), "danger")
+        return redirect(url_for("agendar", medico_id=perfil.id))
     if _turno_ocupado(perfil.id, fecha, datos["hora"]):
         flash("Ese turno acaba de ser reservado por otra persona. Elige otro horario.", "danger")
         return redirect(url_for("agendar", medico_id=perfil.id))
@@ -339,11 +401,12 @@ def _crear_cita(datos):
     try:
         cita = Cita(
             medico_id=perfil.id,
+            paciente_usuario_id=datos["paciente_usuario_id"],
             paciente_nombre=datos["paciente_nombre"],
             paciente_email=datos["paciente_email"],
             paciente_telefono=datos["paciente_telefono"],
             fecha=fecha,
-            hora=datos["hora"],
+            hora=hora,
             motivo=datos["motivo"] or None,
             precio_aprox=perfil.precio_aprox,
             metodo_pago=datos["metodo_pago"],
@@ -365,14 +428,16 @@ def _crear_cita(datos):
 
 
 @app.route("/cita-exito/<codigo>")
+@rol_requerido(C.ROL_PACIENTE)
 def cita_exito(codigo):
-    cita = _cita_por_codigo(codigo)
+    cita = _cita_del_paciente(codigo)
     return render_template("cita_exito.html", cita=cita)
 
 
 @app.route("/cita/<codigo>/ticket")
+@rol_requerido(C.ROL_PACIENTE)
 def descargar_ticket(codigo):
-    cita = _cita_por_codigo(codigo)
+    cita = _cita_del_paciente(codigo)
     return Response(
         L.render_ticket(cita),
         mimetype="text/markdown",
@@ -384,29 +449,32 @@ def descargar_ticket(codigo):
 # CONSULTAR Y CANCELAR CITA  (03 §3 / 06 User Flow 2)  — CRUD Cita: read / update
 # ══════════════════════════════════════════════════════════════════
 
-@app.route("/consultar-cita", methods=["GET", "POST"])
+@app.route("/consultar-cita")
+@rol_requerido(C.ROL_PACIENTE)
 def consultar_cita():
-    if request.method == "POST":
-        criterio = (request.form.get("criterio") or "").strip()
-        cita = db.session.query(Cita).filter(
-            (Cita.codigo_ticket == criterio) | (Cita.paciente_telefono == criterio)
-        ).order_by(Cita.fecha_creacion.desc()).first()
-        if cita is None:
-            flash("Cita no encontrada. Revisa el código o el teléfono.", "danger")
-            return render_template("consultar_cita.html")
-        return redirect(url_for("mi_cita", codigo=cita.codigo_ticket))
-    return render_template("consultar_cita.html")
+    return redirect(url_for("mis_citas"))
+
+
+@app.route("/mis-citas")
+@rol_requerido(C.ROL_PACIENTE)
+def mis_citas():
+    citas = db.session.query(Cita).filter_by(
+        paciente_usuario_id=_usuario_actual().id
+    ).order_by(Cita.fecha.asc(), Cita.hora.asc()).all()
+    return render_template("mis_citas.html", citas=citas)
 
 
 @app.route("/mi-cita/<codigo>")
+@rol_requerido(C.ROL_PACIENTE)
 def mi_cita(codigo):
-    cita = _cita_por_codigo(codigo)
+    cita = _cita_del_paciente(codigo)
     return render_template("cita_detalle.html", cita=cita)
 
 
 @app.route("/mi-cita/<codigo>/cancelar", methods=["GET", "POST"])
+@rol_requerido(C.ROL_PACIENTE)
 def cancelar_cita(codigo):
-    cita = _cita_por_codigo(codigo)
+    cita = _cita_del_paciente(codigo)
 
     if cita.estado == C.ESTADO_CITA_CANCELADA:
         flash("Esta cita ya estaba cancelada.", "warning")
@@ -458,6 +526,24 @@ def crear_resena(medico_id):
         db.session.rollback()
         flash(str(err), "danger")
     return redirect(url_for("especialista", medico_id=medico_id))
+
+
+@app.route("/panel-profesional")
+@rol_requerido(C.ROL_MEDICO)
+def panel_profesional():
+    perfil = _usuario_actual().perfil_medico
+    if perfil is None:
+        abort(404)
+    proximas = db.session.query(Cita).filter(
+        Cita.medico_id == perfil.id,
+        Cita.fecha >= date.today(),
+        Cita.estado == C.ESTADO_CITA_CONFIRMADA,
+    ).order_by(Cita.fecha.asc(), Cita.hora.asc()).limit(3).all()
+    balance = sum(
+        float(cita.precio_aprox) for cita in perfil.citas
+        if cita.estado == C.ESTADO_CITA_CONFIRMADA and cita.estado_pago != C.ESTADO_PAGO_REEMBOLSADO
+    )
+    return render_template("panel_profesional.html", perfil=perfil, proximas=proximas, balance=balance)
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -523,6 +609,12 @@ def admin_especialista_nuevo():
                 foto=foto,
             )
             db.session.add(perfil)
+            db.session.flush()
+            for dia, inicio, fin in C.DISPONIBILIDAD_DEMO:
+                db.session.add(DisponibilidadMedica(
+                    perfil_medico_id=perfil.id, dia_semana=dia,
+                    hora_inicio=inicio, hora_fin=fin,
+                ))
             db.session.commit()
             flash(f"Especialista '{usuario.nombre}' creado.", "success")
             return redirect(url_for("admin_especialistas"))
