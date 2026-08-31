@@ -213,3 +213,11 @@ h3 { font-size: 22px; }
 .vc-result-extra .vc-data, .vc-panel-card .vc-data { margin: 4px 0; }
 .vc-booking legend { margin-top: 14px; }
 .vc-booking > button { margin-top: 16px; }
+
+/* Formulario dentro del modal de agendamiento */
+.vc-modal select, .vc-modal textarea { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); padding: 10px 12px; }
+.vc-modal select:focus, .vc-modal textarea:focus { border-color: var(--blue); outline: 0; box-shadow: 0 0 0 3px rgba(39,110,241,.13); }
+.vc-modal fieldset { margin: 14px 0 0; padding: 12px 0 0; border: 0; border-top: 1px solid var(--line); }
+.vc-modal fieldset label { display: flex; align-items: center; gap: 9px; margin: 8px 0; }
+.vc-modal fieldset input { width: auto; min-height: auto; }
+.vc-modal-card form { max-height: 62vh; overflow-y: auto; }
