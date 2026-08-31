@@ -1,55 +1,45 @@
 {% extends "base.html" %}
-{% import "_macros.html" as ui with context %}
-{% block titulo %}Directorio de especialistas — Vectra Cure{% endblock %}
-
+{% block titulo %}Explorar especialistas — Vectra Cure{% endblock %}
+{% block body_class %}vc-page-explorer{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+{% endblock %}
 {% block content %}
-<h1 class="h3 mb-3">Especialistas cerca de ti</h1>
-
-<form method="get" class="mb-4">
-  <div class="d-flex flex-wrap gap-2 align-items-center">
-    <a href="{{ url_for('directorio') }}" class="vc-chip {{ 'activo' if not especialidad }}">Todas</a>
-    {% for e in ESPECIALIDADES %}
-      <a href="{{ url_for('directorio', especialidad=e, orden=orden) }}"
-         class="vc-chip {{ 'activo' if especialidad == e }}">{{ ICONO_ESPECIALIDAD[e] }} {{ e }}</a>
-    {% endfor %}
-  </div>
-  <div class="d-flex flex-wrap gap-2 mt-3">
-    <span class="vc-data align-self-center">Ordenar por:</span>
-    {% for clave, etiqueta in [('rating','⭐ Mejor calificados'), ('distancia','📍 Más cercanos'), ('precio','💵 Más económico')] %}
-      <a href="{{ url_for('directorio', especialidad=especialidad, orden=clave) }}"
-         class="vc-chip {{ 'activo' if orden == clave }}">{{ etiqueta }}</a>
-    {% endfor %}
-  </div>
-</form>
-
-<div class="row g-4">
-  <div class="col-lg-7">
-    {% if perfiles %}
-      <div class="row row-cols-1 row-cols-md-2 g-4">
-        {% for p in perfiles %}
-          <div class="col">{{ ui.tarjeta_especialista(p, distancias[p.id]) }}</div>
-        {% endfor %}
+<section class="vc-explorer">
+  <aside class="vc-drawer">
+    <p class="vc-eyebrow">Directorio médico</p>
+    <h1>Encuentra atención cerca de ti.</h1>
+    <p class="vc-data">Usamos Quito como referencia hasta que compartas tu ubicación.</p>
+    <form class="vc-filter" method="get">
+      <input name="q" value="{{ q }}" placeholder="Nombre o consultorio">
+      <div class="vc-filter-row">
+        <select name="especialidad"><option value="">Todas las especialidades</option>{% for e in ESPECIALIDADES %}<option value="{{ e }}" {{ 'selected' if especialidad == e }}>{{ e }}</option>{% endfor %}</select>
+        <select name="orden"><option value="rating" {{ 'selected' if orden == 'rating' }}>Mejor calificación</option><option value="distancia" {{ 'selected' if orden == 'distancia' }}>Más cercano</option><option value="precio" {{ 'selected' if orden == 'precio' }}>Menor precio</option></select>
       </div>
-    {% else %}
-      <div class="vc-card p-4 text-center">
-        <h5>No encontramos especialistas en tu zona inmediata</h5>
-        <p class="vc-data">¿Deseas ampliar tu radio de búsqueda?</p>
-        <div class="d-flex gap-2 justify-content-center">
-          {% for r in constantes.RADIOS_AMPLIACION_KM %}<span class="vc-chip">📍 {{ r }} km</span>{% endfor %}
-        </div>
-        <p class="vc-data mt-3 mb-0">Sugerencia: revisa <a href="{{ url_for('directorio', especialidad='Medicina General') }}">Medicina General</a> cercana.</p>
-      </div>
+      <input type="hidden" name="lat" value="{{ lat }}"><input type="hidden" name="lng" value="{{ lng }}">
+      <select name="radio" aria-label="Radio de búsqueda">{% for km in (3,5,8,10) %}<option value="{{ km }}" {{ 'selected' if radio == km }}>{{ km }} km alrededor</option>{% endfor %}</select>
+      <button class="vc-button vc-button-block">Actualizar resultados</button>
+    </form>
+    <div class="vc-result-count">{{ perfiles|length }} especialistas a {{ radio|int }} km</div>
+    {% if perfiles %}{% for p in perfiles %}
+      <article class="vc-result-card" data-result-card data-profile-id="{{ p.id }}">
+        <div class="vc-result-top"><div class="vc-avatar" aria-hidden="true"></div><div><div class="vc-result-name">{{ p.usuario.nombre }}</div><div class="vc-data">{{ p.especialidad }} · ★ {{ '%.1f'|format(p.rating_promedio|float) }}</div><div class="vc-data">{{ distancias[p.id] }} km · {{ L.resumen_disponibilidad(p) }}</div></div></div>
+        <div class="vc-result-extra"><span class="vc-chip">✓ Verificado</span><p class="vc-data mt-2 mb-1">{{ p.nombre_clinica }} · {{ p.direccion }}</p><p class="vc-data mb-1">Consulta aproximada: ${{ '%.2f'|format(p.precio_aprox|float) }}</p><p class="vc-data mb-0">{{ p.horario_atencion }}</p><div class="vc-card-actions"><button type="button" class="vc-button vc-button-outline" data-route-to="{{ p.id }}">Ruta</button><a class="vc-button vc-button-outline" href="{{ url_for('especialista', medico_id=p.id) }}">Ver perfil</a><a class="vc-button" href="{{ url_for('agendar', medico_id=p.id) }}">Agendar</a></div></div>
+      </article>
+    {% endfor %}{% else %}
+      <div class="vc-empty"><strong>No encontramos especialistas en este radio.</strong><p>Prueba 5, 8 o 10 km, o elimina algún filtro.</p>{% for km in constantes.RADIOS_AMPLIACION_KM %}{% if km > radio %}<a class="vc-text-link" href="{{ url_for('directorio', q=q, especialidad=especialidad, orden=orden, radio=km) }}">Buscar a {{ km }} km →</a><br>{% endif %}{% endfor %}</div>
     {% endif %}
-  </div>
-  <div class="col-lg-5">
-    <div class="vc-map">
-      <div class="text-center p-3">
-        <div style="font-size:2rem">🗺️</div>
-        <div>Mapa interactivo (Split View)</div>
-        <div class="vc-data">Representación estática — pines por especialidad.<br>
-          Distancias calculadas desde el centro-norte de Quito.</div>
-      </div>
-    </div>
-  </div>
-</div>
+  </aside>
+  <div class="vc-map"><div class="vc-map-canvas" id="map" aria-label="Mapa de especialistas"></div><div class="vc-map-note">Mapa © OpenStreetMap · rutas bajo demanda</div></div>
+</section>
+{% endblock %}
+{% block scripts %}
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script>
+    window.VECTRA_MAP = {
+      center: [{{ lat }}, {{ lng }}], tileUrl: {{ map_tile_url|tojson }}, attribution: {{ map_attribution|tojson }}, routeServiceUrl: {{ route_service_url|tojson }},
+      profiles: [{% for p in perfiles %}{id: {{ p.id }}, name: {{ p.usuario.nombre|tojson }}, specialty: {{ p.especialidad|tojson }}, lat: {{ p.latitud }}, lng: {{ p.longitud }}, url: {{ url_for('especialista', medico_id=p.id)|tojson }}},{% endfor %}]
+    };
+  </script>
+  <script src="{{ url_for('static', filename='js/mapa.js') }}"></script>
 {% endblock %}
