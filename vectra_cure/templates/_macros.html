@@ -3,3 +3,21 @@
 {% macro estrellas(valor) -%}
   <span class="vc-stars">{% for _ in range(valor|round(0,'floor')|int) %}★{% endfor %}{% for _ in range(5 - (valor|round(0,'floor')|int)) %}☆{% endfor %}</span>
 {%- endmacro %}
+
+{% macro iniciales(nombre) -%}
+{%- set titulos = ['dr', 'dra', 'lic', 'ing', 'mg', 'msc', 'md', 'sr', 'sra', 'phd'] -%}
+{%- set utiles = [] -%}
+{%- for w in nombre.split() -%}
+  {%- if w.strip('.')|lower not in titulos -%}{%- set _ = utiles.append(w) -%}{%- endif -%}
+{%- endfor -%}
+{%- set partes = utiles if utiles else nombre.split() -%}
+{{- (partes[0][0] ~ (partes[1][0] if partes|length > 1 else partes[0][1:2]))|upper -}}
+{%- endmacro %}
+
+{% macro avatar(perfil, extra='') -%}
+{%- if perfil.foto -%}
+<img class="vc-avatar {{ extra }}" src="{{ url_for('static', filename='uploads/' ~ perfil.foto) }}" alt="Foto de {{ perfil.usuario.nombre }}">
+{%- else -%}
+<span class="vc-avatar vc-avatar-initials {{ extra }}" aria-hidden="true">{{ iniciales(perfil.usuario.nombre) }}</span>
+{%- endif -%}
+{%- endmacro %}

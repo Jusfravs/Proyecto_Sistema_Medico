@@ -253,3 +253,44 @@ h3 { font-size: 22px; }
   .vc-admin-head h1, .vc-drawer h1 { font-size: 27px; }
   .vc-modal-card { padding: 26px 20px; }
 }
+
+/* ---- Rediseño de pantallas (avatar, ficha 2 col, ticket, filtros) ---- */
+
+/* Avatar con foto o iniciales */
+img.vc-avatar { object-fit: cover; }
+.vc-avatar-initials { display: grid; place-items: center; background: linear-gradient(140deg, var(--mineral), #b9e8dc); color: #0c3b33; font: 700 15px/1 "Instrument Sans", sans-serif; letter-spacing: -.02em; }
+.vc-avatar-lg { flex-basis: 64px; width: 64px; height: 64px; border-radius: 16px; }
+.vc-avatar-lg.vc-avatar-initials { font-size: 20px; }
+
+/* Ficha de especialista en dos columnas (escritorio) */
+.vc-detail-grid { display: grid; grid-template-columns: minmax(0, 348px) minmax(0, 1fr); gap: 22px; align-items: start; }
+.vc-detail-aside { position: sticky; top: 96px; display: grid; gap: 14px; }
+.vc-detail-id { display: flex; gap: 13px; align-items: center; }
+.vc-detail-id .vc-avatar { flex: 0 0 64px; }
+.vc-cta-card { border: 1px solid var(--line); border-radius: 16px; padding: 18px; background: linear-gradient(180deg, #fff, var(--mist)); box-shadow: var(--shadow-card); }
+.vc-cta-card p { margin: 0 0 12px; }
+@media (max-width: 860px) {
+  .vc-detail-grid { grid-template-columns: 1fr; }
+  .vc-detail-aside { position: static; }
+}
+
+/* Comprobante con forma de ticket */
+.vc-ticket-stage { background: var(--mist); border-radius: 24px; padding: 36px 20px; margin-top: 26px; }
+.vc-ticket { max-width: 520px; margin-inline: auto; background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow-small); overflow: hidden; }
+.vc-ticket-head { padding: 24px 26px 20px; background: linear-gradient(180deg, #fff, #f3f9fa); text-align: center; }
+.vc-ticket-head .vc-eyebrow { margin-bottom: 8px; }
+.vc-ticket-code { font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace; font-size: 28px; font-weight: 700; letter-spacing: .08em; color: var(--ink); }
+.vc-ticket-perf { position: relative; margin: 0 20px; border-top: 2px dashed var(--line-dark); }
+.vc-ticket-perf::before, .vc-ticket-perf::after { content: ""; position: absolute; top: -13px; width: 24px; height: 24px; border-radius: 50%; background: var(--mist); border: 1px solid var(--line); }
+.vc-ticket-perf::before { left: -33px; }
+.vc-ticket-perf::after { right: -33px; }
+.vc-ticket-body { padding: 22px 26px 26px; }
+.vc-ticket-row { display: flex; justify-content: space-between; gap: 14px; padding: 7px 0; font-size: 13px; }
+.vc-ticket-row + .vc-ticket-row { border-top: 1px solid var(--line); }
+.vc-ticket-row span:first-child { color: var(--muted); }
+.vc-ticket-row span:last-child { text-align: right; font-weight: 600; }
+
+/* Filtros del explorador agrupados */
+.vc-filter-group { display: grid; gap: 10px; }
+.vc-filter-label { font: 800 10px/1 Manrope, sans-serif; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+.vc-filter .vc-divider { margin: 4px 0; }
