@@ -8,8 +8,9 @@ La landing tiene un único propósito: llevar a cada persona a su recorrido corr
 
 Este documento define la versión de diseño y comportamiento que debe
 implementarse en la landing, el acceso, el registro y el directorio. Si entra
-en conflicto con decisiones anteriores de `04_TECHNICAL_ARCHITECTURE.md` o
-`06_SITEMAP_AND_USER_FLOWS.md` sobre esos temas, prevalece este documento. Al
+en conflicto con decisiones anteriores de
+`docs/architecture/04_TECHNICAL_ARCHITECTURE.md` o
+`docs/product/06_SITEMAP_AND_USER_FLOWS.md` sobre esos temas, prevalece este documento. Al
 implementar, esos documentos deberán actualizarse para reflejar el flujo final.
 
 ## Decisiones confirmadas

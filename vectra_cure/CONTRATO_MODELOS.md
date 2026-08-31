@@ -19,7 +19,7 @@ from models import db, Usuario, PerfilMedico, Cita, Resena
 `models.py` es la única capa de datos usada en ejecución. Las pruebas utilizan
 estas mismas clases con SQLite en memoria y nunca se conectan a PostgreSQL.
 
-## 2. Esquema SQL de referencia (04_TECHNICAL_ARCHITECTURE.md)
+## 2. Esquema SQL de referencia (docs/architecture/04_TECHNICAL_ARCHITECTURE.md)
 
 El doc 04 define las tablas en inglés (`users`, `doctor_profiles`, `appointments`,
 `reviews`). Este proyecto usa **nombres en español**. Mapeo:
@@ -98,7 +98,7 @@ Resena.medico              # -> PerfilMedico
 ## 5. Datos semilla
 
 Los define el compañero de BD (pacientes, especialistas por especialidad, citas y
-reseñas). Pueden basarse en la encuesta N = 25 (`05_MARKET_SURVEY_FORM.md`):
+reseñas). Pueden basarse en la encuesta N = 25 (`docs/product/05_MARKET_SURVEY_FORM.md`):
 distribución de método de pago ≈ 88 % digital / 12 % efectivo, reseñas sesgadas a 4–5★.
 Debe existir al menos **un usuario con rol `'admin'`** para entrar al panel.
 

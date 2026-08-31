@@ -333,8 +333,8 @@ El sistema comprueba que la cita pertenezca al usuario autenticado antes de most
 
 - `docs/prds/landing-medica-v2-v1.0-prd.md`
 - `docs/prds/plan-maestro-producto-vectra-cure-v1.0.md`
-- `03_USER_FLOW_AND_BOOKING.md`
-- `06_SITEMAP_AND_USER_FLOWS.md`
+- `docs/product/03_USER_FLOW_AND_BOOKING.md`
+- `docs/product/06_SITEMAP_AND_USER_FLOWS.md`
 - `FLUJO_DE_TRABAJO.md`
 
 ---
