@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 
 from app import app  # noqa: E402
-from models import Cita, PerfilMedico, Usuario, db  # noqa: E402
+from models import Cita, DisponibilidadMedica, PerfilMedico, Usuario, db  # noqa: E402
 import logica as L  # noqa: E402
 
 
@@ -46,7 +46,9 @@ class BaseTest(unittest.TestCase):
         admin.password_hash = L.hashear_password("admin123")
         medico = Usuario(nombre="Dr. House", email="house@x.com", telefono="2", rol="medico")
         medico.password_hash = L.hashear_password("x")
-        db.session.add_all([admin, medico])
+        paciente = Usuario(nombre="Ana", email="ana@x.com", telefono="9", rol="paciente")
+        paciente.password_hash = L.hashear_password("secret1")
+        db.session.add_all([admin, medico, paciente])
         db.session.flush()
         self.perfil = PerfilMedico(
             usuario_id=medico.id, especialidad="Odontología", num_colegiatura="MED-1",
@@ -54,16 +56,25 @@ class BaseTest(unittest.TestCase):
             precio_aprox=30.0,
         )
         db.session.add(self.perfil)
+        db.session.flush()
+        for dia in range(7):
+            db.session.add(DisponibilidadMedica(
+                perfil_medico_id=self.perfil.id, dia_semana=dia,
+                hora_inicio="08:00", hora_fin="20:00",
+            ))
         db.session.commit()
         self.perfil_id = self.perfil.id
 
     def _login_admin(self):
         return self.c.post("/login", data={"email": "admin@x.com", "password": "admin123"})
 
+    def _login_paciente(self):
+        return self.c.post("/login", data={"email": "ana@x.com", "password": "secret1"})
+
 
 class TestPublico(BaseTest):
     def test_health_paginas(self):
-        for url in ["/", "/directorio", f"/especialista/{self.perfil_id}", "/consultar-cita", "/registro", "/login"]:
+        for url in ["/", "/directorio", f"/especialista/{self.perfil_id}", "/registro", "/login"]:
             self.assertEqual(self.c.get(url).status_code, 200, url)
 
     def test_esquema_faltante_no_expone_el_depurador(self):
@@ -80,11 +91,9 @@ class TestPublico(BaseTest):
 
     def test_registro_y_login(self):
         r = self.c.post("/registro", data={
-            "tipo": "paciente", "nombre": "Ana", "telefono": "9", "email": "ana@x.com",
+            "tipo": "paciente", "nombre": "Ana Nueva", "telefono": "9", "email": "ana-nueva@x.com",
             "password": "secret1"}, follow_redirects=True)
-        self.assertIn("iniciar sesión", r.get_data(as_text=True).lower())
-        r = self.c.post("/login", data={"email": "ana@x.com", "password": "secret1"})
-        self.assertEqual(r.status_code, 302)
+        self.assertIn("explorar", r.get_data(as_text=True).lower())
 
     def test_registro_email_duplicado(self):
         datos = {"tipo": "paciente", "nombre": "A", "telefono": "9", "email": "dup@x.com", "password": "secret1"}
@@ -95,6 +104,7 @@ class TestPublico(BaseTest):
 
 class TestAgendamiento(BaseTest):
     def _agendar(self, hora="10:00", metodo="EFECTIVO_VENTANILLA"):
+        self._login_paciente()
         return self.c.post(f"/agendar/{self.perfil_id}", data={
             "paciente_nombre": "Ana", "paciente_email": "ana@x.com", "paciente_telefono": "9",
             "fecha": "2026-09-20", "hora": hora, "motivo": "control", "metodo_pago": metodo,
@@ -118,6 +128,19 @@ class TestAgendamiento(BaseTest):
         r = self.c.get(f"/cita/{cod}/ticket")
         self.assertEqual(r.mimetype, "text/markdown")
         self.assertIn("VECTRA CURE", r.get_data(as_text=True))
+
+    def test_no_permite_fecha_pasada(self):
+        self._login_paciente()
+        r = self.c.post(f"/agendar/{self.perfil_id}", data={
+            "fecha": "2020-01-01", "hora": "10:00", "metodo_pago": "EFECTIVO_VENTANILLA",
+        }, follow_redirects=True)
+        self.assertIn("ya pasó", r.get_data(as_text=True))
+        self.assertEqual(db.session.query(Cita).count(), 0)
+
+    def test_cita_pertenece_al_paciente_autenticado(self):
+        self._agendar()
+        cita = db.session.query(Cita).first()
+        self.assertEqual(cita.paciente.email, "ana@x.com")
 
     def test_cancelar_con_reverso(self):
         # PayPal Mock: agendar muestra la pasarela; se confirma en /pago/aprobar

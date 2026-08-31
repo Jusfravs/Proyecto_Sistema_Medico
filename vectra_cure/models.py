@@ -40,6 +40,7 @@ class Usuario(db.Model):
         uselist=False,
         cascade="all, delete-orphan",
     )
+    citas_paciente = db.relationship("Cita", back_populates="paciente")
 
     def __repr__(self):
         return f"<Usuario {self.email} ({self.rol})>"
@@ -97,6 +98,12 @@ class PerfilMedico(db.Model):
         order_by="Resena.fecha_creacion.desc()",
     )
     citas = db.relationship("Cita", back_populates="medico")
+    disponibilidades = db.relationship(
+        "DisponibilidadMedica",
+        back_populates="medico",
+        cascade="all, delete-orphan",
+        order_by="DisponibilidadMedica.dia_semana, DisponibilidadMedica.hora_inicio",
+    )
 
     def __repr__(self):
         return f"<PerfilMedico #{self.id} {self.especialidad}>"
@@ -110,6 +117,12 @@ class Cita(db.Model):
         db.Integer,
         db.ForeignKey("perfiles_medicos.id", ondelete="RESTRICT"),
         nullable=False,
+    )
+    paciente_usuario_id = db.Column(
+        db.Integer,
+        db.ForeignKey("usuarios.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
     )
     paciente_nombre = db.Column(db.String(120), nullable=False)
     paciente_email = db.Column(db.String(100), nullable=False)
@@ -167,9 +180,46 @@ class Cita(db.Model):
     )
 
     medico = db.relationship("PerfilMedico", back_populates="citas")
+    paciente = db.relationship("Usuario", back_populates="citas_paciente")
 
     def __repr__(self):
         return f"<Cita {self.codigo_ticket} {self.estado}>"
+
+
+class DisponibilidadMedica(db.Model):
+    """Horario estructurado por especialista; 0 representa lunes y 6 domingo."""
+
+    __tablename__ = "disponibilidades_medicas"
+
+    id = db.Column(db.Integer, primary_key=True)
+    perfil_medico_id = db.Column(
+        db.Integer,
+        db.ForeignKey("perfiles_medicos.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    dia_semana = db.Column(db.SmallInteger, nullable=False)
+    hora_inicio = db.Column(db.String(5), nullable=False)
+    hora_fin = db.Column(db.String(5), nullable=False)
+    activo = db.Column(db.Boolean, nullable=False, default=True)
+
+    __table_args__ = (
+        db.CheckConstraint("dia_semana BETWEEN 0 AND 6", name="ck_disponibilidad_dia"),
+        db.CheckConstraint("hora_inicio < hora_fin", name="ck_disponibilidad_rango"),
+        db.UniqueConstraint(
+            "perfil_medico_id", "dia_semana", "hora_inicio", "hora_fin",
+            name="uq_disponibilidad_bloque",
+        ),
+        db.Index(
+            "ix_disponibilidad_perfil_dia_activo",
+            "perfil_medico_id", "dia_semana", "activo",
+        ),
+    )
+
+    medico = db.relationship("PerfilMedico", back_populates="disponibilidades")
+
+    def __repr__(self):
+        return f"<DisponibilidadMedica {self.perfil_medico_id} d{self.dia_semana}>"
 
 
 class Resena(db.Model):
