@@ -2,32 +2,36 @@
 {% block titulo %}Reseñas — Admin{% endblock %}
 
 {% block content %}
-<h1 class="h4 mb-3">Reseñas</h1>
+<section class="vc-admin"><div class="vc-shell">
+  <div class="vc-admin-head"><h1>Reseñas</h1></div>
 
-<div class="vc-card p-0 table-responsive">
-  <table class="table align-middle mb-0">
-    <thead><tr><th>#</th><th>Especialista</th><th>Paciente</th><th>★</th><th>Comentario</th><th>Fecha</th><th></th></tr></thead>
-    <tbody>
-      {% for r in resenas %}
-      <tr>
-        <td>{{ r.id }}</td>
-        <td class="vc-data">{{ r.medico.usuario.nombre }}</td>
-        <td>{{ r.paciente_nombre }}</td>
-        <td>{{ '★' * r.calificacion }}</td>
-        <td class="vc-data">{{ r.comentario or '—' }}</td>
-        <td class="vc-data">{{ r.fecha_creacion.strftime('%Y-%m-%d') }}</td>
-        <td class="text-nowrap">
-          <a href="{{ url_for('admin_resena_editar', resena_id=r.id) }}" class="btn btn-sm btn-vc-outline">Editar</a>
-          <form class="d-inline" method="post" action="{{ url_for('admin_resena_eliminar', resena_id=r.id) }}"
-                onsubmit="return confirm('¿Eliminar reseña?')">
-            <button class="btn btn-sm btn-outline-danger">Eliminar</button>
-          </form>
-        </td>
-      </tr>
-      {% else %}
-      <tr><td colspan="7" class="text-center vc-data py-3">Sin reseñas.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
+  <div class="vc-table-wrap">
+    <table class="vc-table">
+      <thead><tr><th>#</th><th>Especialista</th><th>Paciente</th><th>★</th><th>Comentario</th><th>Fecha</th><th></th></tr></thead>
+      <tbody>
+        {% for r in resenas %}
+        <tr>
+          <td>{{ r.id }}</td>
+          <td class="vc-data">{{ r.medico.usuario.nombre }}</td>
+          <td>{{ r.paciente_nombre }}</td>
+          <td><span class="vc-stars">{{ '★' * r.calificacion }}</span></td>
+          <td class="vc-data">{{ r.comentario or '—' }}</td>
+          <td class="vc-data">{{ r.fecha_creacion.strftime('%Y-%m-%d') }}</td>
+          <td>
+            <div class="vc-cell-actions">
+              <a class="vc-button vc-button-outline vc-button-sm" href="{{ url_for('admin_resena_editar', resena_id=r.id) }}">Editar</a>
+              <form method="post" action="{{ url_for('admin_resena_eliminar', resena_id=r.id) }}"
+                    onsubmit="return confirm('¿Eliminar reseña?')">
+                <button class="vc-button vc-button-danger vc-button-sm">Eliminar</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7"><p class="vc-empty">Sin reseñas.</p></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div></section>
 {% endblock %}

@@ -1,0 +1,7 @@
+# Evita que git trate como texto los binarios del repo
+*.docx binary
+*.png binary
+*.jpeg binary
+*.jpg binary
+*.ico binary
+*.pdf binary

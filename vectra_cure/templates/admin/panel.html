@@ -2,24 +2,27 @@
 {% block titulo %}Panel de administración — Vectra Cure{% endblock %}
 
 {% block content %}
-<h1 class="h3 mb-4">⚙️ Panel de administración</h1>
+<section class="vc-admin"><div class="vc-shell">
+  <p class="vc-eyebrow">Administración</p>
+  <h1>⚙️ Panel de administración</h1>
 
-<div class="row g-3 mb-4">
-  {% for clave, etiqueta, icono in [
-      ('usuarios','Usuarios','👥'), ('especialistas','Especialistas','🩺'),
-      ('citas','Citas','📅'), ('resenas','Reseñas','⭐')] %}
-    <div class="col-6 col-md-3"><div class="vc-card p-3 text-center h-100">
-      <div style="font-size:1.6rem">{{ icono }}</div>
-      <div class="h3 mb-0" style="color:var(--vc-primary)">{{ resumen[clave] }}</div>
-      <div class="vc-data">{{ etiqueta }}</div>
-    </div></div>
-  {% endfor %}
-</div>
+  <div class="vc-panel-grid">
+    {% for clave, etiqueta, icono in [
+        ('usuarios','Usuarios','👥'), ('especialistas','Especialistas','🩺'),
+        ('citas','Citas','📅'), ('resenas','Reseñas','⭐')] %}
+      <article class="vc-panel-card">
+        <p class="vc-data">{{ icono }} {{ etiqueta }}</p>
+        <strong>{{ resumen[clave] }}</strong>
+      </article>
+    {% endfor %}
+  </div>
 
-<div class="list-group">
-  <a href="{{ url_for('admin_especialistas') }}" class="list-group-item list-group-item-action">Gestionar especialistas (crear / editar / desactivar / verificar)</a>
-  <a href="{{ url_for('admin_citas') }}" class="list-group-item list-group-item-action">Gestionar citas (cambiar estado / eliminar)</a>
-  <a href="{{ url_for('admin_resenas') }}" class="list-group-item list-group-item-action">Gestionar reseñas (editar / eliminar)</a>
-  <a href="{{ url_for('admin_usuarios') }}" class="list-group-item list-group-item-action">Gestionar usuarios (activar / desactivar)</a>
-</div>
+  <hr class="vc-divider">
+  <nav class="vc-list" aria-label="Accesos de administración">
+    <a href="{{ url_for('admin_especialistas') }}">Gestionar especialistas (crear / editar / desactivar / verificar)</a>
+    <a href="{{ url_for('admin_citas') }}">Gestionar citas (cambiar estado / eliminar)</a>
+    <a href="{{ url_for('admin_resenas') }}">Gestionar reseñas (editar / eliminar)</a>
+    <a href="{{ url_for('admin_usuarios') }}">Gestionar usuarios (activar / desactivar)</a>
+  </nav>
+</div></section>
 {% endblock %}
