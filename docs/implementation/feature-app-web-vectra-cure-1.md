@@ -143,9 +143,12 @@ Implementación de la **app web** de Vectra Cure con **Flask + plantillas Jinja 
 
 ## 8. Related Specifications / Further Reading
 
-- `../01_UI_UX_RESEARCH.md`, `../02_DESIGN_SYSTEM.md`, `../03_USER_FLOW_AND_BOOKING.md`,
-  `../04_TECHNICAL_ARCHITECTURE.md`, `../05_MARKET_SURVEY_FORM.md`, `../06_SITEMAP_AND_USER_FLOWS.md`.
-- `../vectra_cure/CONTRATO_MODELOS.md` — contrato de la capa de datos.
+- `../research/01_UI_UX_RESEARCH.md`, `../design/02_DESIGN_SYSTEM.md`,
+  `../product/03_USER_FLOW_AND_BOOKING.md`,
+  `../architecture/04_TECHNICAL_ARCHITECTURE.md`,
+  `../product/05_MARKET_SURVEY_FORM.md`,
+  `../product/06_SITEMAP_AND_USER_FLOWS.md`.
+- `../../vectra_cure/CONTRATO_MODELOS.md` — contrato de la capa de datos.
 - Curso POO: `C:/Users/Isaac/Desktop/POO/Cosas que faltaron/INSTRUCCIONES_CREAR_PROYECTO.md`,
   `.../Tutorial_Completo_PasoAPaso_Semana{1,2,3}.md`, `.../ActividadPUCE.pdf`,
   `C:/Users/Isaac/Desktop/POO/trabajo en clase POO/tienda_online/`.

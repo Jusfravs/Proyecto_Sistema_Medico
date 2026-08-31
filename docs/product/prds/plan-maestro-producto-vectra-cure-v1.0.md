@@ -85,7 +85,8 @@ Cuando se programe, disponibilidad y propiedad de citas se entregan en el mismo 
 
 Definir el proveedor concreto de teselas y la política de uso que aplique, el contrato del adaptador de rutas, la tabla de disponibilidad, la referencia de paciente en citas y la migración de datos demo.
 
-**Referencias:** `FLUJO_DE_TRABAJO.md` §6.1, `database/REVISION_ESQUEMA.md`, `vectra_cure/CONTRATO_MODELOS.md` y el PRD de landing.
+**Referencias:** `FLUJO_DE_TRABAJO.md` §6.1, `database/REVISION_ESQUEMA.md`,
+`vectra_cure/CONTRATO_MODELOS.md` y el PRD de landing.
 
 **Verificación:** el diagrama de datos, el SQL, los modelos y la documentación describen las mismas relaciones antes de abrir archivos de aplicación.
 
@@ -95,7 +96,7 @@ Definir el proveedor concreto de teselas y la política de uso que aplique, el c
 
 Aplicar los tokens de marca, tipografía, navegación, footer, botones, tarjetas, modales, drawer y reglas de movimiento. Crear componentes reutilizables en Flask, Jinja, CSS y JavaScript progresivo.
 
-**Referencias:** `02_DESIGN_SYSTEM.md` y el PRD de landing.
+**Referencias:** `docs/design/02_DESIGN_SYSTEM.md` y el PRD de landing.
 
 **Verificación:** contraste, foco visible, navegación por teclado, móvil y `prefers-reduced-motion`.
 
@@ -105,7 +106,8 @@ Aplicar los tokens de marca, tipografía, navegación, footer, botones, tarjetas
 
 Construir la portada informativa, hero dual, mapa abstracto, pila de especialistas, narrativa, carrusel y bloque de confianza. Convertir acceso y registro de paciente en modales; conservar el registro completo de especialistas.
 
-**Referencias:** `06_SITEMAP_AND_USER_FLOWS.md`, PRD de landing y `03_USER_FLOW_AND_BOOKING.md`.
+**Referencias:** `docs/product/06_SITEMAP_AND_USER_FLOWS.md`, PRD de landing y
+`docs/product/03_USER_FLOW_AND_BOOKING.md`.
 
 **Verificación:** paciente nuevo llega al explorador; especialista nuevo llega al explorador con su pin destacado; las rutas sin JavaScript siguen operativas.
 
@@ -115,7 +117,8 @@ Construir la portada informativa, hero dual, mapa abstracto, pila de especialist
 
 Implementar mapa, ubicación, filtros, radios, estado vacío, panel lateral y tarjetas expandibles. La tarjeta seleccionada se expande dentro del panel; el perfil detallado continúa en una página pública.
 
-**Referencias:** PRD de landing, `01_UI_UX_RESEARCH.md` y `06_SITEMAP_AND_USER_FLOWS.md`.
+**Referencias:** PRD de landing, `docs/research/01_UI_UX_RESEARCH.md` y
+`docs/product/06_SITEMAP_AND_USER_FLOWS.md`.
 
 **Verificación:** filtros combinables, estado reflejado en URL, alternativa sin permiso de ubicación, una sola ficha expandida y manejo de fallo del mapa o de la ruta.
 
@@ -125,7 +128,8 @@ Implementar mapa, ubicación, filtros, radios, estado vacío, panel lateral y ta
 
 Conectar el modal de agendamiento a disponibilidad estructurada. Impedir fechas pasadas en cliente y servidor. Rediseñar consulta, confirmación, cancelación, reverso y ticket según la propiedad de cada cita.
 
-**Referencias:** `03_USER_FLOW_AND_BOOKING.md`, modelo de datos y PRD de landing.
+**Referencias:** `docs/product/03_USER_FLOW_AND_BOOKING.md`, modelo de datos y
+PRD de landing.
 
 **Verificación:** una solicitud directa no crea citas pasadas, fuera de horario o pertenecientes a otra persona; cancelar conserva el historial esperado.
 
@@ -135,7 +139,8 @@ Conectar el modal de agendamiento a disponibilidad estructurada. Impedir fechas 
 
 Crear el panel compacto de especialista y terminar footer, soporte y políticas. Revisar todos los estados de carga, vacío, error y éxito en escritorio y móvil.
 
-**Referencias:** PRD de landing, `05_MARKET_SURVEY_FORM.md` y `FLUJO_DE_TRABAJO.md` §7.
+**Referencias:** PRD de landing, `docs/product/05_MARKET_SURVEY_FORM.md` y
+`FLUJO_DE_TRABAJO.md` §7.
 
 **Verificación:** pruebas automatizadas en verde, revisión manual de los flujos paciente/especialista y auditoría básica de accesibilidad.
 

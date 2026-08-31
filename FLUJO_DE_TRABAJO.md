@@ -17,10 +17,10 @@ El proyecto tiene tres capas y cada una vive en su carpeta:
 
 | Carpeta | Qué contiene | Responsable principal |
 | :--- | :--- | :--- |
-| `*.md` en la raíz (`01`–`06`) + `Informe_*.docx` | Documentación UX: investigación, sistema de diseño, flujos, arquitectura, encuesta | Los dos |
+| `docs/` | Documentación UX, producto, diseño, arquitectura, informes y planes, organizada por dominio | Los dos |
 | `database/` | Scripts SQL de PostgreSQL, esquema y su documentación | **Justin** |
 | `vectra_cure/` | Aplicación web Flask: rutas, lógica, plantillas, estilos, pruebas | **Isaac** |
-| `plan/` | Plan de implementación de la app | Isaac |
+| `scripts/` | Automatizaciones auxiliares, como la creación del formulario de encuesta | Isaac |
 
 **La frontera entre las dos capas es `vectra_cure/models.py`.** La app no define
 tablas ni ejecuta `db.create_all()` en producción: consume los modelos que
