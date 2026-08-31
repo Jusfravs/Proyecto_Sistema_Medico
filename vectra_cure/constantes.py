@@ -2,9 +2,9 @@
 constantes.py
 ─────────────
 Valores fijos del dominio de Vectra Cure. Tomados de:
-  · 04_TECHNICAL_ARCHITECTURE.md  (enums de rol, especialidad, pago, estado)
-  · 03_USER_FLOW_AND_BOOKING.md   (métodos de pago, motivos de cancelación, bloques horarios)
-  · 06_SITEMAP_AND_USER_FLOWS.md  (radios de búsqueda)
+  · docs/architecture/04_TECHNICAL_ARCHITECTURE.md  (enums de rol, especialidad, pago, estado)
+  · docs/product/03_USER_FLOW_AND_BOOKING.md        (métodos de pago, motivos de cancelación, bloques horarios)
+  · docs/product/06_SITEMAP_AND_USER_FLOWS.md       (radios de búsqueda)
 
 No hay nada de base de datos aquí: solo texto y tuplas que usan las rutas,
 la lógica y las plantillas.
@@ -25,7 +25,7 @@ ESPECIALIDADES = (
     "Pediatría",
 )
 
-# Íconos para las tarjetas del directorio (02_DESIGN_SYSTEM / 06_SITEMAP)
+# Íconos para las tarjetas del directorio (docs/design/02_DESIGN_SYSTEM / docs/product/06_SITEMAP)
 ICONO_ESPECIALIDAD = {
     "Medicina General": "🩺",
     "Odontología": "🦷",

@@ -11,7 +11,7 @@ Este directorio contiene el contexto de diseño de Vectra Cure preparado para tr
 5. Compara cada propuesta con el flujo y conserva solo lo que respete los criterios de este paquete.
 
 Para comprobar transiciones entre pantallas, consulta
-`../prds/flujos-producto-v2-v1.0.md`. Ese documento detalla los recorridos,
+`../../product/prds/flujos-producto-v2-v1.0.md`. Ese documento detalla los recorridos,
 estados y reglas que Stitch debe respetar.
 
 No pidas a Stitch que copie referencias externas ni que genere código de producción. Solicita prototipos visuales de alta fidelidad, flujos y estados.

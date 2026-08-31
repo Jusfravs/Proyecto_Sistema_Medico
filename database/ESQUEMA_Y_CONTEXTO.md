@@ -13,7 +13,7 @@ El esquema instalado se llama `public` y contiene cuatro tablas:
 - `citas`: reserva, pago simulado, estado y ticket;
 - `resenas`: calificación y comentario asociado a un especialista.
 
-La primera versión del diseño aparece en `04_TECHNICAL_ARCHITECTURE.md` con
+La primera versión del diseño aparece en `docs/architecture/04_TECHNICAL_ARCHITECTURE.md` con
 nombres en inglés. La implementación adoptó nombres en español y añadió reglas
 necesarias para autenticación, baja suave, cancelación y control de concurrencia.
 

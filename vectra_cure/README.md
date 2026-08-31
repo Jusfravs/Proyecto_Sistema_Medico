@@ -3,7 +3,7 @@
 Plataforma de geolocalización y **agendamiento médico**. App web con **Flask +
 plantillas Jinja + Bootstrap + sesiones**, siguiendo el patrón del proyecto del
 curso de POO (`tienda_online`). Cubre el **CRUD** de las 4 entidades del modelo
-de datos (doc `04_TECHNICAL_ARCHITECTURE.md`) y los flujos de agendamiento,
+de datos (doc `docs/architecture/04_TECHNICAL_ARCHITECTURE.md`) y los flujos de agendamiento,
 cancelación y ticket (docs `03` y `06`).
 
 > **Base de datos.** La ejecución utiliza `models.py` con PostgreSQL 18. El

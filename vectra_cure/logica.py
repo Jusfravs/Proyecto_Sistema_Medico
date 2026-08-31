@@ -6,8 +6,9 @@ instancias de los modelos (que entrega el compañero de BD) — aquí no hay
 ninguna clase ORM ni acceso a `db.session`. Así el `models.py` real puede
 ser puramente estructural (atributos + relaciones).
 
-Fuentes: 03_USER_FLOW_AND_BOOKING.md (pago, ticket, cancelación),
-04_TECHNICAL_ARCHITECTURE.md (enums), 02_DESIGN_SYSTEM.md (formato del recibo).
+Fuentes: docs/product/03_USER_FLOW_AND_BOOKING.md (pago, ticket, cancelación),
+docs/architecture/04_TECHNICAL_ARCHITECTURE.md (enums),
+docs/design/02_DESIGN_SYSTEM.md (formato del recibo).
 """
 
 from __future__ import annotations

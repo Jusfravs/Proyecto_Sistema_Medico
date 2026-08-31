@@ -6,7 +6,7 @@ Isaac Unapucha · Justin Cedeño
 
 Este manual explica **cómo ejecutar la aplicación, cómo usarla y qué hacer
 cuando algo falla**. Para el reparto de tareas y el flujo de Git, revisa
-[`FLUJO_DE_TRABAJO.md`](FLUJO_DE_TRABAJO.md).
+[`FLUJO_DE_TRABAJO.md`](../../FLUJO_DE_TRABAJO.md).
 
 ---
 
@@ -37,7 +37,7 @@ cuando algo falla**. Para el reparto de tareas y el flujo de Git, revisa
 **Extensiones de VS Code:** al abrir la carpeta del proyecto, VS Code ofrece
 instalar las del equipo automáticamente (*"Install All"*). Si no aparece el
 aviso, revisa la tabla de extensiones en
-[`FLUJO_DE_TRABAJO.md` §3.0](FLUJO_DE_TRABAJO.md#30-vs-code--extensiones-del-proyecto).
+[`FLUJO_DE_TRABAJO.md` §3.0](../../FLUJO_DE_TRABAJO.md#30-vs-code--extensiones-del-proyecto).
 
 **Verificar que PostgreSQL esté corriendo** (PowerShell):
 
@@ -538,10 +538,10 @@ o desde el panel de pruebas (ícono del matraz).
 
 | Documento | Contenido |
 | :--- | :--- |
-| [`FLUJO_DE_TRABAJO.md`](FLUJO_DE_TRABAJO.md) | Reparto de tareas y flujo de Git en equipo |
-| [`vectra_cure/README.md`](vectra_cure/README.md) | Estructura técnica de la aplicación |
-| [`vectra_cure/CONTRATO_MODELOS.md`](vectra_cure/CONTRATO_MODELOS.md) | Contrato entre la aplicación y la capa de datos |
-| [`database/README.md`](database/README.md) | Scripts SQL y orden de ejecución |
-| [`database/ESQUEMA_Y_CONTEXTO.md`](database/ESQUEMA_Y_CONTEXTO.md) | Modelo relacional explicado |
-| [`03_USER_FLOW_AND_BOOKING.md`](03_USER_FLOW_AND_BOOKING.md) | Flujo de reserva y formato del ticket |
-| [`06_SITEMAP_AND_USER_FLOWS.md`](06_SITEMAP_AND_USER_FLOWS.md) | Mapa de pantallas y diagramas de flujo |
+| [`FLUJO_DE_TRABAJO.md`](../../FLUJO_DE_TRABAJO.md) | Reparto de tareas y flujo de Git en equipo |
+| [`vectra_cure/README.md`](../../vectra_cure/README.md) | Estructura técnica de la aplicación |
+| [`vectra_cure/CONTRATO_MODELOS.md`](../../vectra_cure/CONTRATO_MODELOS.md) | Contrato entre la aplicación y la capa de datos |
+| [`database/README.md`](../../database/README.md) | Scripts SQL y orden de ejecución |
+| [`database/ESQUEMA_Y_CONTEXTO.md`](../../database/ESQUEMA_Y_CONTEXTO.md) | Modelo relacional explicado |
+| [`03_USER_FLOW_AND_BOOKING.md`](../product/03_USER_FLOW_AND_BOOKING.md) | Flujo de reserva y formato del ticket |
+| [`06_SITEMAP_AND_USER_FLOWS.md`](../product/06_SITEMAP_AND_USER_FLOWS.md) | Mapa de pantallas y diagramas de flujo |
