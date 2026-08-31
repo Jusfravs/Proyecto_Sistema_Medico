@@ -2,47 +2,46 @@
 {% block titulo %}Cita {{ cita.codigo_ticket }} — Vectra Cure{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-lg-8">
-    <div class="vc-card p-4">
-      <div class="d-flex justify-content-between align-items-start">
-        <div>
-          <h1 class="h4 mb-1">Ticket #{{ cita.codigo_ticket }}</h1>
-          <span class="vc-badge-verificado">{{ constantes.ESTADO_CITA_ETIQUETA[cita.estado] }}</span>
-        </div>
-        <span class="vc-data">{{ cita.fecha_creacion.strftime('%Y-%m-%d %H:%M') }}</span>
+<section class="vc-profile"><div class="vc-shell"><div class="vc-narrow-wide">
+  <article class="vc-card">
+    <div class="vc-card-head">
+      <div>
+        <p class="vc-eyebrow">Detalle de la reserva</p>
+        <h1>Ticket #{{ cita.codigo_ticket }}</h1>
+        <span class="vc-tag">{{ constantes.ESTADO_CITA_ETIQUETA[cita.estado] }}</span>
       </div>
+      <span class="vc-data">{{ cita.fecha_creacion.strftime('%Y-%m-%d %H:%M') }}</span>
+    </div>
 
-      <hr>
-      <div class="row">
-        <div class="col-md-6">
-          <h6>Paciente</h6>
-          <p class="vc-data">{{ cita.paciente_nombre }}<br>{{ cita.paciente_telefono }}<br>{{ cita.paciente_email }}</p>
-          <h6>Especialista</h6>
-          <p class="vc-data">{{ cita.medico.usuario.nombre }} · {{ cita.medico.especialidad }}<br>
-            {{ cita.medico.nombre_clinica }}<br>{{ cita.medico.direccion }}</p>
-        </div>
-        <div class="col-md-6">
-          <h6>Cita</h6>
-          <p class="vc-data">{{ cita.fecha.strftime('%Y-%m-%d') }} · {{ cita.hora }}<br>
-            Motivo: {{ cita.motivo or '—' }}<br>
-            Total aprox.: ${{ '%.2f'|format(cita.precio_aprox|float) }} USD</p>
-          <h6>Pago</h6>
-          <p class="vc-data">{{ constantes.METODO_PAGO_ETIQUETA[cita.metodo_pago] }}<br>
-            Estado: {{ constantes.ESTADO_PAGO_ETIQUETA[cita.estado_pago] }}</p>
-          {% if cita.motivo_cancelacion %}
-            <h6>Motivo de cancelación</h6><p class="vc-data">{{ cita.motivo_cancelacion }}</p>
-          {% endif %}
-        </div>
+    <hr class="vc-divider">
+    <div class="vc-form-grid">
+      <div>
+        <h4>Paciente</h4>
+        <p class="vc-data">{{ cita.paciente_nombre }}<br>{{ cita.paciente_telefono }}<br>{{ cita.paciente_email }}</p>
+        <h4>Especialista</h4>
+        <p class="vc-data">{{ cita.medico.usuario.nombre }} · {{ cita.medico.especialidad }}<br>
+          {{ cita.medico.nombre_clinica }}<br>{{ cita.medico.direccion }}</p>
       </div>
-
-      <div class="d-flex gap-2 mt-3">
-        <a href="{{ url_for('descargar_ticket', codigo=cita.codigo_ticket) }}" class="btn btn-vc-outline">⬇️ Volver a descargar ticket (.md)</a>
-        {% if cita.estado not in ['CANCELADA', 'COMPLETADA', 'NO_SHOW'] %}
-          <a href="{{ url_for('cancelar_cita', codigo=cita.codigo_ticket) }}" class="btn btn-outline-danger">❌ Cancelar cita</a>
+      <div>
+        <h4>Cita</h4>
+        <p class="vc-data">{{ cita.fecha.strftime('%Y-%m-%d') }} · {{ cita.hora }}<br>
+          Motivo: {{ cita.motivo or '—' }}<br>
+          Total aprox.: ${{ '%.2f'|format(cita.precio_aprox|float) }} USD</p>
+        <h4>Pago</h4>
+        <p class="vc-data">{{ constantes.METODO_PAGO_ETIQUETA[cita.metodo_pago] }}<br>
+          Estado: {{ constantes.ESTADO_PAGO_ETIQUETA[cita.estado_pago] }}</p>
+        {% if cita.motivo_cancelacion %}
+          <h4>Motivo de cancelación</h4><p class="vc-data">{{ cita.motivo_cancelacion }}</p>
         {% endif %}
       </div>
     </div>
-  </div>
-</div>
+
+    <div class="vc-row-actions">
+      <a class="vc-button vc-button-outline" href="{{ url_for('descargar_ticket', codigo=cita.codigo_ticket) }}">⬇️ Volver a descargar ticket (.md)</a>
+      {% if cita.estado not in ['CANCELADA', 'COMPLETADA', 'NO_SHOW'] %}
+        <a class="vc-button vc-button-danger" href="{{ url_for('cancelar_cita', codigo=cita.codigo_ticket) }}">❌ Cancelar cita</a>
+      {% endif %}
+    </div>
+  </article>
+</div></div></section>
 {% endblock %}

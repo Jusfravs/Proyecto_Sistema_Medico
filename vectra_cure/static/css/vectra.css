@@ -108,3 +108,108 @@ h3 { font-size: 22px; }
 :root .vc-doctor-image { display: block; width: 100%; height: 171px; object-fit: cover; object-position: center; }
 :root .vc-steps { grid-template-columns: repeat(4, 1fr) !important; }
 @media (max-width: 860px) { :root .vc-steps { grid-template-columns: 1fr !important; } }
+
+/* ==========================================================================
+   Primitivas adicionales para plantillas migradas V1 -> V2
+   ========================================================================== */
+
+/* Paginas centradas */
+.vc-narrow { width: min(760px, 100%); margin-inline: auto; }
+.vc-narrow-wide { width: min(880px, 100%); margin-inline: auto; }
+.vc-narrow-tight { width: min(440px, 100%); margin-inline: auto; }
+.vc-back-link { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 22px; color: var(--muted); font-size: 13px; font-weight: 800; }
+.vc-back-link:hover { color: var(--blue); }
+
+/* Card generica */
+.vc-card { padding: 26px; border: 1px solid var(--line); border-radius: 18px; background: #fff; box-shadow: var(--shadow-small); }
+.vc-card + .vc-card { margin-top: 20px; }
+.vc-card-lg { padding: 34px; border-radius: 22px; }
+.vc-card-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.vc-card h1 { font-size: 34px; }
+.vc-card h2 { font-size: 22px; }
+.vc-card h4 { margin: 16px 0 4px; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+
+/* Divisor, filas y bloques */
+.vc-divider { height: 1px; margin: 20px 0; border: 0; background: var(--line); }
+.vc-row-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
+.vc-stack-sm { display: grid; gap: 8px; }
+.vc-review { padding: 12px 0; border-top: 1px solid var(--line); }
+.vc-review:first-of-type { border-top: 0; }
+.vc-gallery { display: flex; gap: 10px; overflow-x: auto; padding: 4px 0; margin: 14px 0; }
+.vc-gallery img { height: 120px; border-radius: 12px; }
+
+/* Formularios */
+.vc-form { display: grid; gap: 15px; margin-top: 18px; }
+.vc-form > label { display: grid; gap: 6px; color: var(--ink); font-size: 12px; font-weight: 800; }
+.vc-form input, .vc-form select, .vc-form textarea { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); padding: 10px 12px; }
+.vc-form textarea { min-height: 96px; resize: vertical; }
+.vc-form input:focus, .vc-form select:focus, .vc-form textarea:focus { border-color: var(--blue); outline: 0; box-shadow: 0 0 0 3px rgba(39,110,241,.13); }
+.vc-form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.vc-form-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.vc-form-grid label { display: grid; gap: 6px; color: var(--ink); font-size: 12px; font-weight: 800; }
+.vc-col-full { grid-column: 1 / -1; }
+.vc-form-check { display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 700; }
+.vc-form-check input { width: auto; min-height: auto; }
+.vc-fieldset-title { margin: 8px 0 0; font-size: 16px; }
+
+/* Control segmentado (paciente / especialista) */
+.vc-segmented { display: flex; gap: 6px; margin: 20px 0; padding: 5px; border: 1px solid var(--line); border-radius: 12px; background: var(--mist); }
+.vc-segmented a { flex: 1; padding: 10px 12px; border-radius: 8px; text-align: center; color: var(--muted); font-size: 13px; font-weight: 800; }
+.vc-segmented a.is-active { background: var(--blue); color: #fff; }
+
+/* Etiquetas de estado */
+.vc-tag { display: inline-flex; align-items: center; gap: 5px; width: max-content; padding: 5px 10px; border-radius: 100px; background: var(--mist); color: var(--ink-soft); font-size: 11px; font-weight: 800; letter-spacing: .02em; text-transform: capitalize; }
+.vc-tag-ok { background: #e3f7f1; color: #176b5d; }
+.vc-tag-warn { background: #fff2e2; color: #9a5a1c; }
+.vc-tag-danger { background: #fff2ef; color: #8d2d1e; }
+.vc-verified { display: inline-flex; align-items: center; gap: 5px; width: max-content; padding: 5px 10px; border-radius: 100px; background: #e3f7f1; color: #176b5d; font-size: 11px; font-weight: 800; }
+
+/* Estrellas y marca de exito */
+.vc-stars { color: var(--sunrise); letter-spacing: 2px; font-size: 14px; }
+.vc-success-mark { display: grid; place-items: center; width: 68px; height: 68px; margin: 0 auto 18px; border-radius: 50%; background: #e3f7f1; color: #176b5d; font-size: 34px; font-weight: 800; }
+
+/* Desglose de importes */
+.vc-money-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 0; }
+.vc-money-row.is-total { font-weight: 800; font-size: 16px; }
+
+/* Boton peligro */
+.vc-button-danger { border-color: #d9482f; background: #d9482f; }
+.vc-button-danger:hover { background: #b73a24; box-shadow: 0 12px 20px rgba(217, 72, 47, .22); }
+
+/* Panel de administracion */
+.vc-admin { padding: 60px 0; }
+.vc-admin-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 22px; }
+.vc-admin-head h1 { font-size: 34px; }
+.vc-admin-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.vc-chip.is-active { background: var(--blue); color: #fff; }
+
+/* Lista de accesos */
+.vc-list { display: grid; gap: 8px; }
+.vc-list a { display: block; padding: 15px 18px; border: 1px solid var(--line); border-radius: 12px; background: #fff; font-weight: 700; font-size: 14px; }
+.vc-list a:hover { border-color: var(--blue); color: var(--blue); }
+
+/* Tabla de datos */
+.vc-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; }
+.vc-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.vc-table th { padding: 12px 14px; text-align: left; background: var(--mist); color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+.vc-table td { padding: 12px 14px; border-top: 1px solid var(--line); vertical-align: middle; }
+.vc-table tr.is-inactive td { opacity: .55; }
+.vc-table .vc-cell-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.vc-table select { min-height: 34px; border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; background: #fff; }
+.vc-table form { display: inline-flex; gap: 6px; align-items: center; }
+
+/* Spinner de proceso */
+.vc-spinner { display: inline-block; width: 30px; height: 30px; border: 3px solid var(--line); border-top-color: var(--blue); border-radius: 50%; animation: vc-spin .7s linear infinite; }
+@keyframes vc-spin { to { transform: rotate(360deg); } }
+.vc-processing { padding: 22px 0; text-align: center; }
+
+@media (max-width: 720px) {
+  .vc-form-grid, .vc-form-grid-3 { grid-template-columns: 1fr; }
+  .vc-admin-head { align-items: flex-start; }
+  .vc-card { padding: 20px; }
+}
+
+/* Espaciado que antes aportaban las utilidades de Bootstrap */
+.vc-result-extra .vc-data, .vc-panel-card .vc-data { margin: 4px 0; }
+.vc-booking legend { margin-top: 14px; }
+.vc-booking > button { margin-top: 16px; }

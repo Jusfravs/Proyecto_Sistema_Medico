@@ -2,33 +2,33 @@
 {% block titulo %}Mi perfil — Vectra Cure{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-lg-7">
-    <div class="vc-card p-4">
-      <h1 class="h4 mb-1">Mi perfil</h1>
-      <p class="vc-data">{{ usuario.email }} · <span class="vc-badge-verificado">{{ usuario.rol }}</span>
-        · desde {{ usuario.fecha_registro.strftime('%Y-%m-%d') }}</p>
+<section class="vc-profile"><div class="vc-shell"><div class="vc-narrow">
+  <article class="vc-card">
+    <p class="vc-eyebrow">Tu cuenta</p>
+    <h1>Mi perfil</h1>
+    <p class="vc-data">{{ usuario.email }} · desde {{ usuario.fecha_registro.strftime('%Y-%m-%d') }}</p>
+    <span class="vc-tag">{{ usuario.rol }}</span>
 
-      <form method="post" action="{{ url_for('editar_perfil') }}">
-        <div class="row g-3">
-          <div class="col-md-6"><label class="form-label">Nombre</label>
-            <input name="nombre" class="form-control" value="{{ usuario.nombre }}" required></div>
-          <div class="col-md-6"><label class="form-label">Teléfono</label>
-            <input name="telefono" class="form-control" value="{{ usuario.telefono }}" required></div>
-          <div class="col-md-6"><label class="form-label">Nueva contraseña (opcional)</label>
-            <input type="password" name="password" class="form-control" minlength="6"></div>
-        </div>
-        <button class="btn btn-vc mt-3">Guardar cambios</button>
-      </form>
+    <form class="vc-form" method="post" action="{{ url_for('editar_perfil') }}">
+      <div class="vc-form-grid">
+        <label>Nombre
+          <input name="nombre" value="{{ usuario.nombre }}" required></label>
+        <label>Teléfono
+          <input name="telefono" value="{{ usuario.telefono }}" required></label>
+        <label class="vc-col-full">Nueva contraseña (opcional)
+          <input type="password" name="password" minlength="6"></label>
+      </div>
+      <button class="vc-button">Guardar cambios</button>
+    </form>
 
-      {% if usuario.perfil_medico %}
-        <hr>
-        <h2 class="h6">Mi consultorio</h2>
-        <p class="vc-data mb-1">{{ usuario.perfil_medico.especialidad }} ·
-          {{ usuario.perfil_medico.nombre_clinica }}</p>
-        <a href="{{ url_for('especialista', medico_id=usuario.perfil_medico.id) }}" class="btn btn-vc-outline btn-sm">Ver mi ficha pública</a>
-      {% endif %}
-    </div>
-  </div>
-</div>
+    {% if usuario.perfil_medico %}
+      <hr class="vc-divider">
+      <h2>Mi consultorio</h2>
+      <p class="vc-data">{{ usuario.perfil_medico.especialidad }} · {{ usuario.perfil_medico.nombre_clinica }}</p>
+      <div class="vc-row-actions">
+        <a class="vc-button vc-button-outline vc-button-sm" href="{{ url_for('especialista', medico_id=usuario.perfil_medico.id) }}">Ver mi ficha pública</a>
+      </div>
+    {% endif %}
+  </article>
+</div></div></section>
 {% endblock %}

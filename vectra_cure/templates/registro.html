@@ -2,67 +2,65 @@
 {% block titulo %}Crear cuenta — Vectra Cure{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-lg-7">
-    <div class="vc-card p-4">
-      <h1 class="h4 mb-3">Crear cuenta</h1>
+<section class="vc-profile"><div class="vc-shell"><div class="vc-narrow-wide">
+  <article class="vc-card">
+    <p class="vc-eyebrow">Tu atención comienza aquí</p>
+    <h1>Crear cuenta</h1>
 
-      <div class="btn-group w-100 mb-4" role="group">
-        <a href="{{ url_for('registro', tipo='paciente') }}"
-           class="btn {{ 'btn-vc' if tipo != 'medico' else 'btn-vc-outline' }}">👤 Soy paciente</a>
-        <a href="{{ url_for('registro', tipo='medico') }}"
-           class="btn {{ 'btn-vc' if tipo == 'medico' else 'btn-vc-outline' }}">🩺 Soy especialista</a>
+    <nav class="vc-segmented" aria-label="Tipo de cuenta">
+      <a class="{{ 'is-active' if tipo != 'medico' }}" href="{{ url_for('registro', tipo='paciente') }}">👤 Soy paciente</a>
+      <a class="{{ 'is-active' if tipo == 'medico' }}" href="{{ url_for('registro', tipo='medico') }}">🩺 Soy especialista</a>
+    </nav>
+
+    <form class="vc-form" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="tipo" value="{{ tipo }}">
+
+      <h2 class="vc-fieldset-title">Datos personales</h2>
+      <div class="vc-form-grid">
+        <label>Nombre completo
+          <input name="nombre" value="{{ datos.get('nombre','') }}" required></label>
+        <label>Teléfono / WhatsApp
+          <input name="telefono" value="{{ datos.get('telefono','') }}" required></label>
+        <label>Correo electrónico
+          <input type="email" name="email" value="{{ datos.get('email','') }}" required></label>
+        <label>Contraseña (mín. 6)
+          <input type="password" name="password" minlength="6" required></label>
       </div>
 
-      <form method="post" enctype="multipart/form-data">
-        <input type="hidden" name="tipo" value="{{ tipo }}">
-
-        <h2 class="h6">Datos personales</h2>
-        <div class="row g-3">
-          <div class="col-md-6"><label class="form-label">Nombre completo</label>
-            <input name="nombre" class="form-control" value="{{ datos.get('nombre','') }}" required></div>
-          <div class="col-md-6"><label class="form-label">Teléfono / WhatsApp</label>
-            <input name="telefono" class="form-control" value="{{ datos.get('telefono','') }}" required></div>
-          <div class="col-md-6"><label class="form-label">Correo electrónico</label>
-            <input type="email" name="email" class="form-control" value="{{ datos.get('email','') }}" required></div>
-          <div class="col-md-6"><label class="form-label">Contraseña (mín. 6)</label>
-            <input type="password" name="password" class="form-control" minlength="6" required></div>
+      {% if tipo == 'medico' %}
+        <h2 class="vc-fieldset-title">Verificación de títulos y consultorio</h2>
+        <div class="vc-form-grid">
+          <label>Especialidad
+            <select name="especialidad" required>
+              {% for e in ESPECIALIDADES %}<option value="{{ e }}">{{ e }}</option>{% endfor %}
+            </select></label>
+          <label>N° de colegiatura
+            <input name="num_colegiatura" value="{{ datos.get('num_colegiatura','') }}" required></label>
+          <label>Nombre del consultorio
+            <input name="nombre_clinica" value="{{ datos.get('nombre_clinica','') }}" required></label>
+          <label>Precio aprox. de consulta (USD)
+            <input type="number" step="0.01" name="precio_aprox" value="{{ datos.get('precio_aprox','') }}" required></label>
+          <label class="vc-col-full">Dirección
+            <input name="direccion" value="{{ datos.get('direccion','') }}" required></label>
         </div>
+        <div class="vc-form-grid vc-form-grid-3">
+          <label>Latitud
+            <input name="latitud" placeholder="-0.180653"></label>
+          <label>Longitud
+            <input name="longitud" placeholder="-78.467834"></label>
+          <label>Horario de atención
+            <input name="horario_atencion" placeholder="09:00 - 18:30"></label>
+        </div>
+        <label>Foto del consultorio (opcional)
+          <input type="file" name="foto" accept="image/*"></label>
+        <p class="vc-data">En esta versión académica, tu perfil queda verificado y visible en el mapa al completar el registro.</p>
+      {% endif %}
 
-        {% if tipo == 'medico' %}
-          <h2 class="h6 mt-4">Verificación de títulos y consultorio</h2>
-          <div class="row g-3">
-            <div class="col-md-6"><label class="form-label">Especialidad</label>
-              <select name="especialidad" class="form-select" required>
-                {% for e in ESPECIALIDADES %}<option value="{{ e }}">{{ e }}</option>{% endfor %}
-              </select></div>
-            <div class="col-md-6"><label class="form-label">N° de colegiatura</label>
-              <input name="num_colegiatura" class="form-control" value="{{ datos.get('num_colegiatura','') }}" required></div>
-            <div class="col-md-6"><label class="form-label">Nombre del consultorio</label>
-              <input name="nombre_clinica" class="form-control" value="{{ datos.get('nombre_clinica','') }}" required></div>
-            <div class="col-md-6"><label class="form-label">Precio aprox. de consulta (USD)</label>
-              <input type="number" step="0.01" name="precio_aprox" class="form-control" value="{{ datos.get('precio_aprox','') }}" required></div>
-            <div class="col-12"><label class="form-label">Dirección</label>
-              <input name="direccion" class="form-control" value="{{ datos.get('direccion','') }}" required></div>
-            <div class="col-md-4"><label class="form-label">Latitud</label>
-              <input name="latitud" class="form-control" placeholder="-0.180653"></div>
-            <div class="col-md-4"><label class="form-label">Longitud</label>
-              <input name="longitud" class="form-control" placeholder="-78.467834"></div>
-            <div class="col-md-4"><label class="form-label">Horario de atención</label>
-              <input name="horario_atencion" class="form-control" placeholder="09:00 - 18:30"></div>
-            <div class="col-12"><label class="form-label">Foto del consultorio (opcional)</label>
-              <input type="file" name="foto" class="form-control" accept="image/*"></div>
-          </div>
-          <p class="vc-data mt-2">En esta versión académica, tu perfil queda
-            verificado y visible en el mapa al completar el registro.</p>
-        {% endif %}
-
-        <button class="btn btn-vc btn-lg w-100 mt-4">
-          {{ 'Completar registro de especialista' if tipo == 'medico' else 'Registrarme' }}
-        </button>
-      </form>
-      <p class="text-center vc-data mt-3">¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión</a></p>
-    </div>
-  </div>
-</div>
+      <button class="vc-button vc-button-block">
+        {{ 'Completar registro de especialista' if tipo == 'medico' else 'Registrarme' }}
+      </button>
+    </form>
+    <p class="vc-data">¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión</a></p>
+  </article>
+</div></div></section>
 {% endblock %}

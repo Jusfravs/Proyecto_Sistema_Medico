@@ -2,23 +2,19 @@
 {% block titulo %}Iniciar sesión — Vectra Cure{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-5">
-    <div class="vc-card vc-card-lg p-4">
-      <h1 class="h4 mb-3">Iniciar sesión</h1>
-      <form method="post">
-        <div class="mb-3">
-          <label class="form-label">Correo electrónico</label>
-          <input type="email" name="email" class="form-control" required>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Contraseña</label>
-          <input type="password" name="password" class="form-control" required>
-        </div>
-        <button class="btn btn-vc w-100">Ingresar</button>
-      </form>
-      <p class="text-center vc-data mt-3">¿No tienes cuenta? <a href="{{ url_for('registro') }}">Regístrate</a></p>
-    </div>
-  </div>
-</div>
+<section class="vc-profile"><div class="vc-shell"><div class="vc-narrow-tight">
+  <article class="vc-card">
+    <p class="vc-eyebrow">Bienvenido de vuelta</p>
+    <h1>Iniciar sesión</h1>
+    <form class="vc-form" method="post">
+      {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
+      <label>Correo electrónico
+        <input type="email" name="email" autocomplete="email" required></label>
+      <label>Contraseña
+        <input type="password" name="password" autocomplete="current-password" required></label>
+      <button class="vc-button vc-button-block">Ingresar</button>
+    </form>
+    <p class="vc-data">¿No tienes cuenta? <a href="{{ url_for('registro') }}">Regístrate</a></p>
+  </article>
+</div></div></section>
 {% endblock %}
