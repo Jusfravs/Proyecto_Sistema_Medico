@@ -25,7 +25,10 @@
   {% if usuario_actual and usuario_actual.rol == 'paciente' %}
   <div class="vc-modal" id="agendar-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="agendar-title"><div class="vc-modal-card"><button class="vc-modal-close" type="button" data-modal-close aria-label="Cerrar">{{ icono('x') }}</button><p class="vc-eyebrow">Reserva segura</p><h2 id="agendar-title">Agenda tu cita</h2><p class="vc-data" id="agendar-resumen"></p><form method="post" id="agendar-form"><label>Fecha<input type="date" name="fecha" id="agendar-fecha" min="{{ hoy }}" required></label><label>Hora<select name="hora" id="agendar-hora" required></select></label><p class="vc-data" id="agendar-hora-nota" aria-live="polite">Elige una fecha para ver las horas libres.</p><label>Motivo breve de consulta<input name="motivo" placeholder="Ej. Consulta de control"></label><fieldset><legend class="vc-data">Método de pago</legend><label><input type="radio" name="metodo_pago" value="PAYPAL_MOCK" checked> Pago digital simulado</label><label><input type="radio" name="metodo_pago" value="EFECTIVO_VENTANILLA"> Pago en ventanilla</label></fieldset><button class="vc-button vc-button-block" id="agendar-enviar">Continuar con mi reserva</button></form><p class="vc-data"><a id="agendar-pagina" href="{{ url_for('directorio') }}">Abrir la página completa de reserva</a></p></div></div>
   {% endif %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="{{ url_for('static', filename='js/vectra.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/vectra-anim.js') }}"></script>
   {% if usuario_actual and usuario_actual.rol == 'paciente' %}<script src="{{ url_for('static', filename='js/agendar-modal.js') }}"></script>{% endif %}
   {% block scripts %}{% endblock %}
 </body></html>

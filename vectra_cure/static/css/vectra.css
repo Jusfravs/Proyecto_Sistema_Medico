@@ -26,7 +26,8 @@ button, input, select { font: inherit; }
 .vc-skip:focus { top: 12px; }
 
 /* Navigation */
-.vc-nav { position: sticky; top: 0; z-index: 20; height: 76px; border-bottom: 1px solid rgba(215,229,231,.82); background: rgba(255,255,255,.87); backdrop-filter: blur(18px); }
+.vc-nav { position: sticky; top: 0; z-index: 20; height: 76px; border-bottom: 1px solid rgba(215,229,231,.82); background: rgba(255,255,255,.87); backdrop-filter: blur(18px); transition: height .25s ease, box-shadow .25s ease, background .25s ease; }
+.vc-nav.is-scrolled { height: 64px; background: rgba(255,255,255,.94); box-shadow: 0 6px 24px rgba(18,47,59,.07); }
 .vc-nav-inner { height: 100%; display: flex; align-items: center; gap: 30px; }
 .vc-logo { display: inline-flex; align-items: center; gap: 8px; font: 650 21px/1 "Instrument Sans", sans-serif; letter-spacing: -.05em; white-space: nowrap; }
 .vc-logo svg { width: 22px; height: 22px; flex: none; color: var(--blue); }
@@ -96,6 +97,8 @@ h3 { font-size: 22px; }
 
 @keyframes float { 50% { transform: translateY(-9px); } }
 [data-reveal] { opacity: 0; translate: 0 16px; transition: opacity .5s ease, translate .5s cubic-bezier(.2,.7,.2,1), transform .22s ease; } [data-reveal].is-visible { opacity: 1; translate: none; }
+/* Con GSAP activo, vectra-anim.js controla opacity/transform; la CSS no debe competir. */
+.has-gsap [data-reveal] { translate: none; transition: transform .22s ease; }
 
 /* Enlaces con subrayado animado y flecha que avanza (adaptado de Skiper UI · skiper40, MIT) */
 .vc-nav-links a, .vc-text-link { position: relative; }
