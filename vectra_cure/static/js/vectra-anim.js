@@ -67,8 +67,8 @@
         ease: 'power2.out', clearProps: 'transform',
       });
     }
-    const drawerFilter = document.querySelector('.vc-drawer .vc-filter, .vc-drawer form');
-    if (drawerFilter) g.from(drawerFilter, { opacity: 0, y: 10, duration: 0.4, ease: 'power2.out' });
+    const drawerFilter = document.querySelector('.vc-filter-panel');
+    if (drawerFilter) g.from(drawerFilter, { opacity: 0, y: 10, duration: 0.4, ease: 'power2.out', clearProps: 'transform' });
   }
 
   // Recalcular posiciones cuando terminen de cargar imágenes / el mapa.
