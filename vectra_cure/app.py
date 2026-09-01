@@ -104,6 +104,18 @@ def _guardar_imagen(archivo):
     return final
 
 
+def _mensaje_integridad(err, defecto="No se pudo guardar: hay un dato duplicado."):
+    """Traduce un IntegrityError a un mensaje que apunta al campo real."""
+    texto = str(getattr(err, "orig", err)).lower()
+    if "email" in texto:
+        return "Ya existe una cuenta con ese correo."
+    if "num_colegiatura" in texto:
+        return "Ya hay un especialista registrado con ese N° de colegiatura."
+    if "usuario_id" in texto:
+        return "Ese usuario ya tiene un perfil de especialista."
+    return defecto
+
+
 def _cita_por_codigo(codigo):
     cita = db.session.query(Cita).filter_by(codigo_ticket=codigo).first()
     if cita is None:
@@ -222,6 +234,14 @@ def registro():
             if db.session.query(Usuario).filter_by(email=email).first():
                 raise ValueError("Ya existe una cuenta con ese correo.")
 
+            colegiatura = None
+            if tipo == "medico":
+                colegiatura = L.texto_requerido(
+                    request.form.get("num_colegiatura"), "N° de colegiatura")
+                if db.session.query(PerfilMedico).filter_by(num_colegiatura=colegiatura).first():
+                    raise ValueError(
+                        "Ya hay un especialista registrado con ese N° de colegiatura.")
+
             usuario = Usuario(
                 nombre=nombre, email=email, telefono=telefono,
                 rol=C.ROL_MEDICO if tipo == "medico" else C.ROL_PACIENTE,
@@ -236,8 +256,7 @@ def registro():
                     usuario_id=usuario.id,
                     especialidad=L.opcion_valida(
                         request.form.get("especialidad"), C.ESPECIALIDADES, "especialidad"),
-                    num_colegiatura=L.texto_requerido(
-                        request.form.get("num_colegiatura"), "N° de colegiatura"),
+                    num_colegiatura=colegiatura,
                     nombre_clinica=L.texto_requerido(
                         request.form.get("nombre_clinica"), "nombre del consultorio"),
                     direccion=L.texto_requerido(request.form.get("direccion"), "dirección"),
@@ -261,9 +280,9 @@ def registro():
             db.session.rollback()
             flash(str(err), "danger")
             return render_template("registro.html", datos=request.form, tipo=tipo)
-        except IntegrityError:
+        except IntegrityError as err:
             db.session.rollback()
-            flash("Ya existe una cuenta con ese correo.", "danger")
+            flash(_mensaje_integridad(err), "danger")
             return render_template("registro.html", datos=request.form, tipo=tipo)
 
         _iniciar_sesion(usuario)
@@ -650,7 +669,7 @@ def admin_especialista_nuevo():
             return redirect(url_for("admin_especialistas"))
         except (ValueError, IntegrityError) as err:
             db.session.rollback()
-            flash(str(err) if isinstance(err, ValueError) else "Datos inválidos o duplicados.", "danger")
+            flash(str(err) if isinstance(err, ValueError) else _mensaje_integridad(err), "danger")
         return render_template("admin/especialista_form.html", perfil=None, datos=request.form)
 
     return render_template("admin/especialista_form.html", perfil=None, datos={})
@@ -683,6 +702,9 @@ def admin_especialista_editar(medico_id):
         except ValueError as err:
             db.session.rollback()
             flash(str(err), "danger")
+        except IntegrityError as err:
+            db.session.rollback()
+            flash(_mensaje_integridad(err), "danger")
     return render_template("admin/especialista_form.html", perfil=perfil, datos={})
 
 
