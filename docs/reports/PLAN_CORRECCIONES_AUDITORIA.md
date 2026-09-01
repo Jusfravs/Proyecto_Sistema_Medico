@@ -21,7 +21,9 @@ viewport corto (1366×625) y móvil (390–430 px).
 | B1 | **Cards de la landing recuperan animación y `:hover`.** El reveal usaba `transform: none` en `.is-visible`, que —con igual especificidad y más abajo en el archivo— anulaba los `transform` de `:hover` y del escalonado `nth-child`. Ahora el reveal anima con la propiedad `translate:` y no colisiona. | `static/css/vectra.css` | Bug equipo |
 | B2 | **El mapa ya no genera scroll vertical.** `.vc-explorer` tenía `height: calc(100vh - 76px)` + `min-height: 660px`; en pantallas de menos de ~740 px de alto el `min-height` desbordaba la ventana. Ahora `100dvh`, `min-height: 0`, `overflow: hidden` en `.vc-explorer` y `.vc-map`. | `static/css/vectra.css` | Bug equipo |
 | B3 | **El modal "Agendar" ya no queda tapado por el mapa.** `.vc-modal` estaba en `z-index: 100`; los controles de Leaflet llegan a `z-index: 1000`. Ahora `.vc-modal` está en `z-index: 1100` y `.vc-map` usa `isolation: isolate` para encerrar el apilamiento de Leaflet. Verificado: el modal se abre por encima del mapa y sus marcadores. | `static/css/vectra.css` | Bug equipo |
-| D1 | **Móvil: filtros y resultados antes que el mapa.** Se quitó `grid-row: 1` de `.vc-map` en móvil y se bajó su alto (`48vh` → `42vh`). | `static/css/vectra.css` | DESIGN-IS mov. #1 |
+| D1 | **Móvil: el mapa se muestra primero** (arriba), luego filtros y resultados — a pedido del equipo, que prevalece sobre la auditoría en este punto. `.vc-map { grid-row: 1 }` en móvil, alto `46vh`. | `static/css/vectra.css` | Feedback equipo |
+| D5 | **Animaciones de las cards recuperan fluidez.** El escalonado decorativo (`nth-child` con `translateY`) se acumulaba con el `translate` del reveal y con `:hover`, y `.vc-specialty-grid` con `overflow-x: auto` forzaba `overflow-y: auto` (scrollbar vertical por card). Ahora: rejilla responsiva sin scroll, sin escalonado, reveal con `translate` + `transform` en la transición para que el `:hover` no salte. | `static/css/vectra.css` | Feedback equipo |
+| ANIM | **Micro-interacciones (adaptadas de Skiper UI · skiper40).** Subrayado animado que entra desde el centro en los enlaces de navegación y `.vc-text-link`; flecha que avanza al pasar el ratón en las cards de especialidad y en el CTA del hero. CSS puro, sin dependencias (skiper40 es React/framer-motion; se portó la técnica). | `static/css/vectra.css` | Petición equipo |
 | D2 | **Contraste AA.** `--muted` `#667b83` (4.44:1) → `#5f7377` (≈4.9:1). Foco global: de `rgba(39,110,241,.35)` (~1.6:1) a `var(--blue-dark)` sólido (≥3:1), con anillo blanco interior en los botones llenos. | `static/css/vectra.css` | DESIGN-IS §Accesibilidad |
 | D3 | **CSS muerto eliminado.** `.vc-orbit`, `.vc-map-shape`, `.vc-pin*`, `.vc-doctor-cover*` (sin uso en ninguna plantilla). | `static/css/vectra.css` | DESIGN-IS §Rendimiento |
 | D4 | **Imágenes de tarjetas de especialista con `loading="lazy"` + `decoding="async"`.** | `templates/index.html` | DESIGN-IS mov. #5 |
@@ -120,12 +122,22 @@ El veredicto pide **rediseño**, no retoques, en la tarea primaria
 
 ### Otros detectados fuera de los informes
 
-- **Desbordamiento horizontal en `/directorio` en móvil** (~≤430 px): los
-  inputs de filtro sobresalen del viewport. Preexistente. Revisar el
-  `minmax`/`min-width` de la rejilla y el `padding` del drawer.
 - **`agendar.html`** referencia `bloques` en un bucle Jinja pero la ruta no
   pasa esa variable (render vacío silencioso). Cosmético; revisar al unificar
   la reserva (#10).
+- El desbordamiento horizontal móvil que se sospechó era un artefacto del
+  navegador headless sin emulación de dispositivo; con `Emulation.setDeviceMetricsOverride`
+  a 390 px, `document.scrollWidth == innerWidth`. No hay bug.
+
+### Nota sobre Skiper UI
+
+`npx shadcn add @skiper-ui/skiper40` **no aplica** aquí: Skiper UI son
+componentes React/Next.js + framer-motion y este proyecto es Flask + Jinja +
+CSS propio (sin `components.json` ni React). `skiper40` es un set de enlaces
+con subrayado animado; se portó la técnica (pseudo-elemento `::after` con
+`transform: scaleX`) a `vectra.css` sin dependencias. El resto del catálogo
+de Skiper que dependa de framer-motion/React requeriría migrar el front, que
+es parte del rediseño (Fase D).
 
 ---
 
