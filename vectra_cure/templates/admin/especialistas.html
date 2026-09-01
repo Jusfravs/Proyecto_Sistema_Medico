@@ -5,7 +5,7 @@
 <section class="vc-admin"><div class="vc-shell">
   <div class="vc-admin-head">
     <h1>Especialistas</h1>
-    <a class="vc-button" href="{{ url_for('admin_especialista_nuevo') }}">+ Nuevo especialista</a>
+    <a class="vc-button" href="{{ url_for('admin_especialista_nuevo') }}">{{ icono('plus') }} Nuevo especialista</a>
   </div>
 
   <div class="vc-table-wrap">
@@ -19,7 +19,7 @@
         <tr class="{{ '' if p.activo else 'is-inactive' }}">
           <td>{{ p.id }}</td>
           <td>{{ p.usuario.nombre }}
-            {% if p.verificado %}<span class="vc-verified">🛡️</span>{% endif %}</td>
+            {% if p.verificado %}<span class="vc-verified-inline" title="Especialista verificado">{{ icono('shield') }}</span>{% endif %}</td>
           <td>{{ p.especialidad }}</td>
           <td class="vc-data">{{ p.nombre_clinica }}</td>
           <td>${{ '%.2f'|format(p.precio_aprox|float) }}</td>
@@ -29,7 +29,7 @@
             <div class="vc-cell-actions">
               <a class="vc-button vc-button-outline vc-button-sm" href="{{ url_for('admin_especialista_editar', medico_id=p.id) }}">Editar</a>
               <form method="post" action="{{ url_for('admin_especialista_verificar', medico_id=p.id) }}">
-                <button class="vc-button vc-button-outline vc-button-sm">{{ 'Quitar 🛡️' if p.verificado else 'Verificar' }}</button>
+                <button class="vc-button vc-button-outline vc-button-sm">{{ 'Quitar verificación' if p.verificado else 'Verificar' }}</button>
               </form>
               <form method="post" action="{{ url_for('admin_especialista_desactivar', medico_id=p.id) }}"
                     onsubmit="return confirm('¿Cambiar estado de este especialista?')">

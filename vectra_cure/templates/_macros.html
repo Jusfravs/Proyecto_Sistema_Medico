@@ -1,7 +1,10 @@
 {# Componentes reutilizables #}
 
 {% macro estrellas(valor) -%}
-  <span class="vc-stars">{% for _ in range(valor|round(0,'floor')|int) %}★{% endfor %}{% for _ in range(5 - (valor|round(0,'floor')|int)) %}☆{% endfor %}</span>
+{%- set llenas = valor|round(0,'floor')|int -%}
+<span class="vc-stars" role="img" aria-label="{{ llenas }} de 5">
+{%- for i in range(5) -%}{{ icono('star', '' if i < llenas else 'is-off') }}{%- endfor -%}
+</span>
 {%- endmacro %}
 
 {% macro iniciales(nombre) -%}

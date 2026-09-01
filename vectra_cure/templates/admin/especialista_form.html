@@ -4,7 +4,7 @@
 
 {% block content %}
 <section class="vc-profile"><div class="vc-shell"><div class="vc-narrow-wide">
-  <a class="vc-back-link" href="{{ url_for('admin_especialistas') }}">← Volver</a>
+  <a class="vc-back-link" href="{{ url_for('admin_especialistas') }}">{{ icono('arrow-left') }} Volver</a>
 
   <article class="vc-card">
     <p class="vc-eyebrow">Administración</p>
@@ -55,7 +55,7 @@
         <input type="file" name="foto" accept="image/*"></label>
       <div class="vc-form-check">
         <input type="checkbox" name="verificado" id="verif" {{ 'checked' if (p and p.verificado) or (not p) }}>
-        <label for="verif">🛡️ Verificado</label>
+        <label for="verif">{{ icono('shield') }} Verificado</label>
       </div>
 
       <button class="vc-button vc-button-block">{{ 'Guardar cambios' if edicion else 'Crear especialista' }}</button>

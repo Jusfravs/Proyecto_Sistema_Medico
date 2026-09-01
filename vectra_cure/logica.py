@@ -150,7 +150,7 @@ def render_ticket(cita) -> str:
     m = cita.medico
     nombre_medico = m.usuario.nombre if m and m.usuario else "N/D"
     if m and m.verificado:
-        nombre_medico += f" (Verificado 🛡️ #{m.num_colegiatura})"
+        nombre_medico += f" (Verificado, colegiatura #{m.num_colegiatura})"
 
     if cita.estado_pago == C.ESTADO_PAGO_PAGADO:
         bloque_pago = "[X] PAGADO - TRANSACCIÓN SIMULADA (PayPal Mock)"
