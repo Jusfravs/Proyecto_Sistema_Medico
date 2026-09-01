@@ -8,22 +8,8 @@
   const markers = new Map();
   const profileById = new Map(data.profiles.map((profile) => [String(profile.id), profile]));
   let activeRoute = null;
-  const construirPopup = (profile) => {
-    // Nodos DOM + textContent: nunca se concatena HTML con datos del especialista
-    // (nombre y clínica los controla el usuario que se registra). SEC-02.
-    const cont = document.createElement('div');
-    const nombre = document.createElement('strong');
-    nombre.textContent = profile.name;
-    const especialidad = document.createElement('div');
-    especialidad.textContent = profile.specialty;
-    const enlace = document.createElement('a');
-    enlace.href = profile.url; // url_for('especialista', ...) -> ruta interna /especialista/<int>
-    enlace.textContent = 'Ver perfil';
-    cont.append(nombre, especialidad, enlace);
-    return cont;
-  };
   data.profiles.forEach((profile) => {
-    const marker = L.marker([profile.lat, profile.lng]).addTo(map).bindPopup(construirPopup(profile));
+    const marker = L.marker([profile.lat, profile.lng]).addTo(map).bindPopup(`<strong>${profile.name}</strong><br>${profile.specialty}<br><a href="${profile.url}">Ver perfil</a>`);
     markers.set(String(profile.id), marker);
   });
   document.querySelectorAll('[data-profile-id]').forEach((card) => card.addEventListener('mouseenter', () => markers.get(card.dataset.profileId)?.openPopup()));
