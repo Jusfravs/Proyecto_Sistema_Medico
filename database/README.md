@@ -18,6 +18,30 @@ la documentación de la base PostgreSQL usada por la aplicación Flask.
 | 1 | `01_schema_postgresql.sql` | Base `vectra_cure` | Crea las cinco tablas, claves, restricciones e índices. Se ejecuta una sola vez. |
 | 2 | `02_seed_demo_postgresql.sql` | Base `vectra_cure` | Inserta o actualiza los datos demostrativos. Puede repetirse. |
 | 3 | `03_verificar_postgresql.sql` | Base `vectra_cure` | Comprueba la base activa, las tablas, restricciones, índices y conteos. |
+| 4 | `04_migracion_v2_postgresql.sql` | Base `vectra_cure` | **Solo para una base V1 ya existente.** No destructivo (idempotente): añade `citas.paciente_usuario_id` con su clave foránea y crea `disponibilidades_medicas` con disponibilidad demostrativa. |
+
+## Actualizar una base V1 existente
+
+Si ya tenías la base creada antes de V2 (sin `disponibilidades_medicas` o sin
+`citas.paciente_usuario_id`), la aplicación mostrará "El servicio está
+temporalmente no disponible" al abrir `/directorio`. Para migrarla sin perder
+datos:
+
+- **Con el asistente** (desde la raíz del repo, con el venv activo):
+
+  ```
+  python scripts/migrar_db.py --check     # diagnóstico
+  python scripts/migrar_db.py             # aplica 04 + 03 si hace falta
+  ```
+
+  El asistente lee `vectra_cure/.env`, así que no expone la contraseña.
+
+- **O manualmente en pgAdmin 4:** ejecuta `04_migracion_v2_postgresql.sql` y
+  luego `03_verificar_postgresql.sql` (debe listar cinco tablas).
+
+Si prefieres empezar de cero y no te importan los datos de prueba:
+`python scripts/migrar_db.py --fresh` (o en pgAdmin: `DROP SCHEMA public
+CASCADE; CREATE SCHEMA public;` y vuelve a correr `01` → `02` → `03`).
 
 ## Instalación en pgAdmin 4
 
