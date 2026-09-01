@@ -28,9 +28,13 @@
   document.querySelector('.vc-menu-toggle')?.addEventListener('click', (event) => {
     const links = document.querySelector('.vc-nav-links'); const open = links.classList.toggle('is-open'); event.currentTarget.setAttribute('aria-expanded', String(open));
   });
-  const reveal = document.querySelectorAll('[data-reveal]');
-  const observer = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-visible'); observer.unobserve(e.target); } }), {threshold:.12}) : null;
-  reveal.forEach((node) => observer ? observer.observe(node) : node.classList.add('is-visible'));
+  // El reveal por scroll lo maneja vectra-anim.js si GSAP está disponible;
+  // si no, se usa este IntersectionObserver + la transición CSS.
+  if (!(window.gsap && window.ScrollTrigger)) {
+    const reveal = document.querySelectorAll('[data-reveal]');
+    const observer = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-visible'); observer.unobserve(e.target); } }), {threshold:.12}) : null;
+    reveal.forEach((node) => observer ? observer.observe(node) : node.classList.add('is-visible'));
+  }
   document.querySelectorAll('[data-result-card]').forEach((card) => card.addEventListener('click', (event) => {
     if (event.target.closest('a,button')) return;
     const already = card.classList.contains('is-expanded'); document.querySelectorAll('[data-result-card]').forEach((item) => item.classList.remove('is-expanded'));
