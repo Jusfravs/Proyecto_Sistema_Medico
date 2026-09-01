@@ -280,249 +280,340 @@
   // ============================ PÁGINA: WIREFRAME ============================
   const wf = upsertPage("WIREFRAME");
 
-  const SW = 300, SH = 620;
+  // Breakpoints: mismos 5 flujos en móvil, tablet y escritorio.
+  const BPS = [
+    { key: "movil", label: "Móvil · 375", w: 375 },
+    { key: "tablet", label: "Tablet · 768", w: 768 },
+    { key: "escritorio", label: "Escritorio · 1280", w: 1280 },
+  ];
 
-  // una "pantalla" wireframe: header + bloques
-  const screen = (title, blocks) => {
-    const s = box("screen/" + title, "VERTICAL", { gap: 10, pad: 16, radius: 14, bg: C.paper, stroke: C.wireDark, w: SW });
-    s.primaryAxisSizingMode = "FIXED"; s.resize(SW, SH); s.clipsContent = true;
-    add(s, add(box("hd", "HORIZONTAL", { gap: 8, pb: 8, justify: "SPACE_BETWEEN", align: "CENTER" }),
-      text("Vectra Cure", { size: 11, style: "Bold" }), text("Menu", { size: 12, color: C.wireText })));
-    blocks.forEach((bl) => {
-      if (bl.t === "h") s.appendChild(text(bl.x, { size: 17, style: "Bold" }));
-      else if (bl.t === "p") s.appendChild(text(bl.x, { size: 11, color: C.wireText, width: SW - 32 }));
-      else if (bl.t === "eyebrow") s.appendChild(text(bl.x.toUpperCase(), { size: 9, style: "Bold", color: C.blue, spacing: 10 }));
-      else if (bl.t === "field") {
-        const f = box("field", "VERTICAL", { gap: 4 });
-        add(f, text(bl.x, { size: 9, style: "Bold", color: C.wireText }), rect(SW - 32, 30, C.wire, 8, C.wireDark));
-        s.appendChild(f);
+  // ---- renderizador de bloques (usa el ancho para decidir columnas) --------
+  const renderBlock = (parent, bl, w, screenW) => {
+    if (screenW == null) screenW = w;
+    const inner = w - 32;
+    const isD = screenW >= 1024;   // layouts de 2+ columnas (breakpoint real de vectra.css: 860)
+    const cols2 = screenW >= 720;  // form-grid pasa a 2 columnas
+    if (bl.t === "h") parent.appendChild(text(bl.x, { size: isD ? 26 : 17, style: "Bold", width: inner }));
+    else if (bl.t === "p") parent.appendChild(text(bl.x, { size: isD ? 13 : 11, color: C.wireText, width: inner }));
+    else if (bl.t === "eyebrow") parent.appendChild(text(bl.x.toUpperCase(), { size: isD ? 10 : 9, style: "Bold", color: C.blue, spacing: 10 }));
+    else if (bl.t === "nav") {
+      const n = box("wnav", "HORIZONTAL", { pt: 10, pb: 10, pl: 4, pr: 4, w: inner, justify: "SPACE_BETWEEN", align: "CENTER", pb2: 0 });
+      const right = isD
+        ? add(box("nl", "HORIZONTAL", { gap: 16 }), text("Explorar", { size: 10, color: C.wireText }), text("Cómo funciona", { size: 10, color: C.wireText }), text("[ Soy paciente ]", { size: 10, style: "Bold", color: C.blue }))
+        : text("[ Menú ]", { size: 11, color: C.wireText });
+      add(n, text("Vectra Cure", { size: 12, style: "Bold" }), right);
+      parent.appendChild(n);
+      parent.appendChild(rect(inner, 1, C.wireDark));
+    }
+    else if (bl.t === "field") {
+      const f = box("field", "VERTICAL", { gap: 4 });
+      add(f, text(bl.x, { size: 9, style: "Bold", color: C.wireText }), rect(inner, 30, C.wire, 8, C.wireDark));
+      parent.appendChild(f);
+    }
+    else if (bl.t === "formgrid") {
+      const cols = cols2 ? 2 : 1;
+      const grid = box("fg", "VERTICAL", { gap: 10 });
+      for (let i = 0; i < bl.fields.length; i += cols) {
+        const rowF = box("fgr", "HORIZONTAL", { gap: 12, w: inner });
+        for (let j = i; j < Math.min(i + cols, bl.fields.length); j++) {
+          const cell = box("fgc", "VERTICAL", { gap: 4, w: (inner - (cols - 1) * 12) / cols });
+          add(cell, text(bl.fields[j], { size: 9, style: "Bold", color: C.wireText }),
+            rect((inner - (cols - 1) * 12) / cols, 30, C.wire, 8, C.wireDark));
+          rowF.appendChild(cell);
+        }
+        grid.appendChild(rowF);
       }
-      else if (bl.t === "btn") {
-        const b = box("wbtn", "HORIZONTAL", { pt: 10, pb: 10, radius: 9, bg: bl.kind === "outline" ? C.paper : C.blue, stroke: bl.kind === "outline" ? C.wireDark : C.blue, w: SW - 32, justify: "CENTER" });
-        add(b, text(bl.x, { size: 11, style: "Bold", color: bl.kind === "outline" ? C.ink : C.paper }));
-        s.appendChild(b);
+      parent.appendChild(grid);
+    }
+    else if (bl.t === "btn") {
+      const bw = isD ? Math.min(inner, 320) : inner;
+      const b = box("wbtn", "HORIZONTAL", { pt: 10, pb: 10, radius: 9, bg: bl.kind === "outline" ? C.paper : C.blue, stroke: bl.kind === "outline" ? C.wireDark : C.blue, w: bw, justify: "CENTER" });
+      add(b, text(bl.x, { size: 11, style: "Bold", color: bl.kind === "outline" ? C.ink : C.paper }));
+      parent.appendChild(b);
+    }
+    else if (bl.t === "map") parent.appendChild(rect(inner, bl.h || (isD ? 360 : 150), C.wire, 8, C.wireDark));
+    else if (bl.t === "img") parent.appendChild(rect(inner, bl.h || (isD ? 180 : 90), C.wire, 8, C.wireDark));
+    else if (bl.t === "card") {
+      const c = box("wcard", "VERTICAL", { gap: 5, pad: 10, radius: 9, bg: "#fbfdfd", stroke: C.wireDark, w: inner });
+      add(c, text(bl.x, { size: 11, style: "Bold" }));
+      (bl.lines || []).forEach((ln) => c.appendChild(text(ln, { size: 9, color: C.wireText, width: inner - 20 })));
+      parent.appendChild(c);
+    }
+    else if (bl.t === "rows") {
+      (bl.items || []).forEach((it) => {
+        const r = box("wrow", "HORIZONTAL", { gap: 8, pad: 8, radius: 8, bg: "#fbfdfd", stroke: C.wireDark, w: inner, align: "CENTER" });
+        add(r, rect(28, 28, C.wire, 6), text(it, { size: 10, color: C.wireText, width: inner - 58 }));
+        parent.appendChild(r);
+      });
+    }
+    else if (bl.t === "grid") {
+      const cols = isD ? (bl.cols || 3) : (cols2 ? 2 : 1);
+      const cw = (inner - (cols - 1) * 12) / cols;
+      const g = box("wg", "VERTICAL", { gap: 12 });
+      for (let i = 0; i < bl.items.length; i += cols) {
+        const rr = box("wgr", "HORIZONTAL", { gap: 12, w: inner });
+        for (let j = i; j < Math.min(i + cols, bl.items.length); j++) {
+          const it = bl.items[j];
+          const c = box("wgc", "VERTICAL", { gap: 5, pad: 10, radius: 9, bg: "#fbfdfd", stroke: C.wireDark, w: cw });
+          add(c, text(it.title, { size: 11, style: "Bold" }));
+          (it.lines || []).forEach((ln) => c.appendChild(text(ln, { size: 9, color: C.wireText, width: cw - 20 })));
+          rr.appendChild(c);
+        }
+        g.appendChild(rr);
       }
-      else if (bl.t === "map") s.appendChild(rect(SW - 32, bl.h || 150, C.wire, 8, C.wireDark));
-      else if (bl.t === "img") s.appendChild(rect(SW - 32, bl.h || 90, C.wire, 8, C.wireDark));
-      else if (bl.t === "card") {
-        const c = box("wcard", "VERTICAL", { gap: 5, pad: 10, radius: 9, bg: "#fbfdfd", stroke: C.wireDark, w: SW - 32 });
-        add(c, text(bl.x, { size: 11, style: "Bold" }));
-        (bl.lines || []).forEach((ln) => c.appendChild(text(ln, { size: 9, color: C.wireText })));
-        s.appendChild(c);
+      parent.appendChild(g);
+    }
+    else if (bl.t === "split") {
+      const left = bl.left || [], right = bl.right || [];
+      if (isD) {
+        const lw = bl.lw || Math.round(inner * 0.38), rw = inner - lw - 16;
+        const rowS = box("split", "HORIZONTAL", { gap: 16, w: inner });
+        const lc = box("sl", "VERTICAL", { gap: 8, w: lw });
+        const rc = box("sr", "VERTICAL", { gap: 8, w: rw });
+        left.forEach((b) => renderBlock(lc, b, lw + 32, screenW));
+        right.forEach((b) => renderBlock(rc, b, rw + 32, screenW));
+        add(rowS, lc, rc);
+        parent.appendChild(rowS);
+      } else {
+        const order = bl.mobileRightFirst ? right.concat(left) : left.concat(right);
+        order.forEach((b) => renderBlock(parent, b, w, screenW));
       }
-      else if (bl.t === "rows") {
-        (bl.items || []).forEach((it) => {
-          const r = box("wrow", "HORIZONTAL", { gap: 8, pad: 8, radius: 8, bg: "#fbfdfd", stroke: C.wireDark, w: SW - 32, align: "CENTER" });
-          add(r, rect(28, 28, C.wire, 6), text(it, { size: 10, color: C.wireText, width: SW - 90 }));
-          s.appendChild(r);
-        });
-      }
-      else if (bl.t === "spacer") s.appendChild(rect(1, bl.h || 8, "#ffffff"));
-    });
+    }
+    else if (bl.t === "spacer") parent.appendChild(rect(1, bl.h || 8, "#ffffff"));
+  };
+
+  const screen = (w, title, blocks) => {
+    const s = box("screen/" + title, "VERTICAL", { gap: 10, pad: 16, radius: 14, bg: C.paper, stroke: C.wireDark, w: w });
+    add(s, text(title, { size: 9, style: "Bold", color: C.wireText, spacing: 6 }));
+    blocks.forEach((bl) => renderBlock(s, bl, w));
     return s;
   };
 
   const arrow = () => {
-    const a = box("→", "HORIZONTAL", { justify: "CENTER", align: "CENTER" });
-    a.resize(40, SH); a.primaryAxisSizingMode = "FIXED"; a.counterAxisSizingMode = "FIXED";
+    const a = box("→", "HORIZONTAL", { pl: 10, pr: 10, justify: "CENTER", align: "CENTER" });
     add(a, text("→", { size: 22, color: C.muted }));
     return a;
   };
 
   const flow = (n, title, screens) => {
-    const f = box("Flujo " + n, "VERTICAL", { gap: 16 });
+    const f = box("Flujo " + n, "VERTICAL", { gap: 14 });
     add(f, add(box("lbl", "VERTICAL", { gap: 4 }),
       text("FLUJO " + n, { size: 11, style: "Bold", color: C.blue, spacing: 12 }),
-      text(title, { size: 22, style: "Bold" })));
+      text(title, { size: 20, style: "Bold" })));
     const row = box("screens", "HORIZONTAL", { gap: 0, align: "MIN" });
     screens.forEach((sc, i) => { row.appendChild(sc); if (i < screens.length - 1) row.appendChild(arrow()); });
     add(f, row);
     return f;
   };
 
-  const wfRoot = box("Vectra Cure · Wireframes", "VERTICAL", { gap: 72, pad: 64, bg: "#f7fafa" });
+  // ---- Definición de los 5 flujos, parametrizados por ancho `w` -----------
+  const flows = (w) => [
+    flow(1, "Registro de paciente", [
+      screen(w, "Landing", [
+        { t: "nav" },
+        { t: "split", mobileRightFirst: false, left: [
+          { t: "eyebrow", x: "Red de salud" },
+          { t: "h", x: "Encuentra atención confiable cerca de ti" },
+          { t: "p", x: "Compara especialistas verificados y agenda con información clara." },
+          { t: "btn", x: "Explorar especialistas" },
+          { t: "btn", x: "Soy paciente", kind: "outline" },
+        ], right: [{ t: "img", h: w >= 1024 ? 260 : 140 }] },
+      ]),
+      screen(w, "Modal · Crear cuenta", [
+        { t: "eyebrow", x: "Tu atención comienza aquí" },
+        { t: "h", x: "Crea tu cuenta de paciente" },
+        { t: "field", x: "Nombre completo" },
+        { t: "field", x: "Correo" },
+        { t: "field", x: "Teléfono" },
+        { t: "field", x: "Contraseña (mín. 6)" },
+        { t: "btn", x: "Crear cuenta y explorar" },
+        { t: "p", x: "¿Eres especialista? Publica tu consultorio" },
+      ]),
+      screen(w, "Registro (página)", [
+        { t: "h", x: "Crear cuenta" },
+        { t: "card", x: "[ Soy paciente ]   Soy especialista", lines: ["control segmentado"] },
+        { t: "eyebrow", x: "Datos personales" },
+        { t: "formgrid", fields: ["Nombre completo", "Teléfono / WhatsApp", "Correo electrónico", "Contraseña (mín. 6)"] },
+        { t: "btn", x: "Registrarme" },
+        { t: "p", x: "¿Ya tienes cuenta? Inicia sesión" },
+      ]),
+      screen(w, "Directorio (sesión iniciada)", [
+        { t: "nav" },
+        { t: "split", mobileRightFirst: true, lw: 360, left: [
+          { t: "eyebrow", x: "Directorio médico" },
+          { t: "field", x: "Buscar nombre o consultorio" },
+          { t: "field", x: "Especialidad · Orden" },
+          { t: "field", x: "Zona · Radio" },
+          { t: "btn", x: "Actualizar resultados" },
+          { t: "rows", items: ["Dra. Salazar · Dermatología · 2.1 km", "Dr. Andrade · M. General · 0.8 km"] },
+        ], right: [{ t: "map" }] },
+      ]),
+    ]),
+
+    flow(2, "Buscar y agendar una cita", [
+      screen(w, "Directorio", [
+        { t: "nav" },
+        { t: "split", mobileRightFirst: true, lw: 360, left: [
+          { t: "eyebrow", x: "Directorio médico" },
+          { t: "field", x: "Buscar" },
+          { t: "field", x: "Especialidad · Orden" },
+          { t: "field", x: "Zona · Radio" },
+          { t: "btn", x: "Actualizar resultados" },
+          { t: "rows", items: ["Especialista · rating · distancia", "Especialista · rating · distancia", "…"] },
+        ], right: [{ t: "map" }] },
+      ]),
+      screen(w, "Ficha de especialista", [
+        { t: "p", x: "← Volver al directorio" },
+        { t: "split", lw: 340, left: [
+          { t: "card", x: "✓ Verificado #MED-48001", lines: ["Dra. Valeria Salazar", "Dermatología · ★ 4.8 (12 reseñas)", "2.1 km · 09:00–18:30", "Consulta desde $45"] },
+          { t: "card", x: "Reservar", lines: ["Elige fecha y hora libre.", "[ Agendar cita rápida ]"] },
+        ], right: [
+          { t: "card", x: "Consultorio", lines: ["galería de fotos"] },
+          { t: "img", h: 90 },
+          { t: "card", x: "Reseñas de pacientes", lines: ["★★★★★ Camila — Atención rápida", "★★★★☆ Carlos — Consultorio limpio"] },
+          { t: "card", x: "Deja tu reseña", lines: ["Calificación + comentario", "[ Publicar reseña ]"] },
+        ] },
+      ]),
+      screen(w, "Agendar", [
+        { t: "eyebrow", x: "Reserva segura" },
+        { t: "h", x: "Agenda con Dra. Salazar" },
+        { t: "p", x: "Dermatología · Clínica Piel & Salud · aprox. $45" },
+        { t: "formgrid", fields: ["Fecha", "Hora (horas libres del día)"] },
+        { t: "field", x: "Motivo breve de consulta" },
+        { t: "card", x: "Método de pago", lines: ["( ) Pago digital simulado", "( ) Pago en ventanilla"] },
+        { t: "btn", x: "Continuar con mi reserva" },
+      ]),
+      screen(w, "Pago simulado", [
+        { t: "card", x: "Entorno simulado", lines: ["no se transfiere dinero real"] },
+        { t: "h", x: "Vectra Cure Pay" },
+        { t: "card", x: "Desglose", lines: ["Consulta Dermatología   $45.00", "Tasa de plataforma      $0.00", "Total                   $45.00"] },
+        { t: "btn", x: "Aprobar pago simulado" },
+        { t: "p", x: "Cancelar y volver" },
+      ]),
+      screen(w, "Cita confirmada", [
+        { t: "eyebrow", x: "Reserva completada" },
+        { t: "h", x: "¡Cita confirmada!" },
+        { t: "p", x: "Notificación enviada al teléfono y correo." },
+        { t: "card", x: "Comprobante VC-2026-XXXX", lines: ["Especialista · Especialidad", "Consultorio · Dirección", "Fecha y hora · Tolerancia 15 min", "Total aprox. · Estado de pago"] },
+        { t: "btn", x: "Descargar ticket (.md)" },
+        { t: "btn", x: "Ver / gestionar mi cita", kind: "outline" },
+      ]),
+    ]),
+
+    flow(3, "Agendar rápido desde el directorio", [
+      screen(w, "Directorio · card expandida", [
+        { t: "nav" },
+        { t: "split", mobileRightFirst: true, lw: 360, left: [
+          { t: "eyebrow", x: "Directorio médico" },
+          { t: "card", x: "Dra. Salazar · Dermatología", lines: ["2.1 km · ★ 4.8", "[ Ruta ]  [ Ver perfil ]  [ Agendar ]"] },
+          { t: "card", x: "Dr. Andrade · M. General", lines: ["0.8 km · ★ 5.0"] },
+        ], right: [{ t: "map" }] },
+      ]),
+      screen(w, "Modal · Agenda tu cita", [
+        { t: "eyebrow", x: "Reserva segura" },
+        { t: "h", x: "Agenda tu cita" },
+        { t: "p", x: "Dra. Salazar · Dermatología · aprox. $45" },
+        { t: "formgrid", fields: ["Fecha", "Hora"] },
+        { t: "field", x: "Motivo breve de consulta" },
+        { t: "card", x: "Método de pago", lines: ["( ) Digital simulado    ( ) Ventanilla"] },
+        { t: "btn", x: "Continuar con mi reserva" },
+        { t: "p", x: "Abrir la página completa de reserva" },
+      ]),
+      screen(w, "Pago simulado", [
+        { t: "h", x: "Vectra Cure Pay" },
+        { t: "card", x: "Total  $45.00 USD", lines: ["Consulta  $45.00", "Tasa      $0.00"] },
+        { t: "btn", x: "Aprobar pago simulado" },
+      ]),
+      screen(w, "Cita confirmada", [
+        { t: "h", x: "¡Cita confirmada!" },
+        { t: "card", x: "Comprobante VC-2026-XXXX", lines: ["Ticket con todos los datos de la cita"] },
+        { t: "btn", x: "Descargar ticket (.md)" },
+      ]),
+    ]),
+
+    flow(4, "Consultar y cancelar una cita", [
+      screen(w, "Mis citas", [
+        { t: "nav" },
+        { t: "eyebrow", x: "Tu atención organizada" },
+        { t: "h", x: "Mis citas" },
+        { t: "p", x: "Solo tú ves las reservas de tu cuenta." },
+        { t: "grid", cols: 2, items: [
+          { title: "Confirmada · Dra. Salazar", lines: ["Dermatología · 12/09 14:00", "Consultorio · $45 aprox.", "[ Ver cita ]"] },
+          { title: "Completada · Dr. Andrade", lines: ["M. General · 02/09 10:00", "[ Ver cita ]"] },
+        ] },
+      ]),
+      screen(w, "Detalle de la cita", [
+        { t: "eyebrow", x: "Detalle de la reserva" },
+        { t: "h", x: "Ticket #VC-2026-XXXX" },
+        { t: "card", x: "Estado: Confirmada", lines: ["Paciente: nombre · teléfono · correo", "Especialista · Especialidad · Consultorio", "Fecha/hora · Motivo · Total aprox.", "Pago: método y estado"] },
+        { t: "btn", x: "Volver a descargar ticket", kind: "outline" },
+        { t: "btn", x: "Cancelar cita", kind: "outline" },
+      ]),
+      screen(w, "Cancelar cita", [
+        { t: "eyebrow", x: "Cancelación" },
+        { t: "h", x: "Cancelar cita #VC-2026-XXXX" },
+        { t: "p", x: "Si el pago fue digital se emite reverso simulado y el turno se libera." },
+        { t: "card", x: "Motivo", lines: ["( ) Imprevisto personal", "( ) Encontré atención más rápido", "( ) Ya no tengo síntomas", "( ) Costo o método de pago", "( ) Otros → detalle"] },
+        { t: "btn", x: "Confirmar cancelación" },
+      ]),
+      screen(w, "Procesando", [
+        { t: "spacer", h: 120 },
+        { t: "card", x: "Procesando…", lines: ["Emitiendo reverso y liberando cupo médico"] },
+        { t: "spacer", h: 120 },
+      ]),
+      screen(w, "Cancelada + reverso", [
+        { t: "h", x: "Ticket #VC-2026-XXXX" },
+        { t: "card", x: "Estado: Cancelada", lines: ["Motivo de cancelación registrado", "Pago: Reembolso simulado emitido"] },
+        { t: "p", x: "El turno vuelve a estar disponible para otros pacientes." },
+      ]),
+    ]),
+
+    flow(5, "Alta de especialista", [
+      screen(w, "Landing · para especialistas", [
+        { t: "nav" },
+        { t: "eyebrow", x: "También para especialistas" },
+        { t: "h", x: "Haz visible tu atención donde tus pacientes buscan" },
+        { t: "p", x: "Publica tu consultorio y organiza tu disponibilidad." },
+        { t: "btn", x: "Publicar mi consultorio" },
+      ]),
+      screen(w, "Registro (tipo médico)", [
+        { t: "h", x: "Crear cuenta" },
+        { t: "card", x: "Soy paciente   [ Soy especialista ]" },
+        { t: "eyebrow", x: "Datos personales" },
+        { t: "formgrid", fields: ["Nombre completo", "Teléfono / WhatsApp", "Correo electrónico", "Contraseña"] },
+        { t: "eyebrow", x: "Verificación de títulos y consultorio" },
+        { t: "formgrid", fields: ["Especialidad", "N° de colegiatura", "Nombre del consultorio", "Precio aprox. (USD)", "Dirección", "Latitud", "Longitud", "Horario de atención"] },
+        { t: "field", x: "Foto del consultorio (opcional)" },
+        { t: "btn", x: "Completar registro de especialista" },
+      ]),
+      screen(w, "Panel profesional", [
+        { t: "eyebrow", x: "Panel profesional" },
+        { t: "h", x: "Todo lo esencial, de un vistazo" },
+        { t: "grid", cols: 3, items: [
+          { title: "Próximas citas: 3", lines: ["12/09 14:00 · Camila M.", "13/09 10:00 · Carlos P."] },
+          { title: "Balance estimado: $180.00", lines: ["Suma de reservas confirmadas"] },
+          { title: "Visibilidad: Activa", lines: ["★ 4.8 · 12 reseñas", "Ver mi perfil público →"] },
+        ] },
+      ]),
+    ]),
+  ];
+
+  // ---- Página: una sección por breakpoint, cada una con los 5 flujos ------
+  const wfRoot = box("Vectra Cure · Wireframes", "VERTICAL", { gap: 96, pad: 64, bg: "#f7fafa" });
   wfRoot.x = 0; wfRoot.y = 0;
   add(wfRoot, add(box("h", "VERTICAL", { gap: 6 }),
     text("VECTRA CURE", { size: 11, style: "Bold", color: C.blue, spacing: 14 }),
-    text("Wireframes — 5 flujos", { size: 40, style: "Bold" }),
-    text("Low-fi. Estructura y navegación, no diseño visual.", { size: 13, color: C.muted })));
+    text("Wireframes — 5 flujos × 3 breakpoints", { size: 40, style: "Bold" }),
+    text("Low-fi. Estructura y navegación, no diseño visual. Móvil / Tablet / Escritorio.", { size: 13, color: C.muted })));
 
-  // ---- Flujo 1: Registro de paciente ----
-  add(wfRoot, flow(1, "Registro de paciente", [
-    screen("Landing", [
-      { t: "eyebrow", x: "Red de salud" },
-      { t: "h", x: "Encuentra atención confiable cerca de ti" },
-      { t: "p", x: "Compara especialistas verificados y agenda con información clara." },
-      { t: "img", h: 130 },
-      { t: "btn", x: "Explorar especialistas" },
-      { t: "btn", x: "Soy paciente", kind: "outline" },
-    ]),
-    screen("Modal · Crear cuenta", [
-      { t: "eyebrow", x: "Tu atención comienza aquí" },
-      { t: "h", x: "Crea tu cuenta de paciente" },
-      { t: "field", x: "Nombre completo" },
-      { t: "field", x: "Correo" },
-      { t: "field", x: "Teléfono" },
-      { t: "field", x: "Contraseña (mín. 6)" },
-      { t: "btn", x: "Crear cuenta y explorar" },
-      { t: "p", x: "¿Eres especialista? Publica tu consultorio" },
-    ]),
-    screen("Registro (página)", [
-      { t: "h", x: "Crear cuenta" },
-      { t: "card", x: "[ Soy paciente ] · Soy especialista", lines: ["control segmentado"] },
-      { t: "eyebrow", x: "Datos personales" },
-      { t: "field", x: "Nombre completo" },
-      { t: "field", x: "Teléfono / WhatsApp" },
-      { t: "field", x: "Correo electrónico" },
-      { t: "field", x: "Contraseña" },
-      { t: "btn", x: "Registrarme" },
-    ]),
-    screen("Directorio (sesión iniciada)", [
-      { t: "eyebrow", x: "Directorio médico" },
-      { t: "h", x: "Encuentra atención cerca de ti" },
-      { t: "field", x: "Buscar nombre o consultorio" },
-      { t: "field", x: "Especialidad · Orden" },
-      { t: "map", h: 120 },
-      { t: "rows", items: ["Dra. Salazar · Dermatología · 2.1 km", "Dr. Andrade · M. General · 0.8 km"] },
-    ]),
-  ]));
-
-  // ---- Flujo 2: Buscar y agendar (completo) ----
-  add(wfRoot, flow(2, "Buscar y agendar una cita", [
-    screen("Directorio", [
-      { t: "eyebrow", x: "Directorio médico" },
-      { t: "field", x: "Buscar" },
-      { t: "field", x: "Especialidad · Orden · Zona · Radio" },
-      { t: "btn", x: "Actualizar resultados" },
-      { t: "map", h: 110 },
-      { t: "rows", items: ["Especialista + rating + distancia", "…"] },
-    ]),
-    screen("Ficha de especialista", [
-      { t: "p", x: "← Volver al directorio" },
-      { t: "card", x: "✓ Verificado #MED-48001", lines: ["Dra. Valeria Salazar", "Dermatología · ★ 4.8 (12)", "2.1 km · 09:00–18:30 · desde $45"] },
-      { t: "btn", x: "Agendar cita" },
-      { t: "img", h: 70 },
-      { t: "card", x: "Reseñas de pacientes", lines: ["★★★★★ Camila — Atención rápida", "★★★★☆ Carlos — Consultorio limpio"] },
-    ]),
-    screen("Agendar", [
-      { t: "eyebrow", x: "Reserva segura" },
-      { t: "h", x: "Agenda con Dra. Salazar" },
-      { t: "field", x: "Fecha" },
-      { t: "field", x: "Hora (horas libres del día)" },
-      { t: "field", x: "Motivo breve" },
-      { t: "card", x: "Método de pago", lines: ["( ) Pago digital simulado", "( ) Pago en ventanilla"] },
-      { t: "btn", x: "Continuar con mi reserva" },
-    ]),
-    screen("Pago simulado", [
-      { t: "card", x: "Entorno simulado", lines: ["no se transfiere dinero real"] },
-      { t: "h", x: "Vectra Cure Pay" },
-      { t: "card", x: "Desglose", lines: ["Consulta Dermatología  $45.00", "Tasa de plataforma     $0.00", "Total                  $45.00"] },
-      { t: "btn", x: "Aprobar pago simulado" },
-      { t: "p", x: "Cancelar y volver" },
-    ]),
-    screen("Cita confirmada", [
-      { t: "eyebrow", x: "Reserva completada" },
-      { t: "h", x: "¡Cita confirmada!" },
-      { t: "p", x: "Notificación enviada al teléfono y correo." },
-      { t: "card", x: "Comprobante VC-2026-XXXX", lines: ["Especialista · Especialidad", "Consultorio · Dirección", "Fecha y hora · Total · Pago"] },
-      { t: "btn", x: "Descargar ticket (.md)" },
-      { t: "btn", x: "Ver / gestionar mi cita", kind: "outline" },
-    ]),
-  ]));
-
-  // ---- Flujo 3: Agendar rápido (modal) ----
-  add(wfRoot, flow(3, "Agendar rápido desde el directorio", [
-    screen("Directorio · card", [
-      { t: "eyebrow", x: "Directorio médico" },
-      { t: "map", h: 110 },
-      { t: "card", x: "Dra. Salazar · Dermatología", lines: ["2.1 km · ★ 4.8", "[ Ruta ]  [ Ver perfil ]  [ Agendar ]"] },
-      { t: "card", x: "Dr. Andrade · M. General", lines: ["0.8 km · ★ 5.0"] },
-    ]),
-    screen("Modal · Agenda tu cita", [
-      { t: "eyebrow", x: "Reserva segura" },
-      { t: "h", x: "Agenda tu cita" },
-      { t: "p", x: "Dra. Salazar · Dermatología · aprox. $45" },
-      { t: "field", x: "Fecha" },
-      { t: "field", x: "Hora" },
-      { t: "field", x: "Motivo breve" },
-      { t: "card", x: "Método de pago", lines: ["( ) Digital   ( ) Ventanilla"] },
-      { t: "btn", x: "Continuar con mi reserva" },
-      { t: "p", x: "Abrir la página completa de reserva" },
-    ]),
-    screen("Pago simulado", [
-      { t: "h", x: "Vectra Cure Pay" },
-      { t: "card", x: "Total  $45.00 USD", lines: ["Consulta  $45.00", "Tasa      $0.00"] },
-      { t: "btn", x: "Aprobar pago simulado" },
-    ]),
-    screen("Cita confirmada", [
-      { t: "h", x: "¡Cita confirmada!" },
-      { t: "card", x: "Comprobante VC-2026-XXXX", lines: ["Ticket con todos los datos"] },
-      { t: "btn", x: "Descargar ticket (.md)" },
-    ]),
-  ]));
-
-  // ---- Flujo 4: Consultar / cancelar cita ----
-  add(wfRoot, flow(4, "Consultar y cancelar una cita", [
-    screen("Mis citas", [
-      { t: "eyebrow", x: "Tu atención organizada" },
-      { t: "h", x: "Mis citas" },
-      { t: "p", x: "Solo tú ves las reservas de tu cuenta." },
-      { t: "card", x: "Confirmada · Dra. Salazar", lines: ["Dermatología · 12/09 14:00", "Consultorio · $45 aprox.", "[ Ver cita ]"] },
-      { t: "card", x: "Completada · Dr. Andrade", lines: ["M. General · 02/09 10:00"] },
-    ]),
-    screen("Detalle de la cita", [
-      { t: "eyebrow", x: "Detalle de la reserva" },
-      { t: "h", x: "Ticket #VC-2026-XXXX" },
-      { t: "card", x: "Estado: Confirmada", lines: ["Paciente · Especialista", "Fecha/hora · Motivo · Total", "Pago: método y estado"] },
-      { t: "btn", x: "Volver a descargar ticket", kind: "outline" },
-      { t: "btn", x: "Cancelar cita", kind: "outline" },
-    ]),
-    screen("Cancelar cita", [
-      { t: "eyebrow", x: "Cancelación" },
-      { t: "h", x: "Cancelar cita #VC-2026-XXXX" },
-      { t: "p", x: "Si el pago fue digital se emite reverso simulado y el turno se libera." },
-      { t: "card", x: "Motivo", lines: ["( ) Imprevisto personal", "( ) Encontré atención más rápido", "( ) Ya no tengo síntomas", "( ) Costo / pago", "( ) Otros → detalle"] },
-      { t: "btn", x: "Confirmar cancelación" },
-    ]),
-    screen("Procesando", [
-      { t: "spacer", h: 180 },
-      { t: "p", x: "Procesando reverso y liberando cupo médico…" },
-    ]),
-    screen("Cancelada + reverso", [
-      { t: "h", x: "Ticket #VC-2026-XXXX" },
-      { t: "card", x: "Estado: Cancelada", lines: ["Motivo de cancelación registrado", "Pago: Reembolso simulado emitido"] },
-      { t: "p", x: "El turno vuelve a estar disponible." },
-    ]),
-  ]));
-
-  // ---- Flujo 5: Alta de especialista ----
-  add(wfRoot, flow(5, "Alta de especialista", [
-    screen("Landing · para especialistas", [
-      { t: "eyebrow", x: "También para especialistas" },
-      { t: "h", x: "Haz visible tu atención donde tus pacientes buscan" },
-      { t: "p", x: "Publica tu consultorio y organiza tu disponibilidad." },
-      { t: "btn", x: "Publicar mi consultorio" },
-    ]),
-    screen("Registro (tipo médico)", [
-      { t: "h", x: "Crear cuenta" },
-      { t: "card", x: "Soy paciente · [ Soy especialista ]" },
-      { t: "eyebrow", x: "Datos personales" },
-      { t: "field", x: "Nombre · Teléfono · Correo · Contraseña" },
-      { t: "eyebrow", x: "Verificación y consultorio" },
-      { t: "field", x: "Especialidad · Nº colegiatura" },
-      { t: "field", x: "Consultorio · Precio · Dirección" },
-      { t: "field", x: "Latitud · Longitud · Horario" },
-      { t: "field", x: "Foto del consultorio (opcional)" },
-      { t: "btn", x: "Completar registro de especialista" },
-    ]),
-    screen("Panel profesional", [
-      { t: "eyebrow", x: "Panel profesional" },
-      { t: "h", x: "Todo lo esencial, de un vistazo" },
-      { t: "card", x: "Próximas citas: 3", lines: ["12/09 14:00 · Camila M.", "13/09 10:00 · Carlos P."] },
-      { t: "card", x: "Balance estimado: $180.00", lines: ["Reservas confirmadas"] },
-      { t: "card", x: "Visibilidad: Activa", lines: ["★ 4.8 · 12 reseñas", "Ver mi perfil público →"] },
-    ]),
-  ]));
+  BPS.forEach((bp) => {
+    const sec = box("BP/" + bp.key, "VERTICAL", { gap: 48 });
+    add(sec, add(box("bph", "VERTICAL", { gap: 4 }),
+      text(bp.label.toUpperCase(), { size: 22, style: "Bold", color: C.blue, spacing: 4 }),
+      text("Los 5 flujos a " + bp.w + " px de ancho.", { size: 12, color: C.muted })));
+    flows(bp.w).forEach((fl) => sec.appendChild(fl));
+    wfRoot.appendChild(sec);
+  });
 
   wf.appendChild(wfRoot);
 
