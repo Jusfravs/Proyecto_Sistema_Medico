@@ -10,16 +10,16 @@
   <aside class="vc-drawer">
     <p class="vc-eyebrow">Directorio médico</p>
     <h1>Encuentra atención cerca de ti.</h1>
-    <p class="vc-data" id="vc-zona-nota">
+    <p class="vc-data" id="vc-zona-nota" aria-live="polite">
       {% if usa_ubicacion %}Resultados desde tu ubicación.{% else %}Usamos {{ zona_actual }} como referencia hasta que compartas tu ubicación.{% endif %}
     </p>
     <form class="vc-filter" method="get" id="vc-filtros">
       <div class="vc-filter-group">
         <span class="vc-filter-label">Qué buscas</span>
-        <input name="q" value="{{ q }}" placeholder="Nombre o consultorio">
+        <input name="q" value="{{ q }}" placeholder="Nombre o consultorio" aria-label="Buscar por nombre o consultorio">
         <div class="vc-filter-row">
-          <select name="especialidad"><option value="">Todas las especialidades</option>{% for e in ESPECIALIDADES %}<option value="{{ e }}" {{ 'selected' if especialidad == e }}>{{ e }}</option>{% endfor %}</select>
-          <select name="orden"><option value="rating" {{ 'selected' if orden == 'rating' }}>Mejor calificación</option><option value="distancia" {{ 'selected' if orden == 'distancia' }}>Más cercano</option><option value="precio" {{ 'selected' if orden == 'precio' }}>Menor precio</option></select>
+          <select name="especialidad" aria-label="Filtrar por especialidad"><option value="">Todas las especialidades</option>{% for e in ESPECIALIDADES %}<option value="{{ e }}" {{ 'selected' if especialidad == e }}>{{ e }}</option>{% endfor %}</select>
+          <select name="orden" aria-label="Ordenar resultados"><option value="rating" {{ 'selected' if orden == 'rating' }}>Mejor calificación</option><option value="distancia" {{ 'selected' if orden == 'distancia' }}>Más cercano</option><option value="precio" {{ 'selected' if orden == 'precio' }}>Menor precio</option></select>
         </div>
       </div>
       <hr class="vc-divider">
