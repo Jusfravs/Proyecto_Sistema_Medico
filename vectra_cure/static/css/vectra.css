@@ -26,8 +26,8 @@ button, input, select { font: inherit; }
 .vc-skip:focus { top: 12px; }
 
 /* Navigation */
-.vc-nav { position: sticky; top: 0; z-index: 20; height: 76px; border-bottom: 1px solid rgba(215,229,231,.82); background: rgba(255,255,255,.87); backdrop-filter: blur(18px); transition: height .25s ease, box-shadow .25s ease, background .25s ease; }
-.vc-nav.is-scrolled { height: 64px; background: rgba(255,255,255,.94); box-shadow: 0 6px 24px rgba(18,47,59,.07); }
+.vc-nav { position: sticky; top: 0; z-index: 20; height: 76px; border-bottom: 1px solid rgba(215,229,231,.82); background: rgba(255,255,255,.87); backdrop-filter: blur(18px); transition: box-shadow .25s ease, background .25s ease, border-color .25s ease; }
+.vc-nav.is-scrolled { background: rgba(255,255,255,.95); border-color: rgba(215,229,231,.5); box-shadow: 0 8px 28px rgba(18,47,59,.08); }
 .vc-nav-inner { height: 100%; display: flex; align-items: center; gap: 30px; }
 .vc-logo { display: inline-flex; align-items: center; gap: 8px; font: 650 21px/1 "Instrument Sans", sans-serif; letter-spacing: -.05em; white-space: nowrap; }
 .vc-logo svg { width: 22px; height: 22px; flex: none; color: var(--blue); }
@@ -45,6 +45,7 @@ h3 { font-size: 22px; }
 .vc-data { color: var(--muted); font-size: 13px; }
 .vc-button { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; gap: 9px; padding: 11px 18px; border: 1px solid var(--blue); border-radius: 12px; background: var(--blue); color: #fff; font-size: 13px; font-weight: 800; cursor: pointer; transition: transform .18s ease, box-shadow .18s ease, background .18s ease; }
 .vc-button:hover { transform: translateY(-2px); background: var(--blue-dark); box-shadow: 0 12px 20px rgba(39,110,241,.22); }
+.vc-button:active { transform: translateY(0) scale(.985); transition-duration: .1s; }
 .vc-button:focus-visible, button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--blue-dark); outline-offset: 3px; }
 .vc-button:not(.vc-button-outline):focus-visible { outline-color: #fff; outline-offset: -4px; }
 .vc-button-sm { min-height: 38px; padding: 8px 14px; border-radius: 10px; }

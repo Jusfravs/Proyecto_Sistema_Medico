@@ -46,7 +46,7 @@
     ST.batch(rest, {
       start: 'top 87%',
       onEnter: (batch) => g.to(batch, {
-        opacity: 1, y: 0, duration: 0.55, stagger: 0.08,
+        opacity: 1, y: 0, duration: 0.45, stagger: 0.07,
         ease: 'power2.out', overwrite: true, clearProps: 'transform',
       }),
     });
@@ -63,7 +63,7 @@
     const cards = document.querySelectorAll('.vc-result-card');
     if (cards.length) {
       g.from(cards, {
-        opacity: 0, y: 12, duration: 0.45, stagger: 0.05,
+        opacity: 0, y: 12, duration: 0.4, stagger: 0.05,
         ease: 'power2.out', clearProps: 'transform',
       });
     }
