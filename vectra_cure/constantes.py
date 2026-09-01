@@ -25,13 +25,14 @@ ESPECIALIDADES = (
     "Pediatría",
 )
 
-# Íconos para las tarjetas del directorio (docs/design/02_DESIGN_SYSTEM / docs/product/06_SITEMAP)
+# Nombre del icono SVG por especialidad (ver vectra_cure/iconos.py).
+# Las plantillas lo pasan a la función `icono(...)`; nunca se muestran emojis.
 ICONO_ESPECIALIDAD = {
-    "Medicina General": "🩺",
-    "Odontología": "🦷",
-    "Dermatología": "🧴",
-    "Veterinaria": "🐾",
-    "Pediatría": "👶",
+    "Medicina General": "stethoscope",
+    "Odontología": "tooth",
+    "Dermatología": "droplet",
+    "Veterinaria": "paw",
+    "Pediatría": "child",
 }
 
 # ── Métodos y estados de pago (03 §2 / 04) ─────────────────────────

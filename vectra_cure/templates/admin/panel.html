@@ -4,14 +4,14 @@
 {% block content %}
 <section class="vc-admin"><div class="vc-shell">
   <p class="vc-eyebrow">Administración</p>
-  <h1>⚙️ Panel de administración</h1>
+  <h1>{{ icono('settings') }} Panel de administración</h1>
 
   <div class="vc-panel-grid">
-    {% for clave, etiqueta, icono in [
-        ('usuarios','Usuarios','👥'), ('especialistas','Especialistas','🩺'),
-        ('citas','Citas','📅'), ('resenas','Reseñas','⭐')] %}
+    {% for clave, etiqueta, nombre_icono in [
+        ('usuarios','Usuarios','users'), ('especialistas','Especialistas','stethoscope'),
+        ('citas','Citas','calendar'), ('resenas','Reseñas','star')] %}
       <article class="vc-panel-card">
-        <p class="vc-data">{{ icono }} {{ etiqueta }}</p>
+        <p class="vc-data">{{ icono(nombre_icono) }} {{ etiqueta }}</p>
         <strong>{{ resumen[clave] }}</strong>
       </article>
     {% endfor %}

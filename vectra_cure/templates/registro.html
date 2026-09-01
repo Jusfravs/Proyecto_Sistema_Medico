@@ -8,8 +8,8 @@
     <h1>Crear cuenta</h1>
 
     <nav class="vc-segmented" aria-label="Tipo de cuenta">
-      <a class="{{ 'is-active' if tipo != 'medico' }}" href="{{ url_for('registro', tipo='paciente') }}">👤 Soy paciente</a>
-      <a class="{{ 'is-active' if tipo == 'medico' }}" href="{{ url_for('registro', tipo='medico') }}">🩺 Soy especialista</a>
+      <a class="{{ 'is-active' if tipo != 'medico' }}" href="{{ url_for('registro', tipo='paciente') }}">{{ icono('user') }} Soy paciente</a>
+      <a class="{{ 'is-active' if tipo == 'medico' }}" href="{{ url_for('registro', tipo='medico') }}">{{ icono('stethoscope') }} Soy especialista</a>
     </nav>
 
     <form class="vc-form" method="post" enctype="multipart/form-data">

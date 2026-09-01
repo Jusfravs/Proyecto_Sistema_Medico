@@ -3,7 +3,7 @@
 
 {% block content %}
 <section class="vc-profile"><div class="vc-shell"><div class="vc-narrow">
-  <a class="vc-back-link" href="{{ url_for('admin_resenas') }}">← Volver</a>
+  <a class="vc-back-link" href="{{ url_for('admin_resenas') }}">{{ icono('arrow-left') }} Volver</a>
 
   <article class="vc-card">
     <p class="vc-eyebrow">Administración</p>
@@ -14,7 +14,7 @@
         <input name="paciente_nombre" value="{{ resena.paciente_nombre }}" required></label>
       <label>Calificación
         <select name="calificacion" required>
-          {% for n in [5,4,3,2,1] %}<option value="{{ n }}" {{ 'selected' if resena.calificacion == n }}>{{ '★' * n }} ({{ n }})</option>{% endfor %}
+          {% for n in [5,4,3,2,1] %}<option value="{{ n }}" {{ 'selected' if resena.calificacion == n }}>{{ n }} de 5</option>{% endfor %}
         </select></label>
       <label>Comentario
         <textarea name="comentario" rows="3">{{ resena.comentario or '' }}</textarea></label>

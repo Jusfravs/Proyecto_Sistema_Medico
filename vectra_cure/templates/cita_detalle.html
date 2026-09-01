@@ -37,9 +37,9 @@
     </div>
 
     <div class="vc-row-actions">
-      <a class="vc-button vc-button-outline" href="{{ url_for('descargar_ticket', codigo=cita.codigo_ticket) }}">⬇️ Volver a descargar ticket (.md)</a>
+      <a class="vc-button vc-button-outline" href="{{ url_for('descargar_ticket', codigo=cita.codigo_ticket) }}">{{ icono('download') }} Volver a descargar ticket (.md)</a>
       {% if cita.estado not in ['CANCELADA', 'COMPLETADA', 'NO_SHOW'] %}
-        <a class="vc-button vc-button-danger" href="{{ url_for('cancelar_cita', codigo=cita.codigo_ticket) }}">❌ Cancelar cita</a>
+        <a class="vc-button vc-button-danger" href="{{ url_for('cancelar_cita', codigo=cita.codigo_ticket) }}">{{ icono('x') }} Cancelar cita</a>
       {% endif %}
     </div>
   </article>

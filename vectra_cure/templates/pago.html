@@ -4,7 +4,7 @@
 {% block content %}
 <section class="vc-profile"><div class="vc-shell"><div class="vc-narrow-tight">
   <article class="vc-card vc-card-lg">
-    <span class="vc-tag vc-tag-warn">🔒 Entorno simulado · no se transfiere dinero real</span>
+    <span class="vc-tag vc-tag-warn">{{ icono('lock') }} Entorno simulado · no se transfiere dinero real</span>
     <h1>Vectra Cure Pay</h1>
     <p class="vc-data">Estás a punto de aprobar el pago simulado de tu consulta con
       <strong>{{ perfil.usuario.nombre }}</strong>.</p>
@@ -21,7 +21,7 @@
       {% for campo in ['medico_id','paciente_nombre','paciente_email','paciente_telefono','fecha','hora','motivo'] %}
         <input type="hidden" name="{{ campo }}" value="{{ datos[campo] }}">
       {% endfor %}
-      <button class="vc-button vc-button-block">✅ Aprobar pago simulado</button>
+      <button class="vc-button vc-button-block">{{ icono('check') }} Aprobar pago simulado</button>
     </form>
     <p class="vc-data"><a href="{{ url_for('agendar', medico_id=perfil.id) }}">Cancelar y volver</a></p>
   </article>
