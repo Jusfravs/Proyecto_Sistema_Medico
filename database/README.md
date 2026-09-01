@@ -20,6 +20,7 @@ la documentación de la base PostgreSQL usada por la aplicación Flask.
 | 2 | `02_seed_demo_postgresql.sql` | Base `vectra_cure` | Inserta o actualiza los datos demostrativos. Puede repetirse. |
 | 3 | `03_verificar_postgresql.sql` | Base `vectra_cure` | Comprueba la base activa, las tablas, restricciones, índices y conteos. |
 | 4 | `04_migracion_v2_postgresql.sql` | Base `vectra_cure` | **Solo para una base V1 ya existente.** No destructivo (idempotente): añade `citas.paciente_usuario_id` con su clave foránea y crea `disponibilidades_medicas` con disponibilidad demostrativa. |
+| 5 | `05_seed_zona_centro_norte_postgresql.sql` | Base `vectra_cure` | **Opcional.** Semilla aditiva e idempotente con 24 especialistas repartidos dentro del polígono Miraflores–La Vicentina–P. M. Guangüiltagua–P. E. Rumipamba. Se ejecuta después de `02` y puede repetirse. La genera `scripts/generar_especialistas_zona.py`. |
 
 ## Actualizar una base V1 existente
 
@@ -85,6 +86,7 @@ Estas cuentas solo pertenecen a la semilla local.
 | --- | --- | --- |
 | Administrador | `admin@vectra.demo` | `admin123` |
 | Especialista | `medico0@vectra.demo` a `medico5@vectra.demo` | `medico123` |
+| Especialista (zona centro-norte, semilla `05`) | `medico.zn00@vectra.demo` a `medico.zn23@vectra.demo` | `medico123` |
 | Paciente | `paciente0@vectra.demo` a `paciente4@vectra.demo` | `paciente123` |
 # Nota de instalación V2
 
