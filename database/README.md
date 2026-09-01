@@ -9,6 +9,7 @@ la documentación de la base PostgreSQL usada por la aplicación Flask.
 | --- | --- |
 | [`ESQUEMA_Y_CONTEXTO.md`](ESQUEMA_Y_CONTEXTO.md) | Explica el modelo relacional, las tablas, las relaciones, las restricciones, los índices y las decisiones de diseño. |
 | [`REVISION_ESQUEMA.md`](REVISION_ESQUEMA.md) | Registra la revisión del SQL frente a los modelos SQLAlchemy y enumera mejoras pendientes. |
+| [`GUIA_MIGRACION_CON_CODEX.md`](GUIA_MIGRACION_CON_CODEX.md) | Guía paso a paso para que cada integrante migre su base local V1 → V2 (asistente `scripts/migrar_db.py` o pgAdmin), con instrucciones y prompts para hacerlo asistido por Codex CLI. |
 
 ## Scripts y orden de ejecución
 
@@ -24,8 +25,10 @@ la documentación de la base PostgreSQL usada por la aplicación Flask.
 
 Si ya tenías la base creada antes de V2 (sin `disponibilidades_medicas` o sin
 `citas.paciente_usuario_id`), la aplicación mostrará "El servicio está
-temporalmente no disponible" al abrir `/directorio`. Para migrarla sin perder
-datos:
+temporalmente no disponible" al abrir `/directorio`. Guía detallada para todo el
+equipo (incluye sección para Codex CLI):
+[`GUIA_MIGRACION_CON_CODEX.md`](GUIA_MIGRACION_CON_CODEX.md). En resumen, para
+migrarla sin perder datos:
 
 - **Con el asistente** (desde la raíz del repo, con el venv activo):
 
