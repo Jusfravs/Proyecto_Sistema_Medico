@@ -15,18 +15,30 @@ de desarrollo y ejecútalo.
   rápido · consultar/cancelar · alta de especialista) a 3 breakpoints
   (375 / 768 / 1280). Low-fi.
 
-## 2. `vectra-final-design/` — DISEÑO FINAL
+## 2. `vectra-diseno-final.js` — DISEÑO FINAL (frames nativos)
 
-Plugin **con UI** (`manifest.json` + `code.js` + `ui.html`). Crea un plugin de
-desarrollo "con UI" y reemplaza los tres archivos.
+Plugin **"Run once"** (sin UI). Pega el contenido en el `code.js` de un plugin
+de desarrollo y ejecútalo.
 
-Al abrirlo, arrastra los PNG de [`screens/`](./screens) (o elígelos). Crea la
-página **DISEÑO FINAL** con cada captura como frame a escala, agrupada por
-Escritorio / Móvil, más una leyenda de tokens.
+Crea la página **DISEÑO FINAL** con 14 pantallas clave recreadas como **frames
+nativos de Figma** (editables), usando los colores, la tipografía y los
+componentes reales de `vectra.css` — no son capturas:
+
+landing · directorio · ficha de especialista · agendar · pago simulado ·
+cita confirmada · registro paciente · registro especialista · mis citas ·
+detalle de cita · cancelar cita · panel profesional · login · modal agendar.
+
+## 3. `vectra-final-design/` — alternativa: importar capturas
+
+Plugin **con UI** (`manifest.json` + `code.js` + `ui.html`). Si en vez de
+frames nativos prefieres las **capturas reales** de la app en Figma: crea un
+plugin de desarrollo "con UI", reemplaza los tres archivos, y arrastra los PNG
+de [`screens/`](./screens). Crea la página **DISEÑO FINAL** con cada captura
+como frame a escala.
+
+> Los dos plugins escriben en la misma página "DISEÑO FINAL"; usa uno u otro.
 
 ### `screens/` — capturas de la app real
 
-Generadas con Chrome headless contra el servidor Flask local
-(`docs/design/figma/screens/*.png`). Para regenerarlas: levantar la app y
-volver a correr el script de captura (ver historial de commits). Numeradas por
-flujo; sufijo `-desktop` / `-mobile`.
+Generadas con Chrome headless contra el servidor Flask local. Numeradas por
+flujo; sufijo `-desktop` / `-mobile`. Solo las usa el plugin de la opción 3.
