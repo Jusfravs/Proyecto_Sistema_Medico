@@ -3,7 +3,7 @@
 
 {% block content %}
 <section class="vc-profile"><div class="vc-shell"><div class="vc-narrow">
-  <div class="vc-success-mark">✓</div>
+  <div class="vc-success-mark">{{ icono('check') }}</div>
   <p class="vc-eyebrow" style="text-align:center">Reserva completada</p>
   <h1 style="text-align:center">¡Cita confirmada!</h1>
   <p class="vc-data" style="text-align:center">Notificación enviada a {{ cita.paciente_telefono }} y {{ cita.paciente_email }}.</p>
@@ -30,11 +30,11 @@
   </div>
 
   {% if cita.estado_pago == constantes.ESTADO_PAGO_PENDIENTE %}
-    <div class="vc-alert vc-alert-danger">⚠️ {{ constantes.LEYENDA_SALDO_PENDIENTE }}</div>
+    <div class="vc-alert vc-alert-danger">{{ icono('alert-triangle') }} {{ constantes.LEYENDA_SALDO_PENDIENTE }}</div>
   {% endif %}
 
   <div class="vc-row-actions" style="justify-content:center">
-    <a class="vc-button" href="{{ url_for('descargar_ticket', codigo=cita.codigo_ticket) }}">⬇️ Descargar ticket (.md)</a>
+    <a class="vc-button" href="{{ url_for('descargar_ticket', codigo=cita.codigo_ticket) }}">{{ icono('download') }} Descargar ticket (.md)</a>
     <a class="vc-button vc-button-outline" href="{{ url_for('mi_cita', codigo=cita.codigo_ticket) }}">Ver / gestionar mi cita</a>
   </div>
 </div></div></section>
