@@ -101,6 +101,19 @@ class TestPublico(BaseTest):
         r = self.c.post("/registro", data=datos)
         self.assertIn("Ya existe una cuenta", r.get_data(as_text=True))
 
+    def test_registro_especialista_colegiatura_duplicada(self):
+        r = self.c.post("/registro", data={
+            "tipo": "medico", "nombre": "Dr. Nuevo", "telefono": "9",
+            "email": "nuevo-medico@x.com", "password": "secret1",
+            "especialidad": "Odontología", "num_colegiatura": "MED-1",
+            "nombre_clinica": "Otra Clinica", "direccion": "Calle 2",
+            "precio_aprox": "40",
+        })
+        texto = r.get_data(as_text=True)
+        self.assertIn("colegiatura", texto)
+        self.assertNotIn("Ya existe una cuenta con ese correo", texto)
+        self.assertIsNone(db.session.query(Usuario).filter_by(email="nuevo-medico@x.com").first())
+
 
 class TestAgendamiento(BaseTest):
     def _agendar(self, hora="10:00", metodo="EFECTIVO_VENTANILLA"):
