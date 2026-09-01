@@ -1,4 +1,23 @@
 (() => {
+  // ── Panel lateral plegable (hamburguesa, solo escritorio) ────────────
+  const explorer = document.querySelector('.vc-explorer');
+  const toggle = document.querySelector('.vc-drawer-toggle');
+  if (explorer && toggle) {
+    const KEY = 'vc-drawer-collapsed';
+    const apply = (collapsed, persist) => {
+      explorer.classList.toggle('drawer-collapsed', collapsed);
+      toggle.setAttribute('aria-expanded', String(!collapsed));
+      toggle.setAttribute('aria-label', collapsed ? 'Mostrar el panel de búsqueda' : 'Ocultar el panel de búsqueda');
+      if (persist) { try { localStorage.setItem(KEY, collapsed ? '1' : '0'); } catch (e) {} }
+      // Leaflet se redibuja al detectar un resize de ventana.
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 360);
+    };
+    let stored = null;
+    try { stored = localStorage.getItem(KEY); } catch (e) {}
+    if (stored === '1') apply(true, false);
+    toggle.addEventListener('click', () => apply(!explorer.classList.contains('drawer-collapsed'), true));
+  }
+
   const form = document.getElementById('vc-filtros');
   if (!form) return;
   const latIn = document.getElementById('vc-lat');
