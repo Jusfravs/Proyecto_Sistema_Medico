@@ -2,7 +2,7 @@
 {% block titulo %}Reservar atención — Vectra Cure{% endblock %}
 {% block content %}
 <section class="vc-profile"><div class="vc-shell">
-  <a class="vc-text-link" href="{{ url_for('especialista', medico_id=perfil.id) }}">← Volver al perfil</a>
+  <a class="vc-back-link" href="{{ url_for('especialista', medico_id=perfil.id) }}">{{ icono('arrow-left') }} Volver al perfil</a>
   <form method="post" class="vc-booking" id="vc-agendar"
         data-horas-url="{{ url_for('horas_disponibles', medico_id=perfil.id) }}">
     <p class="vc-eyebrow">Reserva segura</p>

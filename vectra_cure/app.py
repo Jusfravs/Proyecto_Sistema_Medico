@@ -17,6 +17,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from werkzeug.utils import secure_filename
 
 import constantes as C
+import iconos as I
 import logica as L
 from auth import login_requerido, rol_requerido
 from config import Config
@@ -86,6 +87,7 @@ def _inyectar_globales():
         "ICONO_ESPECIALIDAD": C.ICONO_ESPECIALIDAD,
         "constantes": C,
         "L": L,
+        "icono": I.icono,
         "hoy": date.today().isoformat(),
     }
 
@@ -724,7 +726,7 @@ def admin_especialista_verificar(medico_id):
     perfil = db.get_or_404(PerfilMedico, medico_id)
     perfil.verificado = not perfil.verificado
     db.session.commit()
-    flash(f"Insignia 🛡️ {'activada' if perfil.verificado else 'retirada'}.", "success")
+    flash(f"Verificación {'activada' if perfil.verificado else 'retirada'}.", "success")
     return redirect(url_for("admin_especialistas"))
 
 
@@ -751,7 +753,7 @@ def admin_cita_estado(cita_id):
         cita.motivo_cancelacion = cita.motivo_cancelacion or "Cancelada por administración"
         L.simular_reverso(cita)
     db.session.commit()
-    flash(f"Cita {cita.codigo_ticket} → {C.ESTADO_CITA_ETIQUETA[nuevo]}.", "success")
+    flash(f"Cita {cita.codigo_ticket}: {C.ESTADO_CITA_ETIQUETA[nuevo]}.", "success")
     return redirect(url_for("admin_citas"))
 
 
