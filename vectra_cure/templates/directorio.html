@@ -7,7 +7,11 @@
 {% endblock %}
 {% block content %}
 <section class="vc-explorer">
-  <aside class="vc-drawer">
+  <button class="vc-drawer-toggle" type="button" aria-label="Mostrar u ocultar el panel de búsqueda" aria-expanded="true" aria-controls="vc-drawer">
+    <svg class="vc-ic-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    <svg class="vc-ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <aside class="vc-drawer" id="vc-drawer">
     <p class="vc-eyebrow">Directorio médico</p>
     <h1>Encuentra atención cerca de ti.</h1>
     <p class="vc-data" id="vc-zona-nota" aria-live="polite">
