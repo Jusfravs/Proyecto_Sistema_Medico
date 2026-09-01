@@ -174,7 +174,6 @@
   };
 
   const kit = upsertPage("UI KIT");
-  figma.currentPage = kit;
 
   const kitRoot = box("Vectra Cure · UI Kit", "VERTICAL", { gap: 44, pad: 64, bg: "#f7fafa" });
   kitRoot.x = 0; kitRoot.y = 0;
@@ -280,7 +279,6 @@
 
   // ============================ PÁGINA: WIREFRAME ============================
   const wf = upsertPage("WIREFRAME");
-  figma.currentPage = wf;
 
   const SW = 300, SH = 620;
 
@@ -529,8 +527,11 @@
   wf.appendChild(wfRoot);
 
   // ---- Cerrar ----
-  figma.currentPage = kit;
-  figma.viewport.scrollAndZoomIntoView([kitRoot]);
+  try {
+    if (figma.setCurrentPageAsync) await figma.setCurrentPageAsync(kit);
+    else figma.currentPage = kit;
+    figma.viewport.scrollAndZoomIntoView([kitRoot]);
+  } catch (e) {}
   figma.notify("Vectra Kit Builder: páginas UI KIT y WIREFRAME creadas");
   figma.closePlugin("Listo: UI KIT + WIREFRAME (5 flujos)");
 })().catch((err) => {
