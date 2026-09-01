@@ -10,7 +10,7 @@
       toggle.setAttribute('aria-label', collapsed ? 'Mostrar el panel de búsqueda' : 'Ocultar el panel de búsqueda');
       if (persist) { try { localStorage.setItem(KEY, collapsed ? '1' : '0'); } catch (e) {} }
       // Leaflet se redibuja al detectar un resize de ventana.
-      setTimeout(() => window.dispatchEvent(new Event('resize')), 180);
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 360);
     };
     let stored = null;
     try { stored = localStorage.getItem(KEY); } catch (e) {}
