@@ -1,0 +1,88 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  body { font: 12px/1.5 Inter, -apple-system, sans-serif; margin: 0; padding: 16px; color: #112530; }
+  h1 { font-size: 13px; margin: 0 0 4px; }
+  p { margin: 0 0 12px; color: #5f7377; }
+  .drop { border: 1.5px dashed #b9ced2; border-radius: 12px; padding: 22px 12px; text-align: center; background: #f7fafa; cursor: pointer; }
+  .drop.hover { border-color: #276ef1; background: #eef6ff; }
+  input[type=file] { display: none; }
+  button { width: 100%; margin-top: 12px; padding: 9px; border: 0; border-radius: 9px; background: #276ef1; color: #fff; font-weight: 700; font-size: 12px; cursor: pointer; }
+  button:disabled { background: #b9ced2; cursor: default; }
+  .log { margin-top: 10px; max-height: 90px; overflow: auto; font-size: 10px; color: #5f7377; }
+  .log div { padding: 1px 0; }
+</style>
+
+<h1>Importar el diseño final</h1>
+<p>Selecciona los PNG de <code>docs/design/figma/screens/</code>. Se crea la página <b>DISEÑO FINAL</b>.</p>
+
+<label class="drop" id="drop">
+  Arrastra los PNG aquí o haz clic para elegirlos
+  <input type="file" id="file" multiple accept="image/png">
+</label>
+
+<button id="go" disabled>Crear página DISEÑO FINAL</button>
+<div class="log" id="log"></div>
+
+<script>
+  const MAX = 3900; // límite práctico para figma.createImage (4096)
+  const fileInput = document.getElementById('file');
+  const drop = document.getElementById('drop');
+  const go = document.getElementById('go');
+  const log = document.getElementById('log');
+  let items = [];
+
+  const say = (t) => { const d = document.createElement('div'); d.textContent = t; log.appendChild(d); log.scrollTop = log.scrollHeight; };
+
+  async function normalize(file) {
+    const url = URL.createObjectURL(file);
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+    let { naturalWidth: w, naturalHeight: h } = img;
+    let bytes;
+    if (w <= MAX && h <= MAX) {
+      bytes = new Uint8Array(await file.arrayBuffer());
+    } else {
+      const scale = MAX / Math.max(w, h);
+      const cw = Math.round(w * scale), ch = Math.round(h * scale);
+      const canvas = document.createElement('canvas');
+      canvas.width = cw; canvas.height = ch;
+      canvas.getContext('2d').drawImage(img, 0, 0, cw, ch);
+      const blob = await new Promise((r) => canvas.toBlob(r, 'image/png'));
+      bytes = new Uint8Array(await blob.arrayBuffer());
+      w = cw; h = ch;
+    }
+    URL.revokeObjectURL(url);
+    return { name: file.name.replace(/\.png$/i, ''), bytes, w, h };
+  }
+
+  async function handle(files) {
+    items = [];
+    log.innerHTML = '';
+    go.disabled = true;
+    const list = [...files].filter((f) => /\.png$/i.test(f.name)).sort((a, b) => a.name.localeCompare(b.name));
+    for (const f of list) {
+      try { items.push(await normalize(f)); say('✓ ' + f.name); }
+      catch (e) { say('✗ ' + f.name + ' (' + e.message + ')'); }
+    }
+    go.disabled = items.length === 0;
+    say(items.length + ' listas para importar');
+  }
+
+  fileInput.addEventListener('change', (e) => handle(e.target.files));
+  drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('hover'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('hover'));
+  drop.addEventListener('drop', (e) => { e.preventDefault(); drop.classList.remove('hover'); handle(e.dataTransfer.files); });
+
+  go.addEventListener('click', () => {
+    go.disabled = true;
+    say('Enviando a Figma…');
+    parent.postMessage({ pluginMessage: { type: 'import', items } }, '*');
+  });
+
+  onmessage = (e) => {
+    const m = e.data.pluginMessage;
+    if (!m) return;
+    if (m.type === 'done') { say('Listo: ' + m.count + ' pantallas en DISEÑO FINAL'); }
+    if (m.type === 'error') { say('Error: ' + m.message); go.disabled = false; }
+  };
+</script>
