@@ -123,6 +123,7 @@ HORARIO_ATENCION_DEFECTO = "09:00 - 18:30"
 # (clave, etiqueta, latitud, longitud)
 ZONAS_REFERENCIA = (
     ("centro_norte", "Centro-norte de Quito", -0.180653, -78.467834),
+    ("floresta_parques", "La Floresta – La Vicentina (parques)", -0.196665, -78.483520),
     ("norte", "Norte de Quito", -0.106500, -78.482000),
     ("centro", "Centro histórico", -0.220100, -78.512300),
     ("sur", "Sur de Quito", -0.292000, -78.548000),
