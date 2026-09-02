@@ -140,7 +140,7 @@ h3 { font-size: 22px; }
 .vc-hero-actions .vc-button:hover .vc-icon, .vc-final .vc-button:hover .vc-icon { transform: translateX(3px); }
 
 @media (max-width: 860px) {
-  .vc-shell { width: min(100% - 30px, 1192px); }.vc-nav { height: 67px; }.vc-nav-inner { gap: 12px; }.vc-menu-toggle { display: block; margin-left: auto; }.vc-nav-links { position: absolute; top: 67px; right: 0; left: 0; display: none; align-items: flex-start; flex-direction: column; gap: 15px; padding: 20px 15px; border-bottom: 1px solid var(--line); background: #fff; }.vc-nav-links.is-open { display: flex; }.vc-nav-actions { gap: 8px; }.vc-nav-actions .vc-text-link { display: none; }
+  .vc-shell { width: min(100% - 30px, 1192px); }.vc-nav { height: 67px; }.vc-nav-inner { gap: 12px; }.vc-menu-toggle { display: block; margin-left: auto; }.vc-nav-links { position: absolute; top: 67px; right: 0; left: 0; display: none; align-items: flex-start; flex-direction: column; gap: 15px; padding: 20px 15px; border-bottom: 1px solid var(--line); background: #fff; }.vc-nav-links.is-open { display: flex; }.vc-nav-actions { gap: 8px; }.vc-nav-actions .vc-text-link, .vc-nav-actions .vc-user-link { display: none; }
   .vc-nav-account { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; width: 100%; margin-top: 4px; padding-top: 15px; border-top: 1px solid var(--line); }
   .vc-nav-account button { border: 0; background: none; padding: 6px 1px; color: var(--muted); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
   .vc-nav-account button:hover { color: var(--blue); }
