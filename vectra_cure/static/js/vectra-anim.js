@@ -7,7 +7,19 @@
 (() => {
   const g = window.gsap;
   const ST = window.ScrollTrigger;
-  if (!g || !ST) return;
+
+  // Respaldo si GSAP no cargó (CDN caído/lento): reveal con IntersectionObserver.
+  if (!g || !ST) {
+    const reveal = document.querySelectorAll('[data-reveal]');
+    const obs = 'IntersectionObserver' in window
+      ? new IntersectionObserver((entries) => entries.forEach((e) => {
+          if (e.isIntersecting) { e.target.classList.add('is-visible'); obs.unobserve(e.target); }
+        }), { threshold: 0.12 })
+      : null;
+    reveal.forEach((n) => (obs ? obs.observe(n) : n.classList.add('is-visible')));
+    return;
+  }
+
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   document.documentElement.classList.add('has-gsap');

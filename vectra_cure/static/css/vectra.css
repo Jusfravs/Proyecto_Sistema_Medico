@@ -37,6 +37,7 @@ button, input, select { font: inherit; }
 .vc-nav-actions { display: flex; align-items: center; gap: 16px; }
 .vc-user-link { font-size: 13px; font-weight: 800; }
 .vc-menu-toggle { display: none; border: 0; background: transparent; color: var(--ink); font-weight: 800; }
+.vc-nav-account { display: none; } /* solo visible en el menú móvil */
 
 /* Common primitives */
 h1, h2, h3, h4 { margin-top: 0; font-family: "Instrument Sans", sans-serif; letter-spacing: -.055em; line-height: 1.02; }
@@ -139,7 +140,11 @@ h3 { font-size: 22px; }
 .vc-hero-actions .vc-button:hover .vc-icon, .vc-final .vc-button:hover .vc-icon { transform: translateX(3px); }
 
 @media (max-width: 860px) {
-  .vc-shell { width: min(100% - 30px, 1192px); }.vc-nav { height: 67px; }.vc-nav-inner { gap: 12px; }.vc-menu-toggle { display: block; margin-left: auto; }.vc-nav-links { position: absolute; top: 67px; right: 0; left: 0; display: none; align-items: flex-start; flex-direction: column; gap: 15px; padding: 20px 15px; border-bottom: 1px solid var(--line); background: #fff; }.vc-nav-links.is-open { display: flex; }.vc-nav-actions { gap: 8px; }.vc-nav-actions .vc-text-link { display: none; }.vc-hero { padding: 72px 0 56px; }.vc-hero-grid { grid-template-columns: 1fr; gap: 29px; }.vc-hero h1 { font-size: clamp(48px, 13vw, 66px); }.vc-hero-visual { height: 346px; }.vc-hero-visual:before { width: 310px; height: 310px; }.vc-section { padding: 78px 0; }.vc-specialty-grid { margin-top: 32px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }.vc-stack, .vc-steps, .vc-trust, .vc-panel-grid, .vc-footer-grid { grid-template-columns: 1fr; }.vc-step:after { top: auto; right: auto; bottom: -20px; left: calc(50% - 18px); transform: rotate(90deg); }.vc-page-explorer .vc-nav { position: relative; }.vc-explorer { height: auto; min-height: 0; overflow: visible; grid-template-columns: minmax(0, 1fr); }.vc-map { min-height: 46vh; grid-row: 1; }
+  .vc-shell { width: min(100% - 30px, 1192px); }.vc-nav { height: 67px; }.vc-nav-inner { gap: 12px; }.vc-menu-toggle { display: block; margin-left: auto; }.vc-nav-links { position: absolute; top: 67px; right: 0; left: 0; display: none; align-items: flex-start; flex-direction: column; gap: 15px; padding: 20px 15px; border-bottom: 1px solid var(--line); background: #fff; }.vc-nav-links.is-open { display: flex; }.vc-nav-actions { gap: 8px; }.vc-nav-actions .vc-text-link { display: none; }
+  .vc-nav-account { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; width: 100%; margin-top: 4px; padding-top: 15px; border-top: 1px solid var(--line); }
+  .vc-nav-account button { border: 0; background: none; padding: 6px 1px; color: var(--muted); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .vc-nav-account button:hover { color: var(--blue); }
+  .vc-hero { padding: 72px 0 56px; }.vc-hero-grid { grid-template-columns: 1fr; gap: 29px; }.vc-hero h1 { font-size: clamp(48px, 13vw, 66px); }.vc-hero-visual { height: 346px; }.vc-hero-visual:before { width: 310px; height: 310px; }.vc-section { padding: 78px 0; }.vc-specialty-grid { margin-top: 32px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }.vc-stack, .vc-steps, .vc-trust, .vc-panel-grid, .vc-footer-grid { grid-template-columns: 1fr; }.vc-step:after { top: auto; right: auto; bottom: -20px; left: calc(50% - 18px); transform: rotate(90deg); }.vc-page-explorer .vc-nav { position: relative; }.vc-explorer { height: auto; min-height: 0; overflow: visible; grid-template-columns: minmax(0, 1fr); }.vc-map { min-height: 46vh; grid-row: 1; }
 .vc-drawer { width: auto; transform: none; max-height: none; min-width: 0; padding: 22px 15px 36px; border: 0; scrollbar-gutter: auto; }.vc-filter-row, .vc-booking-grid { grid-template-columns: 1fr; }.vc-booking { padding: 24px 18px; }.vc-booking h1 { font-size: 37px; }.vc-footer { padding: 48px 0; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *:before, *:after { animation-duration: .01ms !important; transition-duration: .01ms !important; } [data-reveal] { opacity: 1; translate: none; } }
