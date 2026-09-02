@@ -4,32 +4,33 @@ Vectra Cure ayuda a pacientes a encontrar especialistas cercanos, compararlos y
 reservar una cita. También permite a especialistas publicar su consultorio y
 ganar visibilidad.
 
-## Punto de partida
-
-- [Cómo trabajamos el proyecto](FLUJO_DE_TRABAJO.md)
-- [Índice completo de documentación](docs/README.md)
-- [Manual de uso](docs/guides/MANUAL_DE_USO.md)
-- [Aplicación Flask](vectra_cure/README.md)
-- [Esquema de base de datos](database/README.md)
-
-## Especificación vigente del rediseño
-
-| Documento | Propósito |
-| --- | --- |
-| [Plan maestro de producto](docs/product/prds/plan-maestro-producto-vectra-cure-v1.0.md) | Alcance, decisiones de arquitectura y orden de trabajo. |
-| [PRD de landing V2](docs/product/prds/landing-medica-v2-v1.0-prd.md) | Dirección visual, landing, acceso, mapa y panel profesional. |
-| [Flujos de producto V2](docs/product/prds/flujos-producto-v2-v1.0.md) | Recorridos detallados de paciente y especialista. |
-| [Paquete para Google Stitch](docs/design/stitch/README.md) | Contexto visual y prompts por pantalla. |
-
-## Estructura
+## Estructura del repositorio
 
 ```text
-docs/          documentación por dominio, informes y especificaciones
-database/      scripts PostgreSQL y documentación del esquema
-scripts/       automatizaciones auxiliares
-vectra_cure/   aplicación Flask, estilos, plantillas y pruebas
+vectra_cure/   aplicación Flask: código, estilos, plantillas y pruebas
+docs/
+  guides/MANUAL_DE_USO.md    manual de operación y uso
+  design/02_DESIGN_SYSTEM.md sistema visual (tokens, tipografía, componentes)
+README.md      este archivo
 ```
 
-Los documentos originales de investigación, arquitectura y flujos se conservan
-en `docs/` como antecedentes. Si contradicen la especificación V2, prevalecen
-los documentos de `docs/product/prds/`.
+## Cómo levantar la aplicación
+
+Ver **[`vectra_cure/README.md`](vectra_cure/README.md)** (entorno, dependencias,
+variables `.env`) y el **[Manual de uso](docs/guides/MANUAL_DE_USO.md)**.
+
+La aplicación necesita una base **PostgreSQL** ya creada y con el esquema
+cargado. Los scripts SQL de inicialización, migración y semillas, junto con toda
+su documentación, viven fuera del repositorio en
+**`Documentacion_PSM/database/`** — se ejecutan desde pgAdmin.
+
+## Documentación
+
+Salvo el manual de uso y el sistema de diseño (que se quedan en `docs/`), el
+resto de la documentación del proyecto —investigación UX, arquitectura, PRDs,
+flujos, informes, auditorías, base de datos y recursos de diseño (Stitch,
+Figma)— se movió a una carpeta aparte:
+
+**`C:\Users\HP\OneDrive\Desktop\Documentacion_PSM\`**
+
+Ver `Documentacion_PSM/README.md` para el índice.

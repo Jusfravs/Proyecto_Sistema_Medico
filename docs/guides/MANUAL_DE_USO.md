@@ -91,16 +91,19 @@ DB_NAME=vectra_cure
 
 **Paso 3 — Cargar la base de datos**
 
-Desde pgAdmin 4, o desde PowerShell en la raíz del proyecto:
+Los scripts SQL viven fuera del repositorio, en
+`C:\Users\HP\OneDrive\Desktop\Documentacion_PSM\database\`. Ejecútalos en orden
+desde **pgAdmin 4** (o con `psql`), conectado según indica cada archivo:
 
 ```powershell
 $env:PGPASSWORD = "tu_contraseña_aquí"
 $psql = "C:\Program Files\PostgreSQL\18\bin\psql.exe"
+$db   = "$HOME\OneDrive\Desktop\Documentacion_PSM\database"
 
-& $psql -U postgres -h localhost -d postgres    -f database\00_create_database_postgresql.sql
-& $psql -U postgres -h localhost -d vectra_cure -f database\01_schema_postgresql.sql
-& $psql -U postgres -h localhost -d vectra_cure -f database\02_seed_demo_postgresql.sql
-& $psql -U postgres -h localhost -d vectra_cure -f database\03_verificar_postgresql.sql
+& $psql -U postgres -h localhost -d postgres    -f "$db\00_create_database_postgresql.sql"
+& $psql -U postgres -h localhost -d vectra_cure -f "$db\01_schema_postgresql.sql"
+& $psql -U postgres -h localhost -d vectra_cure -f "$db\02_seed_demo_postgresql.sql"
+& $psql -U postgres -h localhost -d vectra_cure -f "$db\03_verificar_postgresql.sql"
 ```
 
 El último script debe terminar mostrando 4 tablas con sus conteos:
@@ -389,8 +392,9 @@ Y confirma que `DB_PORT=5432` en el `.env`.
 **Causa:** la aplicación conecta a PostgreSQL, pero las tablas no existen o el
 esquema no coincide.
 
-**Solución:** ejecuta los scripts de `database/` en orden (sección 2.1, paso 3).
-Verifica también que `DB_NAME=vectra_cure` sea la base correcta.
+**Solución:** ejecuta los scripts SQL en orden (sección 2.1, paso 3; están en
+`Documentacion_PSM/database/`). Verifica también que `DB_NAME=vectra_cure` sea la
+base correcta.
 
 > Esta pantalla es **intencional**: reemplaza el mensaje de error técnico para
 > no exponer consultas SQL, rutas internas ni credenciales al visitante. El
@@ -538,10 +542,10 @@ o desde el panel de pruebas (ícono del matraz).
 
 | Documento | Contenido |
 | :--- | :--- |
-| [`FLUJO_DE_TRABAJO.md`](../../FLUJO_DE_TRABAJO.md) | Reparto de tareas y flujo de Git en equipo |
 | [`vectra_cure/README.md`](../../vectra_cure/README.md) | Estructura técnica de la aplicación |
 | [`vectra_cure/CONTRATO_MODELOS.md`](../../vectra_cure/CONTRATO_MODELOS.md) | Contrato entre la aplicación y la capa de datos |
-| [`database/README.md`](../../database/README.md) | Scripts SQL y orden de ejecución |
-| [`database/ESQUEMA_Y_CONTEXTO.md`](../../database/ESQUEMA_Y_CONTEXTO.md) | Modelo relacional explicado |
-| [`03_USER_FLOW_AND_BOOKING.md`](../product/03_USER_FLOW_AND_BOOKING.md) | Flujo de reserva y formato del ticket |
-| [`06_SITEMAP_AND_USER_FLOWS.md`](../product/06_SITEMAP_AND_USER_FLOWS.md) | Mapa de pantallas y diagramas de flujo |
+| [`docs/design/02_DESIGN_SYSTEM.md`](../design/02_DESIGN_SYSTEM.md) | Sistema visual: tokens, tipografía, componentes |
+
+El resto de la documentación (flujo de trabajo, base de datos, PRDs, flujos de
+producto, investigación UX, arquitectura, informes y recursos de diseño) está en
+`C:\Users\HP\OneDrive\Desktop\Documentacion_PSM\` — ver su `README.md`.

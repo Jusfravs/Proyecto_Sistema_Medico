@@ -1,14 +1,15 @@
 # Vectra Cure — App web (Flask)
 
 Plataforma de geolocalización y **agendamiento médico**. App web con **Flask +
-plantillas Jinja + Bootstrap + sesiones**, siguiendo el patrón del proyecto del
-curso de POO (`tienda_online`). Cubre el **CRUD** de las 4 entidades del modelo
-de datos (doc `docs/architecture/04_TECHNICAL_ARCHITECTURE.md`) y los flujos de agendamiento,
-cancelación y ticket (docs `03` y `06`).
+plantillas Jinja + CSS propio (`static/css/vectra.css`) + sesiones**, siguiendo
+el patrón del proyecto del curso de POO (`tienda_online`). Cubre el **CRUD** de
+las 4 entidades del modelo de datos y los flujos de agendamiento, cancelación y
+ticket.
 
 > **Base de datos.** La ejecución utiliza `models.py` con PostgreSQL 18. El
-> esquema y los datos demostrativos se cargan manualmente desde pgAdmin 4 con
-> los scripts de `../database/`. SQLite se reserva para las pruebas automatizadas.
+> esquema, los datos demostrativos y su documentación viven fuera del repositorio
+> en **`Documentacion_PSM/database/`** y se cargan manualmente desde pgAdmin 4.
+> SQLite se reserva para las pruebas automatizadas.
 
 ## Estructura
 
@@ -23,7 +24,7 @@ cancelación y ticket (docs `03` y `06`).
 | `static/css/vectra.css` | Design system del doc `02` (tokens, temas claro/oscuro, tipografías) |
 | `CONTRATO_MODELOS.md` | Especificación de lo que `models.py` debe exponer |
 | `models.py` | Modelos SQLAlchemy compatibles con PostgreSQL y SQLite de pruebas |
-| `tests/test_app.py` | 13 pruebas `unittest` (SQLite en memoria, no toca PostgreSQL) |
+| `tests/test_app.py` | 20 pruebas `unittest` (SQLite en memoria, no toca PostgreSQL) |
 
 ## Instalación y ejecución
 
@@ -35,10 +36,8 @@ pip install -r requirements.txt
 
 copy .env.example .env
 
-# En pgAdmin 4, conectado a vectra_cure:
-#   1) ejecuta ../database/01_schema_postgresql.sql
-#   2) ejecuta ../database/02_seed_demo_postgresql.sql
-#   3) ejecuta ../database/03_verificar_postgresql.sql
+# En pgAdmin 4, conectado a la base vectra_cure, ejecuta en orden los
+# scripts SQL de Documentacion_PSM/database/ (00 → 01 → 02 → 03).
 
 python app.py                         # http://127.0.0.1:5000
 ```
